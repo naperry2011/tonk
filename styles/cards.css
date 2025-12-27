@@ -1,8 +1,8 @@
 /* Card Styles - Premium Casino Look */
 
 .card {
-  width: 70px;
-  height: 100px;
+  width: var(--card-width);
+  height: var(--card-height);
   background: linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%);
   border-radius: 8px;
   box-shadow:
@@ -352,11 +352,9 @@
   font-size: 2.5rem;
 }
 
-/* Mobile card sizing */
+/* Mobile card styling - dimensions handled by CSS variables */
 @media (max-width: 480px) {
   .card {
-    width: 55px;
-    height: 80px;
     border-radius: 6px;
   }
 
@@ -389,18 +387,9 @@
   .card[data-rank="A"] .card-center .suit-large {
     font-size: 1.8rem;
   }
-
-  .spread-cards .card {
-    margin-left: -25px;
-  }
 }
 
 @media (max-width: 380px) {
-  .card {
-    width: 48px;
-    height: 70px;
-  }
-
   .card-corner {
     font-size: 0.6rem;
   }
@@ -416,11 +405,6 @@
 
 /* Tablet and up */
 @media (min-width: 768px) {
-  .card {
-    width: 75px;
-    height: 105px;
-  }
-
   .card-corner .rank {
     font-size: 1.1rem;
   }
@@ -436,11 +420,6 @@
 
 /* Desktop */
 @media (min-width: 1024px) {
-  .card {
-    width: 80px;
-    height: 112px;
-  }
-
   .card-center .suit-large {
     font-size: 2.4rem;
   }

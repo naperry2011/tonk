@@ -512,7 +512,7 @@ export class GameUI {
    */
   canDrawFromDeck() {
     return this.game.isHumanTurn() &&
-      this.game.phase === PHASES.DRAW &&
+      (this.game.phase === PHASES.DRAW || this.game.phase === PHASES.START_OF_TURN) &&
       !this.game.isStockEmpty();
   }
 
@@ -521,7 +521,7 @@ export class GameUI {
    */
   canDrawFromDiscard() {
     return this.game.isHumanTurn() &&
-      this.game.phase === PHASES.DRAW &&
+      (this.game.phase === PHASES.DRAW || this.game.phase === PHASES.START_OF_TURN) &&
       this.game.getTopDiscard() !== null;
   }
 
@@ -530,6 +530,10 @@ export class GameUI {
    */
   handleDrawFromDeck() {
     try {
+      // Auto-transition to draw phase if at start of turn
+      if (this.game.phase === PHASES.START_OF_TURN) {
+        this.game.proceedToDraw();
+      }
       this.game.drawFromDeck();
     } catch (error) {
       this.showMessage(error.message, 'error');
@@ -541,6 +545,10 @@ export class GameUI {
    */
   handleDrawFromDiscard() {
     try {
+      // Auto-transition to draw phase if at start of turn
+      if (this.game.phase === PHASES.START_OF_TURN) {
+        this.game.proceedToDraw();
+      }
       this.game.drawFromDiscard();
     } catch (error) {
       this.showMessage(error.message, 'error');

@@ -38,6 +38,35 @@
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 20px rgba(212, 168, 85, 0.2);
+
+  /* ==================== SPACING SCALE ==================== */
+  --space-unit: 4px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-base: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* ==================== CARD DIMENSIONS ==================== */
+  --card-width: 70px;
+  --card-height: 100px;
+  --card-scale-opponent: 0.65;
+  --card-scale-spread: 0.7;
+
+  /* ==================== LAYOUT ==================== */
+  --header-height: 60px;
+  --opponent-area-min: 120px;
+  --table-area-min: 180px;
+  --spreads-area-min: 90px;
+
+  /* ==================== GAPS ==================== */
+  --gap-opponent: 20px;
+  --gap-deck: 25px;
+  --gap-buttons: 8px;
+  --gap-player-hand: 6px;
+  --gap-spreads: 10px;
 }
 
 * {
@@ -59,17 +88,30 @@ body {
 }
 
 #game-container {
+  display: grid;
+  grid-template-rows: auto minmax(var(--opponent-area-min), auto) 1fr auto auto;
+  grid-template-areas:
+    "header"
+    "opponents"
+    "table"
+    "player"
+    "actions";
+  height: 100vh;
+  height: 100dvh;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 10px 20px;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+  padding: var(--space-sm) var(--space-base);
   position: relative;
   background: radial-gradient(ellipse at center, var(--bg-table) 0%, var(--bg-table-dark) 70%, var(--bg-primary) 100%);
   border-left: 1px solid var(--border-subtle);
   border-right: 1px solid var(--border-subtle);
 }
+
+#game-header { grid-area: header; }
+#opponent-area { grid-area: opponents; }
+#table-area { grid-area: table; }
+#player-area { grid-area: player; }
+#action-buttons { grid-area: actions; }
 
 #game-header {
   display: flex;
@@ -186,7 +228,7 @@ body {
 /* Message area */
 #message-area {
   position: fixed;
-  top: 80px;
+  top: calc(var(--header-height) + var(--space-base));
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 25px;
