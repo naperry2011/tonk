@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tonk Card Game</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/cards.css">
+  <link rel="stylesheet" href="/styles/layout.css">
+  <link rel="stylesheet" href="/styles/themes.css">
+</head>
+<body>
+  <div id="game-container">
+    <header id="game-header">
+      <div id="header-left">
+        <h1>TONK</h1>
+        <button id="btn-rules">Rules</button>
+        <button id="btn-settings">Settings</button>
+      </div>
+      <div id="match-scores"></div>
+      <div id="turn-indicator"></div>
+    </header>
+
+    <div id="opponent-area">
+      <!-- AI player hands rendered here -->
+    </div>
+
+    <div id="table-area">
+      <div id="spreads-area"></div>
+      <div id="deck-area">
+        <div id="deck" class="card-stack">
+          <div class="card card-back"></div>
+          <span id="deck-count"></span>
+        </div>
+        <div id="discard-pile" class="card-stack">
+          <span id="discard-label">Discard</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="player-area">
+      <div id="player-info">
+        <span id="player-name">Your Hand</span>
+        <span id="card-count">Cards: 0</span>
+        <span id="point-count">Points: 0</span>
+      </div>
+      <div id="player-hand"></div>
+    </div>
+
+    <div id="action-buttons">
+      <button id="btn-form-spread" disabled>Form Spread</button>
+      <button id="btn-hit-spread" disabled>Hit Spread</button>
+      <button id="btn-knock" disabled>Drop</button>
+      <button id="btn-draw" disabled>Draw Card</button>
+      <button id="btn-discard" disabled>Discard</button>
+    </div>
+
+    <div id="message-area"></div>
+
+    <div id="game-over-modal" class="modal hidden">
+      <div class="modal-content">
+        <h2 id="game-over-title"></h2>
+        <p id="game-over-message"></p>
+        <div id="final-scores"></div>
+        <div id="game-over-buttons">
+          <button id="btn-continue-round" class="hidden">Continue</button>
+          <button id="btn-new-game">New Game</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="rules-modal" class="modal hidden">
+      <div class="modal-content rules-content">
+        <button id="btn-close-rules" class="modal-close">&times;</button>
+        <h2>Tonk Rules</h2>
+
+        <h3>Objective</h3>
+        <p>Be the first to get rid of all your cards or have the lowest point total when someone drops. First player to reach 100 points loses the match!</p>
+
+        <h3>Card Values</h3>
+        <ul>
+          <li><strong>Ace:</strong> 1 point</li>
+          <li><strong>2-10:</strong> Face value</li>
+          <li><strong>J, Q, K:</strong> 10 points each</li>
+        </ul>
+
+        <h3>Turn Flow</h3>
+        <ol>
+          <li><strong>Start of Turn:</strong> You may form spreads, hit existing spreads, or drop</li>
+          <li><strong>Draw:</strong> Draw one card from the deck or discard pile</li>
+          <li><strong>Action:</strong> Form spreads, hit spreads, then discard one card to end your turn</li>
+        </ol>
+
+        <h3>Spreads</h3>
+        <ul>
+          <li><strong>Book:</strong> 3 or 4 cards of the same rank (e.g., 7-7-7)</li>
+          <li><strong>Run:</strong> 3+ cards of the same suit in sequence (e.g., 4-5-6 of Hearts). Ace is low only.</li>
+        </ul>
+        <p>You can "hit" existing spreads by adding matching cards to them.</p>
+
+        <h3>Dropping (Knocking)</h3>
+        <p>At the start of your turn (before drawing), you may drop claiming lowest points. All hands are revealed:</p>
+        <ul>
+          <li>If you have the lowest points, you win the round</li>
+          <li>If someone else has equal or lower points, they win (you got "caught")</li>
+        </ul>
+
+        <h3>Winning</h3>
+        <ul>
+          <li><strong>Tonk:</strong> Empty your hand by laying spreads/hitting</li>
+          <li><strong>Initial Tonk:</strong> Start with 49 or 50 points - automatic win! (If multiple players have it, cards are redealt)</li>
+          <li><strong>Drop:</strong> Have the lowest points when you drop</li>
+          <li><strong>Stock Empty:</strong> When the deck runs out and you can't draw, lowest points wins</li>
+        </ul>
+
+        <h3>Match Scoring</h3>
+        <p>When a round ends, the loser(s) add their hand points to their match total. First player to 100 points loses the match!</p>
+      </div>
+    </div>
+
+    <div id="settings-modal" class="modal hidden">
+      <div class="modal-content">
+        <button id="btn-close-settings" class="modal-close">&times;</button>
+        <h2>Settings</h2>
+
+        <div class="settings-section">
+          <h3>Deck Style</h3>
+          <div class="theme-options">
+            <div class="theme-option" data-theme="classic">
+              <div class="theme-preview theme-classic"></div>
+              <span>Classic</span>
+            </div>
+            <div class="theme-option" data-theme="royal">
+              <div class="theme-preview theme-royal"></div>
+              <span>Royal</span>
+            </div>
+            <div class="theme-option" data-theme="midnight">
+              <div class="theme-preview theme-midnight"></div>
+              <span>Midnight</span>
+            </div>
+            <div class="theme-option" data-theme="emerald">
+              <div class="theme-preview theme-emerald"></div>
+              <span>Emerald</span>
+            </div>
+            <div class="theme-option" data-theme="crimson">
+              <div class="theme-preview theme-crimson"></div>
+              <span>Crimson</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="start-screen">
+      <h1>TONK</h1>
+      <p>A classic card game</p>
+      <div id="player-select">
+        <label>Number of Players:</label>
+        <select id="num-players">
+          <option value="2">2 Players (You + 1 AI)</option>
+          <option value="3">3 Players (You + 2 AI)</option>
+          <option value="4">4 Players (You + 3 AI)</option>
+        </select>
+      </div>
+      <button id="btn-start-game">Start Game</button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

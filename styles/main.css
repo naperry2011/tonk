@@ -1,0 +1,476 @@
+:root {
+  /* High-End Poker Room Dark Theme */
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1a1a2e;
+  --bg-table: #1b4332;
+  --bg-table-dark: #143528;
+  --bg-elevated: #252538;
+
+  /* Accent Colors */
+  --gold-accent: #d4a855;
+  --gold-light: #e6c171;
+  --gold-dark: #b8923e;
+  --rose-gold: #b76e79;
+
+  /* Card Colors */
+  --card-white: #ffffff;
+  --card-shadow: rgba(0, 0, 0, 0.4);
+  --card-glow: rgba(212, 168, 85, 0.15);
+  --red-suit: #e63946;
+  --black-suit: #1a1a1a;
+
+  /* Text */
+  --text-light: #f0f0f0;
+  --text-muted: #a0a0b0;
+  --text-dark: #1a1a1a;
+
+  /* Borders & Dividers */
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-accent: rgba(212, 168, 85, 0.3);
+
+  /* Status Colors */
+  --danger: #e63946;
+  --success: #2a9d5c;
+  --info: #6c5ce7;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(212, 168, 85, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-primary);
+  min-height: 100vh;
+  color: var(--text-light);
+}
+
+#game-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+  background: radial-gradient(ellipse at center, var(--bg-table) 0%, var(--bg-table-dark) 70%, var(--bg-primary) 100%);
+  border-left: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
+}
+
+#game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-accent);
+  box-shadow: var(--shadow-md);
+}
+
+#header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+#game-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--gold-accent);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: 6px;
+  margin: 0;
+}
+
+#btn-rules,
+#btn-settings {
+  padding: 10px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--bg-elevated);
+  color: var(--text-light);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+#btn-rules:hover,
+#btn-settings:hover {
+  background: var(--gold-accent);
+  color: var(--text-dark);
+  border-color: var(--gold-accent);
+  box-shadow: var(--shadow-glow);
+}
+
+#match-scores {
+  display: flex;
+  gap: 24px;
+  font-size: 0.9rem;
+  background: var(--bg-elevated);
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+}
+
+#match-scores .player-score {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+#match-scores .player-score .name {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+#match-scores .player-score.human .name {
+  color: var(--gold-accent);
+}
+
+#match-scores .player-score .points {
+  color: var(--text-light);
+  font-weight: 700;
+}
+
+#turn-indicator {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-light);
+  padding: 8px 20px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 25px;
+  display: inline-block;
+  letter-spacing: 0.5px;
+}
+
+#turn-indicator.your-turn {
+  background: linear-gradient(135deg, var(--gold-accent) 0%, var(--gold-dark) 100%);
+  color: var(--text-dark);
+  border-color: var(--gold-light);
+  box-shadow: var(--shadow-glow);
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: var(--shadow-glow);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(212, 168, 85, 0.4);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Message area */
+#message-area {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 25px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  font-size: 1rem;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+#message-area.visible {
+  opacity: 1;
+}
+
+#message-area.error {
+  background: var(--danger);
+}
+
+#message-area.success {
+  background: var(--success);
+}
+
+/* Start Screen */
+#start-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-table) 50%, var(--bg-primary) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+#start-screen.hidden {
+  display: none;
+}
+
+#start-screen h1 {
+  font-size: 4rem;
+  color: var(--gold-accent);
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+  letter-spacing: 8px;
+  margin-bottom: 10px;
+}
+
+#start-screen p {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  opacity: 0.8;
+}
+
+#player-select {
+  margin-bottom: 30px;
+}
+
+#player-select label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+#player-select select {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--card-white);
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+#btn-start-game {
+  padding: 15px 50px;
+  font-size: 1.3rem;
+  background: var(--gold-accent);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: bold;
+}
+
+#btn-start-game:hover {
+  background: var(--gold-dark);
+  transform: scale(1.05);
+}
+
+/* Game Over Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: var(--felt-green);
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.modal-content h2 {
+  font-size: 2.5rem;
+  color: var(--gold-accent);
+  margin-bottom: 15px;
+}
+
+.modal-content p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+#final-scores {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+#final-scores .score-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#final-scores .score-row:last-child {
+  border-bottom: none;
+}
+
+#final-scores .score-row.winner {
+  color: var(--gold-accent);
+  font-weight: bold;
+}
+
+#final-scores .score-row.score-header {
+  font-weight: bold;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 10px;
+  margin-bottom: 5px;
+}
+
+#final-scores .score-row span {
+  flex: 1;
+  text-align: center;
+}
+
+#final-scores .score-row span:first-child {
+  text-align: left;
+}
+
+#game-over-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+#btn-new-game,
+#btn-continue-round {
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  background: var(--gold-accent);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: bold;
+}
+
+#btn-new-game:hover,
+#btn-continue-round:hover {
+  background: var(--gold-dark);
+  transform: scale(1.05);
+}
+
+#btn-continue-round {
+  background: var(--success);
+  color: white;
+}
+
+#btn-continue-round:hover {
+  background: #218838;
+}
+
+/* Rules Modal */
+.rules-content {
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  text-align: left;
+  position: relative;
+}
+
+.rules-content h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.rules-content h3 {
+  color: var(--gold-accent);
+  margin: 20px 0 10px 0;
+  font-size: 1.1rem;
+}
+
+.rules-content p {
+  margin-bottom: 12px;
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
+.rules-content ul,
+.rules-content ol {
+  margin: 10px 0 15px 20px;
+  line-height: 1.6;
+}
+
+.rules-content li {
+  margin-bottom: 6px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 2rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  opacity: 1;
+}
+
+/* Draw button */
+#btn-draw {
+  background: #6c5ce7;
+  color: white;
+}
+
+#btn-draw:hover:not(:disabled) {
+  background: #5b4cdb;
+  transform: translateY(-2px);
+}
+
+/* Button styles */
+button {
+  font-family: inherit;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+/* Utilities */
+.hidden {
+  display: none !important;
+}

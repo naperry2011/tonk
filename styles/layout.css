@@ -1,0 +1,723 @@
+/* Game Layout - Mobile First Responsive Design */
+
+/* Opponent area */
+#opponent-area {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px;
+  min-height: 120px;
+  flex-wrap: wrap;
+}
+
+.opponent-hand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.opponent-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.opponent-cards {
+  display: flex;
+  justify-content: center;
+}
+
+.opponent-cards .card {
+  margin-left: -30px;
+  transform: scale(0.65);
+}
+
+.opponent-cards .card:first-child {
+  margin-left: 0;
+}
+
+.opponent-info {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Table area */
+#table-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 8px;
+  min-height: 200px;
+}
+
+/* Spreads area */
+#spreads-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  width: 100%;
+  max-width: 100%;
+}
+
+#spreads-area:empty::before {
+  content: 'Spreads appear here';
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* Deck area */
+#deck-area {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+#deck {
+  position: relative;
+  width: 70px;
+  height: 100px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  /* Minimum touch target */
+  min-width: 44px;
+  min-height: 44px;
+}
+
+#deck:hover,
+#deck:active {
+  transform: scale(1.05);
+}
+
+#deck.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+#deck-count {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold-accent);
+  color: var(--text-dark);
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+#discard-pile {
+  position: relative;
+  width: 70px;
+  height: 100px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  /* Minimum touch target */
+  min-width: 44px;
+  min-height: 44px;
+}
+
+#discard-pile:hover,
+#discard-pile:active {
+  transform: scale(1.05);
+}
+
+#discard-pile.disabled {
+  cursor: not-allowed;
+  transform: none;
+}
+
+#discard-pile .card {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#discard-label {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+/* Player area */
+#player-area {
+  padding: 12px;
+  text-align: center;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.4));
+  border-radius: 12px 12px 0 0;
+  border-top: 1px solid var(--border-accent);
+}
+
+#player-info {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+#player-name {
+  font-weight: 700;
+  color: var(--gold-accent);
+}
+
+#card-count,
+#point-count {
+  color: var(--text-muted);
+}
+
+#player-hand {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  min-height: 90px;
+  flex-wrap: wrap;
+  padding: 5px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#player-hand .card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+}
+
+#player-hand .card.selected {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(212, 168, 85, 0.4);
+}
+
+/* Action buttons - Touch optimized */
+#action-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 8px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+#action-buttons button {
+  /* Minimum touch target of 44px */
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#btn-form-spread {
+  background: linear-gradient(135deg, var(--success) 0%, #218838 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(42, 157, 92, 0.3);
+}
+
+#btn-form-spread:hover:not(:disabled),
+#btn-form-spread:active:not(:disabled) {
+  background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(42, 157, 92, 0.4);
+}
+
+#btn-hit-spread {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+}
+
+#btn-hit-spread:hover:not(:disabled),
+#btn-hit-spread:active:not(:disabled) {
+  background: linear-gradient(135deg, #138496 0%, #117a8b 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4);
+}
+
+#btn-knock {
+  background: linear-gradient(135deg, var(--danger) 0%, #c82333 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(230, 57, 70, 0.3);
+}
+
+#btn-knock:hover:not(:disabled),
+#btn-knock:active:not(:disabled) {
+  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.4);
+}
+
+#btn-draw {
+  background: linear-gradient(135deg, var(--info) 0%, #5b4cdb 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
+}
+
+#btn-draw:hover:not(:disabled),
+#btn-draw:active:not(:disabled) {
+  background: linear-gradient(135deg, #5b4cdb 0%, #4a3cc9 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
+}
+
+#btn-discard {
+  background: linear-gradient(135deg, var(--gold-accent) 0%, var(--gold-dark) 100%);
+  color: var(--text-dark);
+  box-shadow: 0 2px 8px rgba(212, 168, 85, 0.3);
+}
+
+#btn-discard:hover:not(:disabled),
+#btn-discard:active:not(:disabled) {
+  background: linear-gradient(135deg, var(--gold-dark) 0%, #a07830 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 168, 85, 0.4);
+}
+
+/* Computer thinking indicator */
+.thinking-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.thinking-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.thinking-dots span {
+  width: 6px;
+  height: 6px;
+  background: var(--gold-accent);
+  border-radius: 50%;
+  animation: thinkingBounce 1.4s ease-in-out infinite;
+}
+
+.thinking-dots span:nth-child(1) { animation-delay: 0s; }
+.thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes thinkingBounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+}
+
+/* Spread styling */
+.spread {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  transition: all 0.2s ease;
+}
+
+.spread.can-hit {
+  border-color: var(--gold-accent);
+  box-shadow: 0 0 10px rgba(212, 168, 85, 0.3);
+  cursor: pointer;
+}
+
+.spread-owner {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.spread-cards {
+  display: flex;
+  gap: 2px;
+}
+
+.spread-cards .card {
+  transform: scale(0.7);
+  margin: 0 -10px;
+}
+
+.spread-cards .card:first-child {
+  margin-left: 0;
+}
+
+.spread-cards .card:last-child {
+  margin-right: 0;
+}
+
+/* Empty pile placeholder */
+.empty-pile {
+  width: 70px;
+  height: 100px;
+  border: 2px dashed var(--border-subtle);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+/* ===== TABLET BREAKPOINT (768px+) ===== */
+@media (min-width: 768px) {
+  #opponent-area {
+    gap: 40px;
+    padding: 15px;
+    min-height: 150px;
+  }
+
+  .opponent-name {
+    font-size: 1rem;
+  }
+
+  .opponent-cards .card {
+    margin-left: -35px;
+    transform: scale(0.8);
+  }
+
+  .opponent-info {
+    font-size: 0.85rem;
+  }
+
+  #table-area {
+    gap: 20px;
+    padding: 10px;
+  }
+
+  #spreads-area {
+    gap: 15px;
+    min-height: 130px;
+    max-width: 800px;
+  }
+
+  #deck-area {
+    gap: 35px;
+  }
+
+  #deck {
+    width: 80px;
+    height: 110px;
+  }
+
+  #discard-pile {
+    width: 80px;
+    height: 110px;
+  }
+
+  #player-area {
+    padding: 15px;
+  }
+
+  #player-info {
+    gap: 30px;
+    font-size: 1rem;
+  }
+
+  #player-hand {
+    gap: 8px;
+    min-height: 110px;
+  }
+
+  #action-buttons {
+    gap: 15px;
+    padding: 15px;
+  }
+
+  #action-buttons button {
+    padding: 12px 25px;
+    font-size: 0.95rem;
+  }
+
+  .spread-cards .card {
+    transform: scale(0.8);
+  }
+}
+
+/* ===== DESKTOP BREAKPOINT (1024px+) ===== */
+@media (min-width: 1024px) {
+  #game-container {
+    max-width: 1200px;
+  }
+
+  #opponent-area {
+    gap: 50px;
+  }
+
+  .opponent-cards .card {
+    transform: scale(0.85);
+  }
+
+  #spreads-area {
+    gap: 20px;
+  }
+
+  #deck-area {
+    gap: 40px;
+  }
+
+  #action-buttons button {
+    padding: 14px 30px;
+    font-size: 1rem;
+  }
+
+  .spread-cards .card {
+    transform: scale(0.85);
+    margin: 0 -8px;
+  }
+}
+
+/* ===== SMALL MOBILE BREAKPOINT (480px and below) ===== */
+@media (max-width: 480px) {
+  #game-header {
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  #header-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  #game-header h1 {
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+  }
+
+  #btn-rules,
+  #btn-settings {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+
+  #match-scores {
+    width: 100%;
+    justify-content: center;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  #turn-indicator {
+    font-size: 0.85rem;
+    padding: 6px 14px;
+  }
+
+  #opponent-area {
+    gap: 10px;
+    padding: 8px;
+    min-height: 100px;
+  }
+
+  .opponent-name {
+    font-size: 0.75rem;
+  }
+
+  .opponent-cards .card {
+    margin-left: -35px;
+    transform: scale(0.5);
+  }
+
+  #table-area {
+    gap: 10px;
+    padding: 5px;
+    min-height: 160px;
+  }
+
+  #spreads-area {
+    min-height: 80px;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  #spreads-area:empty::before {
+    font-size: 0.75rem;
+  }
+
+  #deck-area {
+    gap: 20px;
+  }
+
+  #deck,
+  #discard-pile {
+    width: 60px;
+    height: 85px;
+  }
+
+  #deck-count,
+  #discard-label {
+    font-size: 0.7rem;
+    bottom: -18px;
+  }
+
+  #player-area {
+    padding: 10px 8px;
+  }
+
+  #player-info {
+    gap: 15px;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+  }
+
+  #player-hand {
+    gap: 4px;
+    min-height: 75px;
+  }
+
+  #action-buttons {
+    gap: 6px;
+    padding: 10px 6px;
+  }
+
+  #action-buttons button {
+    padding: 8px 10px;
+    font-size: 0.75rem;
+    min-height: 44px;
+  }
+
+  .spread-cards .card {
+    transform: scale(0.55);
+    margin: 0 -12px;
+  }
+
+  .thinking-dots span {
+    width: 5px;
+    height: 5px;
+  }
+}
+
+/* ===== LANDSCAPE MOBILE ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  #game-container {
+    padding: 5px 10px;
+  }
+
+  #game-header {
+    padding: 6px 15px;
+  }
+
+  #opponent-area {
+    min-height: 80px;
+    padding: 5px;
+  }
+
+  .opponent-cards .card {
+    transform: scale(0.5);
+  }
+
+  #table-area {
+    min-height: 100px;
+    gap: 8px;
+  }
+
+  #spreads-area {
+    min-height: 60px;
+    padding: 5px;
+  }
+
+  #deck,
+  #discard-pile {
+    width: 50px;
+    height: 70px;
+  }
+
+  #player-area {
+    padding: 8px;
+  }
+
+  #player-hand {
+    min-height: 60px;
+  }
+
+  #action-buttons {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  #action-buttons button {
+    padding: 6px 12px;
+    min-height: 44px;
+    font-size: 0.7rem;
+  }
+}
+
+/* ===== EXTRA SMALL SCREENS (380px and below) ===== */
+@media (max-width: 380px) {
+  #game-header h1 {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+  }
+
+  #btn-rules,
+  #btn-settings {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+
+  #match-scores {
+    gap: 12px;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+
+  #turn-indicator {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+  }
+
+  #action-buttons {
+    gap: 4px;
+    padding: 8px 4px;
+  }
+
+  #action-buttons button {
+    padding: 6px 8px;
+    font-size: 0.65rem;
+    min-height: 44px;
+    flex: 1 1 auto;
+  }
+}
+
+/* Touch feedback ripple effect */
+@media (hover: none) and (pointer: coarse) {
+  #action-buttons button:active {
+    transform: scale(0.95);
+  }
+
+  .card:active {
+    transform: scale(0.95);
+  }
+
+  #deck:active:not(.disabled),
+  #discard-pile:active:not(.disabled) {
+    transform: scale(0.95);
+  }
+}
