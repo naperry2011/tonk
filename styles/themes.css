@@ -286,7 +286,7 @@
 
 /* Settings Panel Styles */
 #settings-modal .modal-content {
-  max-width: 400px;
+  max-width: min(400px, calc(100vw - var(--space-lg) * 2));
 }
 
 .settings-section {

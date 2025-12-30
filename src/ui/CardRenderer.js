@@ -101,12 +101,21 @@ export class CardRenderer {
     spreadEl.className = `spread spread-${spread.type}`;
     spreadEl.dataset.spreadId = spread.id;
 
-    // Add label
+    // Add label with owner name
     const label = document.createElement('div');
     label.className = 'spread-label';
-    label.textContent = spread.type === 'book' ?
+
+    // Get owner name (show "Your" for human player)
+    const ownerName = spread.owner ?
+      (spread.owner.isHuman ? 'Your' : `${spread.owner.name}'s`) :
+      '';
+
+    // Get spread type description
+    const typeDesc = spread.type === 'book' ?
       `${spread.cards[0].rank}s` :
-      `Run`;
+      'Run';
+
+    label.textContent = ownerName ? `${ownerName} ${typeDesc}` : typeDesc;
     spreadEl.appendChild(label);
 
     // Add cards

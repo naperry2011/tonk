@@ -1,21 +1,78 @@
 /* Game Layout - Mobile First Responsive Design */
 
-/* Opponent area */
+/* ==================== OPPONENT AREAS ==================== */
+
+/* Top opponent area (default for 2-3 players, center opponent for 4 players) */
 #opponent-area {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   gap: var(--gap-opponent);
-  padding: var(--space-sm);
+  padding: var(--space-xs);
   min-height: var(--opponent-area-min);
   flex-wrap: wrap;
   align-items: flex-start;
+  width: 100%;
+  overflow: hidden;
 }
 
+/* Compact opponent area for 3-4 players */
+#game-container[data-player-count="3"] #opponent-area,
+#game-container[data-player-count="4"] #opponent-area {
+  padding: 2px;
+  gap: 8px;
+}
+
+/* Side opponent areas (for 4-player circular layout) */
+.opponent-left-area,
+.opponent-right-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs);
+  min-width: 60px;
+}
+
+/* Side opponents have vertical card layout */
+.opponent-left-area .opponent-hand,
+.opponent-right-area .opponent-hand {
+  flex-direction: column;
+  align-items: center;
+}
+
+.opponent-left-area .opponent-cards,
+.opponent-right-area .opponent-cards {
+  flex-direction: column;
+  height: auto;
+  width: calc(var(--card-width) * var(--card-scale-opponent));
+}
+
+.opponent-left-area .opponent-cards .card,
+.opponent-right-area .opponent-cards .card {
+  margin-left: 0 !important;
+  margin-top: calc(var(--card-height) * var(--card-scale-opponent) * -0.7);
+}
+
+.opponent-left-area .opponent-cards .card:first-child,
+.opponent-right-area .opponent-cards .card:first-child {
+  margin-top: 0;
+}
+
+/* Hide opponent info for side opponents to save space */
+.opponent-left-area .opponent-info,
+.opponent-right-area .opponent-info {
+  display: none;
+}
+
+/* Standard opponent hand styling */
 .opponent-hand {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .opponent-name {
@@ -28,11 +85,22 @@
 .opponent-cards {
   display: flex;
   justify-content: center;
+  /* Adjust height to match scaled card height */
+  height: calc(var(--card-height) * var(--card-scale-opponent));
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .opponent-cards .card {
-  margin-left: calc(var(--card-width) * -0.4 * var(--card-scale-opponent));
+  /* Margin is dynamically set by CardLayoutManager */
   transform: scale(var(--card-scale-opponent));
+  transform-origin: top center;
+  flex-shrink: 0;
+  transition: margin-left 0.15s ease-out, transform 0.2s ease;
 }
 
 .opponent-cards .card:first-child {
@@ -42,17 +110,29 @@
 .opponent-info {
   font-size: 0.75rem;
   color: var(--text-muted);
+  position: relative;
+  z-index: 5;
 }
 
 /* Table area */
 #table-area {
   display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-xs);
+  min-height: auto;
+}
+
+/* Compact table area for 3-4 players */
+#game-container[data-player-count="3"] #table-area,
+#game-container[data-player-count="4"] #table-area {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-base);
-  padding: var(--space-sm);
-  min-height: var(--table-area-min);
+  gap: 4px;
+  padding: 2px;
 }
 
 /* Spreads area */
@@ -60,14 +140,27 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap-spreads);
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
   min-height: var(--spreads-area-min);
-  padding: var(--space-sm);
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 12px;
-  border: 1px solid var(--border-subtle);
-  width: 100%;
+  padding: var(--space-xs);
+  position: relative;
+  z-index: 1;
+}
+
+/* Compact spreads for 3-4 players */
+#game-container[data-player-count="3"] #spreads-area,
+#game-container[data-player-count="4"] #spreads-area {
+  justify-content: center;
+  gap: 4px;
+  padding: 2px;
+}
+
+#spreads-area:empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px;
 }
 
 #spreads-area:empty::before {
@@ -75,6 +168,7 @@
   color: var(--text-muted);
   font-style: italic;
   font-size: 0.85rem;
+  text-align: center;
 }
 
 /* Deck area */
@@ -83,7 +177,30 @@
   gap: var(--gap-deck);
   align-items: center;
   justify-content: center;
-  padding: var(--space-sm);
+  padding: var(--space-xs);
+  flex-shrink: 0;
+}
+
+/* Compact deck area for 3-4 players */
+#game-container[data-player-count="3"] #deck-area,
+#game-container[data-player-count="4"] #deck-area {
+  gap: 12px;
+  padding: 2px;
+}
+
+/* Scale down deck/discard for 3-4 players */
+#game-container[data-player-count="3"] #deck,
+#game-container[data-player-count="3"] #discard-pile,
+#game-container[data-player-count="4"] #deck,
+#game-container[data-player-count="4"] #discard-pile {
+  transform: scale(0.85);
+}
+
+#game-container[data-player-count="3"] #deck:hover,
+#game-container[data-player-count="3"] #discard-pile:hover,
+#game-container[data-player-count="4"] #deck:hover,
+#game-container[data-player-count="4"] #discard-pile:hover {
+  transform: scale(0.9);
 }
 
 #deck {
@@ -156,19 +273,32 @@
 
 /* Player area */
 #player-area {
-  padding: var(--space-md);
+  padding: var(--space-sm);
+  padding-top: var(--space-md);
   text-align: center;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.4));
-  border-radius: 12px 12px 0 0;
-  border-top: 1px solid var(--border-accent);
+}
+
+/* Compact player area for 3-4 players */
+#game-container[data-player-count="3"] #player-area,
+#game-container[data-player-count="4"] #player-area {
+  padding: 4px;
+  padding-top: 6px;
 }
 
 #player-info {
   display: flex;
   justify-content: center;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-md);
-  font-size: 0.9rem;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+  font-size: 0.85rem;
+}
+
+/* Compact player info for 3-4 players */
+#game-container[data-player-count="3"] #player-info,
+#game-container[data-player-count="4"] #player-info {
+  gap: var(--space-sm);
+  margin-bottom: 4px;
+  font-size: 0.8rem;
 }
 
 #player-name {
@@ -184,21 +314,68 @@
 #player-hand {
   display: flex;
   justify-content: center;
-  gap: var(--gap-player-hand);
+  align-items: center;
   min-height: 90px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   padding: var(--space-xs);
   overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-accent) rgba(0, 0, 0, 0.2);
+}
+
+/* Scrollbar styling for player hand */
+#player-hand::-webkit-scrollbar {
+  height: 4px;
+}
+
+#player-hand::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+#player-hand::-webkit-scrollbar-thumb {
+  background: var(--gold-accent);
+  border-radius: 2px;
+}
+
+/* Scroll indicator fade effect */
+#player-hand.scrollable {
+  position: relative;
+}
+
+#player-hand.scrollable::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.3), transparent);
+  pointer-events: none;
+  z-index: 10;
 }
 
 #player-hand .card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transform: scale(var(--card-scale-player, 1));
+  transform-origin: bottom center;
+  transition: margin-left 0.15s ease-out, transform 0.2s ease, box-shadow 0.2s ease;
   flex-shrink: 0;
 }
 
 #player-hand .card.selected {
-  transform: translateY(-10px);
+  transform: scale(var(--card-scale-player, 1)) translateY(-10px);
   box-shadow: 0 8px 20px rgba(212, 168, 85, 0.4);
+}
+
+/* 3-4 player mode: smaller player hand area since cards are scaled */
+#game-container[data-player-count="3"] #player-hand {
+  min-height: 70px;
+}
+
+#game-container[data-player-count="4"] #player-hand {
+  min-height: 60px;
 }
 
 /* Action buttons - Touch optimized */
@@ -328,9 +505,6 @@
   align-items: center;
   gap: 4px;
   padding: 8px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  border: 1px solid var(--border-subtle);
   transition: all 0.2s ease;
 }
 
@@ -349,11 +523,17 @@
 
 .spread-cards {
   display: flex;
+  /* Adjust height to match scaled card height */
+  height: calc(var(--card-height) * var(--card-scale-spread));
+  align-items: flex-start;
 }
 
 .spread-cards .card {
   transform: scale(var(--card-scale-spread));
-  margin-left: calc(var(--card-width) * -0.35 * var(--card-scale-spread));
+  transform-origin: top center;
+  /* Margin is dynamically set by CardLayoutManager */
+  flex-shrink: 0;
+  transition: margin-left 0.15s ease-out, transform 0.2s ease;
 }
 
 .spread-cards .card:first-child {
@@ -456,25 +636,28 @@
 /* ===== SMALL MOBILE BREAKPOINT (480px and below) ===== */
 @media (max-width: 480px) {
   :root {
-    --card-width: 55px;
-    --card-height: 80px;
+    --card-width: 50px;
+    --card-height: 72px;
     --card-scale-opponent: 0.5;
     --card-scale-spread: 0.55;
-    --gap-opponent: 10px;
-    --gap-deck: 20px;
-    --gap-buttons: 6px;
+    --gap-opponent: 5px;
+    --gap-deck: 15px;
+    --gap-buttons: 4px;
     --gap-player-hand: 4px;
-    --gap-spreads: 8px;
-    --opponent-area-min: 100px;
-    --table-area-min: 160px;
-    --spreads-area-min: 80px;
-    --space-lg: 18px;
+    --gap-spreads: 6px;
+    --opponent-area-min: 55px;
+    --table-area-min: 80px;
+    --spreads-area-min: 45px;
+    --space-lg: 12px;
+    --space-xl: 20px;
+    /* Account for wrapped header on small screens */
+    --message-area-top: calc(var(--header-height) + 40px + var(--space-base));
   }
 
   #game-header {
     flex-direction: column;
-    gap: var(--space-sm);
-    padding: var(--space-sm) var(--space-md);
+    gap: 4px;
+    padding: 6px 10px;
   }
 
   #header-left {
@@ -483,43 +666,96 @@
   }
 
   #game-header h1 {
-    font-size: 1.4rem;
-    letter-spacing: 4px;
+    font-size: 1.2rem;
+    letter-spacing: 3px;
   }
 
   #btn-rules,
   #btn-settings {
-    padding: var(--space-sm) var(--space-md);
-    font-size: 0.75rem;
+    padding: 6px 10px;
+    font-size: 0.7rem;
   }
 
   #match-scores {
     width: 100%;
     justify-content: center;
-    padding: var(--space-xs) var(--space-sm);
-    font-size: 0.8rem;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    gap: 12px;
   }
 
   #turn-indicator {
-    font-size: 0.85rem;
-    padding: var(--space-xs) var(--space-md);
+    font-size: 0.75rem;
+    padding: 4px 10px;
   }
 
   .opponent-name {
-    font-size: 0.75rem;
-  }
-
-  #spreads-area:empty::before {
-    font-size: 0.75rem;
-  }
-
-  #deck-count,
-  #discard-label {
     font-size: 0.7rem;
   }
 
+  /* Hide overlapping elements on mobile */
+  #deck-count,
+  #discard-label,
+  .opponent-info,
+  #spreads-area:empty::before {
+    display: none;
+  }
+
+  /* Reduce player-hand min-height on mobile for 3-4 players */
+  #game-container[data-player-count="3"] #player-hand {
+    min-height: 55px;
+  }
+
+  #game-container[data-player-count="4"] #player-hand {
+    min-height: 50px;
+  }
+
+  /* Compact action buttons on mobile */
+  #action-buttons {
+    padding: 6px 4px;
+    gap: 4px;
+  }
+
+  #action-buttons button {
+    min-height: 38px;
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+
+  #deck-area {
+    gap: 10px;
+    padding: 2px;
+    margin-bottom: 4px;
+  }
+
+  /* Scale deck/discard on mobile */
+  #deck,
+  #discard-pile {
+    transform: scale(0.8);
+  }
+
+  #deck:hover,
+  #discard-pile:hover {
+    transform: scale(0.85);
+  }
+
+  /* Even smaller for 3-4 players on mobile */
+  #game-container[data-player-count="3"] #deck,
+  #game-container[data-player-count="3"] #discard-pile,
+  #game-container[data-player-count="4"] #deck,
+  #game-container[data-player-count="4"] #discard-pile {
+    transform: scale(0.7);
+  }
+
+  #game-container[data-player-count="3"] #deck:hover,
+  #game-container[data-player-count="3"] #discard-pile:hover,
+  #game-container[data-player-count="4"] #deck:hover,
+  #game-container[data-player-count="4"] #discard-pile:hover {
+    transform: scale(0.75);
+  }
+
   #player-info {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
 
   #player-hand {
@@ -535,75 +771,251 @@
     width: 5px;
     height: 5px;
   }
+
+  /* Side opponents on mobile */
+  .opponent-left-area,
+  .opponent-right-area {
+    min-width: 45px;
+    padding: 2px;
+  }
+
+  .opponent-left-area .opponent-name,
+  .opponent-right-area .opponent-name {
+    font-size: 0.65rem;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    white-space: nowrap;
+  }
+
+  .opponent-left-area .opponent-cards .card,
+  .opponent-right-area .opponent-cards .card {
+    margin-top: calc(var(--card-height) * var(--card-scale-opponent) * -0.75);
+  }
 }
 
-/* ===== LANDSCAPE MOBILE ===== */
+/* ===== LANDSCAPE MOBILE (short screens) ===== */
 @media (max-height: 500px) and (orientation: landscape) {
   :root {
-    --card-width: 50px;
-    --card-height: 70px;
-    --card-scale-opponent: 0.5;
-    --card-scale-spread: 0.55;
-    --gap-buttons: 6px;
-    --opponent-area-min: 80px;
-    --table-area-min: 100px;
-    --spreads-area-min: 60px;
+    --card-width: 45px;
+    --card-height: 65px;
+    --card-scale-opponent: 0.45;
+    --card-scale-spread: 0.5;
+    --gap-opponent: 8px;
+    --gap-buttons: 4px;
+    --gap-deck: 12px;
+    --opponent-area-min: 40px;
+    --table-area-min: 60px;
+    --spreads-area-min: 35px;
+    --space-lg: 10px;
+    --space-xl: 16px;
   }
 
   #game-container {
-    padding: var(--space-xs) var(--space-sm);
+    padding: 2px 4px;
+    row-gap: 2px;
   }
 
   #game-header {
-    padding: var(--space-xs) var(--space-base);
+    padding: 4px 8px;
+  }
+
+  #game-header h1 {
+    font-size: 1rem;
   }
 
   #player-hand {
-    min-height: 60px;
+    min-height: 50px;
+  }
+
+  /* Compact deck area in landscape */
+  #deck-area {
+    gap: 8px;
+    padding: 1px;
+  }
+
+  #deck,
+  #discard-pile {
+    transform: scale(0.7);
+  }
+
+  #game-container[data-player-count="3"] #deck,
+  #game-container[data-player-count="3"] #discard-pile,
+  #game-container[data-player-count="4"] #deck,
+  #game-container[data-player-count="4"] #discard-pile {
+    transform: scale(0.55);
+  }
+
+  /* 3-4 player landscape adjustments */
+  #game-container[data-player-count="3"] #player-hand {
+    min-height: 45px;
+  }
+
+  #game-container[data-player-count="4"] #player-hand {
+    min-height: 40px;
+  }
+
+  #action-buttons {
+    padding: 4px 2px;
+    gap: 3px;
   }
 
   #action-buttons button {
-    padding: var(--space-xs) var(--space-md);
-    font-size: 0.7rem;
+    min-height: 32px;
+    padding: 4px 8px;
+    font-size: 0.65rem;
+  }
+
+  /* Side opponents in landscape */
+  .opponent-left-area,
+  .opponent-right-area {
+    min-width: 40px;
+  }
+
+  .opponent-left-area .opponent-name,
+  .opponent-right-area .opponent-name {
+    font-size: 0.55rem;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+}
+
+/* ===== MID-HEIGHT LANDSCAPE (tablets and larger phones) ===== */
+@media (min-height: 501px) and (max-height: 650px) and (orientation: landscape) {
+  :root {
+    --card-width: 60px;
+    --card-height: 85px;
+    --card-scale-opponent: 0.55;
+    --card-scale-spread: 0.6;
+    --gap-opponent: 15px;
+    --gap-deck: 20px;
+    --opponent-area-min: 60px;
+    --table-area-min: 100px;
+    --spreads-area-min: 55px;
+  }
+
+  #player-hand {
+    min-height: 70px;
+  }
+
+  #action-buttons button {
+    padding: var(--space-sm) var(--space-base);
+    font-size: 0.8rem;
   }
 }
 
 /* ===== EXTRA SMALL SCREENS (380px and below) ===== */
 @media (max-width: 380px) {
   :root {
-    --card-width: 48px;
-    --card-height: 70px;
-    --card-scale-opponent: 0.45;
-    --card-scale-spread: 0.5;
-    --gap-buttons: 4px;
+    --card-width: 40px;
+    --card-height: 58px;
+    --card-scale-opponent: 0.4;
+    --card-scale-spread: 0.45;
+    --gap-opponent: 2px;
+    --gap-buttons: 3px;
+    --gap-deck: 8px;
+    --space-lg: 10px;
+    --space-xl: 16px;
+    --opponent-area-min: 40px;
+    --table-area-min: 60px;
+    --spreads-area-min: 35px;
+    /* Account for wrapped header on extra small screens */
+    --message-area-top: calc(var(--header-height) + 50px + var(--space-base));
+  }
+
+  #game-header {
+    gap: 2px;
+    padding: 4px 8px;
   }
 
   #game-header h1 {
-    font-size: 1.2rem;
+    font-size: 1rem;
     letter-spacing: 2px;
   }
 
   #btn-rules,
   #btn-settings {
-    padding: var(--space-xs) var(--space-sm);
-    font-size: 0.7rem;
+    padding: 4px 6px;
+    font-size: 0.6rem;
   }
 
   #match-scores {
-    gap: var(--space-md);
-    padding: var(--space-xs) var(--space-sm);
-    font-size: 0.7rem;
+    gap: 8px;
+    padding: 3px 6px;
+    font-size: 0.6rem;
   }
 
   #turn-indicator {
-    font-size: 0.75rem;
-    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+
+  /* Hide overlapping elements on extra small screens */
+  #deck-count,
+  #discard-label,
+  .opponent-info,
+  #spreads-area:empty::before {
+    display: none;
+  }
+
+  #deck-area {
+    gap: 8px;
+    padding: 1px;
+    margin-bottom: 2px;
+  }
+
+  /* Scale deck/discard even smaller on extra small screens */
+  #deck,
+  #discard-pile {
+    transform: scale(0.7);
+  }
+
+  #game-container[data-player-count="3"] #deck,
+  #game-container[data-player-count="3"] #discard-pile,
+  #game-container[data-player-count="4"] #deck,
+  #game-container[data-player-count="4"] #discard-pile {
+    transform: scale(0.6);
+  }
+
+  #player-hand {
+    min-height: 50px;
+  }
+
+  /* 3-4 player extra small adjustments */
+  #game-container[data-player-count="3"] #player-hand {
+    min-height: 45px;
+  }
+
+  #game-container[data-player-count="4"] #player-hand {
+    min-height: 40px;
+  }
+
+  #action-buttons {
+    padding: 4px 2px;
+    gap: 2px;
   }
 
   #action-buttons button {
-    padding: var(--space-xs) var(--space-sm);
-    font-size: 0.65rem;
+    min-height: 34px;
+    padding: 4px 6px;
+    font-size: 0.6rem;
     flex: 1 1 auto;
+  }
+
+  /* Side opponents on extra small screens */
+  .opponent-left-area,
+  .opponent-right-area {
+    min-width: 30px;
+    padding: 1px;
+  }
+
+  .opponent-left-area .opponent-name,
+  .opponent-right-area .opponent-name {
+    font-size: 0.5rem;
+  }
+
+  .opponent-left-area .opponent-cards .card,
+  .opponent-right-area .opponent-cards .card {
+    margin-top: calc(var(--card-height) * var(--card-scale-opponent) * -0.8);
   }
 }
 

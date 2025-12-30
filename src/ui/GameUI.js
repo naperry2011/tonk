@@ -1,4 +1,5 @@
 import { CardRenderer } from './CardRenderer.js';
+import { CardLayoutManager } from './CardLayoutManager.js';
 import { Spread } from '../game/Spread.js';
 import { PHASES } from '../game/rules.js';
 import { loadDeckTheme, saveDeckTheme } from '../utils/storage.js';
@@ -13,6 +14,7 @@ export class GameUI {
     this.selectedSpread = null;
     this.elements = {};
     this.messageTimeout = null;
+    this.layoutManager = new CardLayoutManager();
 
     this.cacheElements();
     this.bindEvents();
@@ -32,6 +34,8 @@ export class GameUI {
       header: document.getElementById('game-header'),
       turnIndicator: document.getElementById('turn-indicator'),
       opponentArea: document.getElementById('opponent-area'),
+      opponentLeftArea: document.querySelector('.opponent-left-area'),
+      opponentRightArea: document.querySelector('.opponent-right-area'),
       tableArea: document.getElementById('table-area'),
       spreadsArea: document.getElementById('spreads-area'),
       deck: document.getElementById('deck'),
@@ -208,6 +212,8 @@ export class GameUI {
    */
   startGame(numPlayers) {
     this.elements.startScreen.classList.add('hidden');
+    // Set player count for CSS circular layout
+    this.elements.gameContainer.dataset.playerCount = numPlayers;
     this.game.initialize(numPlayers);
   }
 
@@ -227,15 +233,54 @@ export class GameUI {
   }
 
   /**
-   * Render opponent hands
+   * Render opponent hands in circular table layout
+   * - 2 players: 1 opponent at top
+   * - 3 players: 2 opponents at top
+   * - 4 players: 1 left, 1 top, 1 right (circular)
    */
   renderOpponents() {
+    // Clear all opponent areas
     this.elements.opponentArea.innerHTML = '';
+    if (this.elements.opponentLeftArea) {
+      this.elements.opponentLeftArea.innerHTML = '';
+    }
+    if (this.elements.opponentRightArea) {
+      this.elements.opponentRightArea.innerHTML = '';
+    }
 
     const opponents = this.game.players.filter(p => !p.isHuman);
-    for (const opponent of opponents) {
-      const opponentEl = CardRenderer.createOpponentHand(opponent);
-      this.elements.opponentArea.appendChild(opponentEl);
+    const playerCount = this.game.players.length;
+
+    if (playerCount === 4 && opponents.length === 3) {
+      // 4-player circular layout: left, top, right
+      this.renderOpponentInArea(opponents[0], this.elements.opponentLeftArea);
+      this.renderOpponentInArea(opponents[1], this.elements.opponentArea);
+      this.renderOpponentInArea(opponents[2], this.elements.opponentRightArea);
+    } else if (playerCount === 3 && opponents.length === 2) {
+      // 3-player circular layout: left and right (no top)
+      this.renderOpponentInArea(opponents[0], this.elements.opponentLeftArea);
+      this.renderOpponentInArea(opponents[1], this.elements.opponentRightArea);
+    } else {
+      // 2 players: opponent at top
+      for (const opponent of opponents) {
+        this.renderOpponentInArea(opponent, this.elements.opponentArea);
+      }
+    }
+  }
+
+  /**
+   * Render a single opponent in the specified area
+   */
+  renderOpponentInArea(opponent, areaElement) {
+    if (!areaElement) return;
+
+    const opponentEl = CardRenderer.createOpponentHand(opponent);
+    areaElement.appendChild(opponentEl);
+
+    // Register opponent cards container for dynamic layout
+    const cardsContainer = opponentEl.querySelector('.opponent-cards');
+    if (cardsContainer) {
+      this.layoutManager.observe(cardsContainer, 'opponent');
     }
   }
 
@@ -324,6 +369,12 @@ export class GameUI {
       }
 
       this.elements.spreadsArea.appendChild(spreadEl);
+
+      // Register spread cards container for dynamic layout
+      const cardsContainer = spreadEl.querySelector('.spread-cards');
+      if (cardsContainer) {
+        this.layoutManager.observe(cardsContainer, 'spread');
+      }
     }
   }
 
@@ -356,6 +407,9 @@ export class GameUI {
 
       this.elements.playerHand.appendChild(cardEl);
     }
+
+    // Register player hand for dynamic layout
+    this.layoutManager.observe(this.elements.playerHand, 'hand');
   }
 
   /**
