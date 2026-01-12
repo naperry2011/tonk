@@ -18,11 +18,16 @@
         <button id="btn-settings">Settings</button>
       </div>
       <div id="match-scores"></div>
-      <div id="chip-display">
-        <span class="chip-icon"></span>
-        <span id="player-chips">1000</span>
+      <div id="chips-and-pot">
+        <div id="chip-display" role="status" aria-label="Your chips">
+          <span class="chip-icon" aria-hidden="true"></span>
+          <span id="player-chips" aria-live="polite">1000</span>
+        </div>
+        <div id="pot-display" role="status" aria-label="Current pot">
+          <span class="pot-label" aria-hidden="true">Pot</span>
+          <span id="pot-amount" aria-live="polite">0</span>
+        </div>
       </div>
-      <div id="turn-indicator"></div>
     </header>
 
     <div id="opponent-area">
@@ -35,17 +40,13 @@
 
     <div id="table-area">
       <div id="spreads-area"></div>
-      <div id="pot-display">
-        <span class="pot-label">Pot</span>
-        <span id="pot-amount">0</span>
-      </div>
       <div id="deck-area">
-        <div id="deck" class="card-stack">
-          <div class="card card-back"></div>
-          <span id="deck-count"></span>
+        <div id="deck" class="card-stack" role="button" tabindex="0" aria-label="Draw from deck">
+          <div class="card card-back" aria-hidden="true"></div>
+          <span id="deck-count" aria-live="polite"></span>
         </div>
-        <div id="discard-pile" class="card-stack">
-          <span id="discard-label">Discard</span>
+        <div id="discard-pile" class="card-stack" role="button" tabindex="0" aria-label="Draw from discard pile">
+          <span id="discard-label" aria-hidden="true">Discard</span>
         </div>
       </div>
     </div>
@@ -63,24 +64,24 @@
       <div id="player-hand"></div>
     </div>
 
-    <div id="action-buttons">
-      <button id="btn-form-spread" disabled>Form Spread</button>
-      <button id="btn-hit-spread" disabled>Hit Spread</button>
-      <button id="btn-knock" disabled>Drop</button>
-      <button id="btn-draw" disabled>Draw Card</button>
-      <button id="btn-discard" disabled>Discard</button>
-      <div id="betting-controls">
-        <span class="bet-label">Raise:</span>
-        <button class="raise-btn" data-amount="10" disabled>+10</button>
-        <button class="raise-btn" data-amount="25" disabled>+25</button>
-        <button class="raise-btn" data-amount="50" disabled>+50</button>
-        <button class="raise-btn" data-amount="100" disabled>+100</button>
+    <div id="action-buttons" role="toolbar" aria-label="Game actions">
+      <button id="btn-form-spread" disabled aria-label="Form spread from selected cards">Form Spread</button>
+      <button id="btn-hit-spread" disabled aria-label="Add selected card to existing spread">Hit Spread</button>
+      <button id="btn-knock" disabled aria-label="Drop and end round">Drop</button>
+      <button id="btn-draw" disabled aria-label="Draw card from deck">Draw Card</button>
+      <button id="btn-discard" disabled aria-label="Discard selected card">Discard</button>
+      <div id="betting-controls" role="group" aria-label="Betting options">
+        <span class="bet-label" aria-hidden="true">Raise:</span>
+        <button class="raise-btn" data-amount="10" disabled aria-label="Raise bet by 10 chips">+10</button>
+        <button class="raise-btn" data-amount="25" disabled aria-label="Raise bet by 25 chips">+25</button>
+        <button class="raise-btn" data-amount="50" disabled aria-label="Raise bet by 50 chips">+50</button>
+        <button class="raise-btn" data-amount="100" disabled aria-label="Raise bet by 100 chips">+100</button>
       </div>
     </div>
 
     <div id="message-area"></div>
 
-    <div id="game-over-modal" class="modal hidden">
+    <div id="game-over-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
       <div class="modal-content">
         <h2 id="game-over-title"></h2>
         <p id="game-over-message"></p>
@@ -92,10 +93,10 @@
       </div>
     </div>
 
-    <div id="rules-modal" class="modal hidden">
+    <div id="rules-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="rules-title">
       <div class="modal-content rules-content">
-        <button id="btn-close-rules" class="modal-close">&times;</button>
-        <h2>Tonk Rules</h2>
+        <button id="btn-close-rules" class="modal-close" aria-label="Close rules">&times;</button>
+        <h2 id="rules-title">Tonk Rules</h2>
 
         <h3>Objective</h3>
         <p>Be the first to get rid of all your cards or have the lowest point total when someone drops. First player to reach 100 points loses the match!</p>
@@ -141,10 +142,10 @@
       </div>
     </div>
 
-    <div id="settings-modal" class="modal hidden">
+    <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
       <div class="modal-content">
-        <button id="btn-close-settings" class="modal-close">&times;</button>
-        <h2>Settings</h2>
+        <button id="btn-close-settings" class="modal-close" aria-label="Close settings">&times;</button>
+        <h2 id="settings-title">Settings</h2>
 
         <div class="settings-section">
           <h3>Deck Style</h3>

@@ -167,13 +167,7 @@
   flex: 0 0 auto;
 }
 
-#spreads-area:empty::before {
-  content: 'Spreads appear here';
-  color: var(--text-muted);
-  font-style: italic;
-  font-size: 0.85rem;
-  text-align: center;
-}
+/* Empty spreads area - no placeholder text needed */
 
 /* Deck area */
 #deck-area {
@@ -385,9 +379,8 @@
 
 /* Action buttons - Touch optimized */
 #action-buttons {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: var(--gap-buttons);
   padding: var(--space-md) var(--space-sm);
   background: rgba(0, 0, 0, 0.4);
@@ -407,58 +400,282 @@
   line-height: 1.2;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+/* Betting controls span full width on its own row */
+#betting-controls {
+  grid-column: 1 / -1;
+}
+
+/* =============================================================
+   ACTION BUTTONS RESPONSIVE SYSTEM
+   Breakpoints per skill standards: 320px, 480px, 768px, 1024px
+   ============================================================= */
+
+/* ----- EXTRA SMALL (≤380px) ----- */
+@media (max-width: 380px) {
+  #action-buttons {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "draw discard"
+      "spread hit"
+      "drop drop"
+      "betting betting";
+    gap: 4px;
+    padding: 6px;
+  }
+
+  #btn-draw { grid-area: draw; }
+  #btn-discard { grid-area: discard; }
+  #btn-form-spread { grid-area: spread; }
+  #btn-hit-spread { grid-area: hit; }
+  #btn-knock { grid-area: drop; }
+  #betting-controls { grid-area: betting; }
+
+  #btn-draw,
+  #btn-discard {
+    min-height: 44px;
+    font-size: 0.7rem;
+  }
+
+  #btn-form-spread,
+  #btn-hit-spread,
+  #btn-knock {
+    min-height: 38px;
+    font-size: 0.6rem;
+    padding: 4px 2px;
+  }
+
+  #betting-controls {
+    justify-content: center;
+    padding: 4px 0;
+    gap: 4px;
+  }
+
+  .raise-btn {
+    min-height: 32px;
+    padding: 4px 8px;
+    font-size: 0.65rem;
+  }
+
+  .bet-label {
+    display: none;
+  }
+}
+
+/* ----- SMALL MOBILE (381px - 480px) ----- */
+@media (min-width: 381px) and (max-width: 480px) {
+  #action-buttons {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "draw discard"
+      "spread hit"
+      "drop drop"
+      "betting betting";
+    gap: 6px;
+    padding: 8px;
+  }
+
+  #btn-draw { grid-area: draw; }
+  #btn-discard { grid-area: discard; }
+  #btn-form-spread { grid-area: spread; }
+  #btn-hit-spread { grid-area: hit; }
+  #btn-knock { grid-area: drop; }
+  #betting-controls { grid-area: betting; }
+
+  #btn-draw,
+  #btn-discard {
+    min-height: 48px;
+    font-size: 0.8rem;
+  }
+
+  #btn-form-spread,
+  #btn-hit-spread,
+  #btn-knock {
+    min-height: 42px;
+    font-size: 0.7rem;
+    padding: 6px 4px;
+  }
+
+  #betting-controls {
+    justify-content: center;
+    padding: 6px 0;
+    gap: 6px;
+  }
+
+  .raise-btn {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ----- LARGE MOBILE / SMALL TABLET (481px - 767px) ----- */
+@media (min-width: 481px) and (max-width: 767px) {
+  #action-buttons {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "spread hit drop"
+      "draw draw discard"
+      "betting betting betting";
+    gap: 8px;
+    padding: 10px;
+  }
+
+  #btn-draw { grid-area: draw; }
+  #btn-discard { grid-area: discard; }
+  #btn-form-spread { grid-area: spread; }
+  #btn-hit-spread { grid-area: hit; }
+  #btn-knock { grid-area: drop; }
+  #betting-controls { grid-area: betting; }
+
+  #action-buttons button {
+    min-height: 44px;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+
+  #betting-controls {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .raise-btn {
+    min-height: 38px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ----- TABLET (768px - 1023px) ----- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #action-buttons {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-areas: none;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  #action-buttons button {
+    grid-area: unset;
+    min-height: 46px;
+    font-size: 0.85rem;
+    padding: 10px 16px;
+  }
+
+  #betting-controls {
+    grid-column: 1 / -1;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .raise-btn {
+    min-height: 40px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ----- DESKTOP (1024px+) ----- */
+@media (min-width: 1024px) {
+  #action-buttons {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-areas: none;
+    gap: 12px;
+    padding: 14px 20px;
+  }
+
+  #action-buttons button {
+    grid-area: unset;
+    min-height: 48px;
+    font-size: 0.95rem;
+    padding: 12px 20px;
+  }
+
+  #betting-controls {
+    grid-column: 1 / -1;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .raise-btn {
+    min-height: 42px;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+  }
 }
 
 #btn-form-spread {
-  background: linear-gradient(135deg, var(--success) 0%, #218838 100%);
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-hover) 100%);
   color: white;
   box-shadow: 0 2px 8px rgba(42, 157, 92, 0.3);
 }
 
 #btn-form-spread:hover:not(:disabled),
 #btn-form-spread:active:not(:disabled) {
-  background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+  background: linear-gradient(135deg, var(--success-hover) 0%, var(--success-active) 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(42, 157, 92, 0.4);
 }
 
+#btn-form-spread:focus:not(:disabled) {
+  outline: 2px solid var(--success);
+  outline-offset: 2px;
+}
+
 #btn-hit-spread {
-  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-hover) 100%);
   color: white;
   box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
 }
 
 #btn-hit-spread:hover:not(:disabled),
 #btn-hit-spread:active:not(:disabled) {
-  background: linear-gradient(135deg, #138496 0%, #117a8b 100%);
+  background: linear-gradient(135deg, var(--teal-hover) 0%, var(--teal-active) 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4);
 }
 
+#btn-hit-spread:focus:not(:disabled) {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
 #btn-knock {
-  background: linear-gradient(135deg, var(--danger) 0%, #c82333 100%);
+  background: linear-gradient(135deg, var(--danger) 0%, var(--danger-hover) 100%);
   color: white;
   box-shadow: 0 2px 8px rgba(230, 57, 70, 0.3);
 }
 
 #btn-knock:hover:not(:disabled),
 #btn-knock:active:not(:disabled) {
-  background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+  background: linear-gradient(135deg, var(--danger-hover) 0%, var(--danger-active) 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(230, 57, 70, 0.4);
 }
 
+#btn-knock:focus:not(:disabled) {
+  outline: 2px solid var(--danger);
+  outline-offset: 2px;
+}
+
 #btn-draw {
-  background: linear-gradient(135deg, var(--info) 0%, #5b4cdb 100%);
+  background: linear-gradient(135deg, var(--info) 0%, var(--info-hover) 100%);
   color: white;
   box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
 }
 
 #btn-draw:hover:not(:disabled),
 #btn-draw:active:not(:disabled) {
-  background: linear-gradient(135deg, #5b4cdb 0%, #4a3cc9 100%);
+  background: linear-gradient(135deg, var(--info-hover) 0%, var(--info-active) 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
+}
+
+#btn-draw:focus:not(:disabled) {
+  outline: 2px solid var(--info);
+  outline-offset: 2px;
 }
 
 #btn-discard {
@@ -469,9 +686,14 @@
 
 #btn-discard:hover:not(:disabled),
 #btn-discard:active:not(:disabled) {
-  background: linear-gradient(135deg, var(--gold-dark) 0%, #a07830 100%);
+  background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-darker) 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(212, 168, 85, 0.4);
+}
+
+#btn-discard:focus:not(:disabled) {
+  outline: 2px solid var(--gold-accent);
+  outline-offset: 2px;
 }
 
 /* Computer thinking indicator */
@@ -572,26 +794,88 @@
     font-size: 0.9rem;
   }
 
-  #action-buttons button {
-    padding: var(--space-sm) var(--space-base);
-    font-size: 0.9rem;
-  }
+  /* Action buttons handled in dedicated responsive section above */
 }
 
-/* ===== TABLET BREAKPOINT (768px+) ===== */
-@media (min-width: 768px) {
+/* ===== TABLET BREAKPOINT (768px - 1023px) ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --card-width: 70px;
+    --card-height: 100px;
+    --card-scale-opponent: 0.75;
+    --card-scale-spread: 0.75;
+    --gap-opponent: 35px;
+    --gap-deck: 30px;
+    --gap-buttons: 12px;
+    --gap-player-hand: 6px;
+    --gap-spreads: 12px;
+    --opponent-area-min: 130px;
+    --spreads-area-min: 110px;
+  }
+
+  #game-container {
+    padding: var(--space-sm) var(--space-base);
+    row-gap: var(--space-sm);
+  }
+
+  .opponent-name {
+    font-size: 0.95rem;
+  }
+
+  .opponent-info {
+    font-size: 0.8rem;
+  }
+
+  #spreads-area {
+    max-width: 700px;
+  }
+
+  #table-area {
+    gap: var(--space-base);
+    padding: var(--space-sm);
+  }
+
+  #player-info {
+    font-size: 0.95rem;
+    gap: var(--space-base);
+  }
+
+  #player-hand {
+    min-height: 100px;
+  }
+
+  /* Modal adjustments for tablet */
+  .modal-content {
+    max-width: min(550px, calc(100vw - var(--space-xl) * 2));
+    padding: 35px;
+  }
+
+  .modal-content h2 {
+    font-size: 2.2rem;
+  }
+
+  /* Action buttons handled in dedicated responsive section above */
+}
+
+/* ===== DESKTOP BREAKPOINT (1024px - 1439px) ===== */
+@media (min-width: 1024px) and (max-width: 1439px) {
   :root {
     --card-width: 75px;
-    --card-height: 105px;
+    --card-height: 107px;
     --card-scale-opponent: 0.8;
     --card-scale-spread: 0.8;
-    --gap-opponent: 40px;
+    --gap-opponent: 45px;
     --gap-deck: 35px;
-    --gap-buttons: 15px;
+    --gap-buttons: 14px;
     --gap-player-hand: 8px;
-    --gap-spreads: 15px;
-    --opponent-area-min: 150px;
-    --spreads-area-min: 130px;
+    --gap-spreads: 16px;
+    --opponent-area-min: 140px;
+    --spreads-area-min: 120px;
+  }
+
+  #game-container {
+    padding: var(--space-md) var(--space-lg);
+    row-gap: var(--space-md);
   }
 
   .opponent-name {
@@ -603,38 +887,266 @@
   }
 
   #spreads-area {
-    max-width: 800px;
+    max-width: 850px;
+  }
+
+  #table-area {
+    gap: var(--space-lg);
+    padding: var(--space-md);
   }
 
   #player-info {
     font-size: 1rem;
+    gap: var(--space-lg);
   }
 
   #player-hand {
     min-height: 110px;
   }
 
-  #action-buttons button {
-    padding: var(--space-md) var(--space-lg);
-    font-size: 0.95rem;
+  /* Modal adjustments for desktop */
+  .modal-content {
+    max-width: min(600px, calc(100vw - var(--space-2xl) * 2));
+    padding: 40px;
+  }
+
+  .modal-content h2 {
+    font-size: 2.4rem;
+  }
+
+  /* Action buttons handled in dedicated responsive section above */
+}
+
+/* ===== LARGE DESKTOP BREAKPOINT (1440px+) ===== */
+@media (min-width: 1440px) {
+  :root {
+    --card-width: 85px;
+    --card-height: 120px;
+    --card-scale-opponent: 0.85;
+    --card-scale-spread: 0.85;
+    --gap-opponent: 60px;
+    --gap-deck: 45px;
+    --gap-buttons: 16px;
+    --gap-player-hand: 10px;
+    --gap-spreads: 20px;
+    --opponent-area-min: 160px;
+    --spreads-area-min: 140px;
+  }
+
+  #game-container {
+    padding: var(--space-base) var(--space-xl);
+    row-gap: var(--space-base);
+    max-width: 1400px;
+  }
+
+  .opponent-name {
+    font-size: 1.1rem;
+  }
+
+  .opponent-info {
+    font-size: 0.9rem;
+  }
+
+  #spreads-area {
+    max-width: 1000px;
+  }
+
+  #table-area {
+    gap: var(--space-xl);
+    padding: var(--space-base);
+  }
+
+  #player-info {
+    font-size: 1.1rem;
+    gap: var(--space-xl);
+  }
+
+  #player-hand {
+    min-height: 130px;
+  }
+
+  /* Modal adjustments for large desktop */
+  .modal-content {
+    max-width: min(650px, calc(100vw - var(--space-2xl) * 2));
+    padding: 45px;
+  }
+
+  .modal-content h2 {
+    font-size: 2.6rem;
+  }
+
+  .rules-content {
+    max-width: min(700px, calc(100vw - var(--space-2xl) * 2));
+  }
+
+  /* Action buttons handled in dedicated responsive section above */
+}
+
+/* =============================================================
+   GAME HEADER RESPONSIVE SYSTEM
+   Breakpoints per skill standards: 320px, 768px, 1024px, 1440px
+   ============================================================= */
+
+/* ----- DESKTOP LARGE (1440px+) ----- */
+@media (min-width: 1440px) {
+  #game-header {
+    padding: var(--space-base) var(--space-xl);
+  }
+
+  #game-header h1 {
+    font-size: 2.2rem;
+    letter-spacing: 8px;
+  }
+
+  #btn-rules,
+  #btn-settings {
+    padding: 12px 20px;
+    font-size: var(--font-size-base);
+  }
+
+  #match-scores {
+    padding: 12px 24px;
+    font-size: var(--font-size-base);
+    gap: var(--space-xl);
+  }
+
+  #chips-and-pot {
+    gap: var(--space-base);
+  }
+
+  #chip-display,
+  #pot-display {
+    padding: 10px 20px;
+  }
+
+  #player-chips,
+  #pot-amount {
+    font-size: var(--font-size-xl);
   }
 }
 
-/* ===== DESKTOP BREAKPOINT (1024px+) ===== */
-@media (min-width: 1024px) {
-  :root {
-    --card-width: 80px;
-    --card-height: 112px;
-    --card-scale-opponent: 0.85;
-    --card-scale-spread: 0.85;
-    --gap-opponent: 50px;
-    --gap-deck: 40px;
-    --gap-spreads: 20px;
+/* ----- DESKTOP (1024px - 1439px) ----- */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  #game-header {
+    padding: var(--space-md) var(--space-lg);
   }
 
-  #action-buttons button {
-    padding: var(--space-md) var(--space-xl);
-    font-size: 1rem;
+  #game-header h1 {
+    font-size: 1.9rem;
+    letter-spacing: 6px;
+  }
+
+  #btn-rules,
+  #btn-settings {
+    padding: 10px 18px;
+    font-size: var(--font-size-sm);
+  }
+
+  #match-scores {
+    padding: 10px 20px;
+    font-size: var(--font-size-sm);
+    gap: var(--space-lg);
+  }
+}
+
+/* ----- TABLET (768px - 1023px) ----- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #game-header {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm-md) var(--space-base);
+    gap: var(--space-sm);
+  }
+
+  #header-left {
+    flex: 0 0 auto;
+  }
+
+  #game-header h1 {
+    font-size: 1.5rem;
+    letter-spacing: 4px;
+  }
+
+  #btn-rules,
+  #btn-settings {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+
+  #match-scores {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    gap: var(--space-base);
+  }
+
+  #chips-and-pot {
+    flex: 0 0 auto;
+    gap: var(--space-sm);
+  }
+
+  #chip-display,
+  #pot-display {
+    padding: 6px 14px;
+  }
+
+  #player-chips,
+  #pot-amount {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* ----- LARGE MOBILE (481px - 767px) ----- */
+@media (min-width: 481px) and (max-width: 767px) {
+  #game-header {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  #header-left {
+    flex: 0 0 auto;
+  }
+
+  #game-header h1 {
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+  }
+
+  #btn-rules,
+  #btn-settings {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+
+  #match-scores {
+    flex: 1 1 100%;
+    order: 3;
+    justify-content: center;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    gap: var(--space-base);
+  }
+
+  #chips-and-pot {
+    flex: 0 0 auto;
+    gap: 8px;
+  }
+
+  #chip-display,
+  #pot-display {
+    padding: 6px 12px;
+  }
+
+  #player-chips,
+  #pot-amount {
+    font-size: 0.95rem;
   }
 }
 
@@ -661,8 +1173,8 @@
 
   #game-header {
     flex-direction: column;
-    gap: 4px;
-    padding: 6px 10px;
+    gap: 6px;
+    padding: 8px 10px;
   }
 
   #header-left {
@@ -679,19 +1191,33 @@
   #btn-settings {
     padding: 6px 10px;
     font-size: 0.7rem;
+    min-height: 36px;
   }
 
   #match-scores {
     width: 100%;
     justify-content: center;
-    padding: 4px 8px;
-    font-size: 0.7rem;
+    padding: 6px 10px;
+    font-size: 0.75rem;
     gap: 12px;
   }
 
-  #turn-indicator {
-    font-size: 0.75rem;
-    padding: 4px 10px;
+  #chips-and-pot {
+    width: 100%;
+    justify-content: center;
+    order: 3;
+    gap: 8px;
+  }
+
+  #chip-display,
+  #pot-display {
+    padding: 6px 10px;
+  }
+
+  #player-chips,
+  #pot-amount {
+    font-size: 0.9rem;
+    min-width: 35px;
   }
 
   .opponent-name {
@@ -701,8 +1227,7 @@
   /* Hide overlapping elements on mobile */
   #deck-count,
   #discard-label,
-  .opponent-info,
-  #spreads-area:empty::before {
+  .opponent-info {
     display: none;
   }
 
@@ -715,17 +1240,7 @@
     min-height: 50px;
   }
 
-  /* Compact action buttons on mobile */
-  #action-buttons {
-    padding: 6px 4px;
-    gap: 4px;
-  }
-
-  #action-buttons button {
-    min-height: 38px;
-    padding: 6px 10px;
-    font-size: 0.7rem;
-  }
+  /* Action buttons handled in dedicated mobile media query above */
 
   #deck-area {
     gap: 10px;
@@ -859,15 +1374,23 @@
     min-height: 40px;
   }
 
+  /* Landscape: single row, compact */
   #action-buttons {
-    padding: 4px 2px;
-    gap: 3px;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-areas: none;
+    padding: 4px;
+    gap: 4px;
   }
 
   #action-buttons button {
+    grid-area: unset;
     min-height: 32px;
-    padding: 4px 8px;
-    font-size: 0.65rem;
+    padding: 4px 6px;
+    font-size: 0.6rem;
+  }
+
+  #betting-controls {
+    grid-column: 1 / -1;
   }
 
   /* Side opponents in landscape */
@@ -908,7 +1431,7 @@
   }
 }
 
-/* ===== EXTRA SMALL SCREENS (380px and below) ===== */
+/* ===== EXTRA SMALL SCREENS (380px and below / 320px minimum) ===== */
 @media (max-width: 380px) {
   :root {
     --card-width: 40px;
@@ -928,8 +1451,14 @@
   }
 
   #game-header {
-    gap: 2px;
-    padding: 4px 8px;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 8px;
+  }
+
+  #header-left {
+    width: 100%;
+    justify-content: space-between;
   }
 
   #game-header h1 {
@@ -939,26 +1468,47 @@
 
   #btn-rules,
   #btn-settings {
-    padding: 4px 6px;
-    font-size: 0.6rem;
+    padding: 5px 8px;
+    font-size: 0.65rem;
+    min-height: 32px;
   }
 
   #match-scores {
+    width: 100%;
     gap: 8px;
-    padding: 3px 6px;
-    font-size: 0.6rem;
+    padding: 4px 8px;
+    font-size: 0.65rem;
   }
 
-  #turn-indicator {
-    font-size: 0.65rem;
-    padding: 3px 8px;
+  #chips-and-pot {
+    width: 100%;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  #chip-display,
+  #pot-display {
+    padding: 4px 8px;
+  }
+
+  #player-chips,
+  #pot-amount {
+    font-size: 0.8rem;
+    min-width: 30px;
+  }
+
+  .pot-label {
+    font-size: 0.55rem;
+  }
+
+  .chip-icon::before {
+    font-size: 0.9rem;
   }
 
   /* Hide overlapping elements on extra small screens */
   #deck-count,
   #discard-label,
-  .opponent-info,
-  #spreads-area:empty::before {
+  .opponent-info {
     display: none;
   }
 
@@ -994,17 +1544,7 @@
     min-height: 40px;
   }
 
-  #action-buttons {
-    padding: 4px 2px;
-    gap: 2px;
-  }
-
-  #action-buttons button {
-    min-height: 34px;
-    padding: 4px 6px;
-    font-size: 0.6rem;
-    flex: 1 1 auto;
-  }
+  /* Action buttons handled in dedicated 380px media query above */
 
   /* Side opponents on extra small screens */
   .opponent-left-area,

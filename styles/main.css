@@ -11,6 +11,7 @@
   --gold-accent: #d4a855;
   --gold-light: #e6c171;
   --gold-dark: #b8923e;
+  --gold-darker: #a07830;
   --rose-gold: #b76e79;
 
   /* Card Colors */
@@ -29,10 +30,19 @@
   --border-subtle: rgba(255, 255, 255, 0.1);
   --border-accent: rgba(212, 168, 85, 0.3);
 
-  /* Status Colors */
+  /* Status Colors - with hover/active variants */
   --danger: #e63946;
+  --danger-hover: #c82333;
+  --danger-active: #bd2130;
   --success: #2a9d5c;
+  --success-hover: #218838;
+  --success-active: #1e7e34;
   --info: #6c5ce7;
+  --info-hover: #5b4cdb;
+  --info-active: #4a3cc9;
+  --teal: #17a2b8;
+  --teal-hover: #138496;
+  --teal-active: #117a8b;
 
   /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -40,12 +50,28 @@
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 20px rgba(212, 168, 85, 0.2);
 
+  /* ==================== TYPOGRAPHY SCALE ==================== */
+  --font-size-2xs: 0.625rem;  /* 10px */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 2rem;      /* 32px */
+  --font-size-4xl: 3rem;      /* 48px */
+  --font-size-5xl: 4rem;      /* 64px */
+
   /* ==================== SPACING SCALE ==================== */
   --space-unit: 4px;
+  --space-2xs: 2px;
   --space-xs: 4px;
   --space-sm: 8px;
+  --space-sm-md: 10px;
   --space-md: 12px;
+  --space-md-base: 15px;
   --space-base: 16px;
+  --space-base-lg: 20px;
   --space-lg: 24px;
   --space-xl: 32px;
   --space-2xl: 48px;
@@ -197,7 +223,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
+  padding: var(--space-md) var(--space-base-lg);
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-accent);
   box-shadow: var(--shadow-md);
@@ -206,7 +232,7 @@ body {
 #header-left {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: var(--space-md-base);
 }
 
 #game-header h1 {
@@ -220,13 +246,13 @@ body {
 
 #btn-rules,
 #btn-settings {
-  padding: 10px 18px;
-  font-size: 0.85rem;
+  padding: var(--space-sm-md) var(--space-base);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   background: var(--bg-elevated);
   color: var(--text-light);
   border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+  border-radius: var(--space-sm);
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
@@ -241,19 +267,30 @@ body {
   box-shadow: var(--shadow-glow);
 }
 
+#btn-rules:focus,
+#btn-settings:focus {
+  outline: 2px solid var(--gold-accent);
+  outline-offset: 2px;
+}
+
+#btn-rules:focus:not(:focus-visible),
+#btn-settings:focus:not(:focus-visible) {
+  outline: none;
+}
+
 #match-scores {
   display: flex;
-  gap: 24px;
-  font-size: 0.9rem;
+  gap: var(--space-lg);
+  font-size: var(--font-size-sm);
   background: var(--bg-elevated);
-  padding: 10px 20px;
-  border-radius: 10px;
+  padding: var(--space-sm-md) var(--space-base-lg);
+  border-radius: var(--space-sm-md);
   border: 1px solid var(--border-subtle);
 }
 
 #match-scores .player-score {
   display: flex;
-  gap: 8px;
+  gap: var(--space-sm);
   align-items: center;
 }
 
@@ -272,10 +309,10 @@ body {
 }
 
 #turn-indicator {
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--text-light);
-  padding: 8px 20px;
+  padding: var(--space-sm) var(--space-base-lg);
   background: var(--bg-elevated);
   border: 1px solid var(--border-subtle);
   border-radius: 25px;
@@ -303,6 +340,21 @@ body {
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  #turn-indicator.your-turn {
+    animation: none;
+  }
 }
 
 /* Message area */
@@ -540,7 +592,115 @@ body {
   }
 }
 
-/* Mobile Adjustments */
+/* =============================================================
+   LANDING PAGE RESPONSIVE SYSTEM
+   Breakpoints per skill standards: 320px, 768px, 1024px, 1440px
+   ============================================================= */
+
+/* ----- LARGE DESKTOP (1440px+) ----- */
+@media (min-width: 1440px) {
+  .landing-title {
+    font-size: 6rem;
+    letter-spacing: 16px;
+  }
+
+  .landing-subtitle {
+    font-size: 1.5rem;
+  }
+
+  .landing-divider {
+    width: 250px;
+    margin: 40px 0;
+  }
+
+  #player-select label {
+    font-size: 1.2rem;
+  }
+
+  #player-select select {
+    padding: 14px 28px;
+    font-size: 1.1rem;
+    min-width: 260px;
+  }
+
+  #btn-start-game {
+    padding: 18px 70px;
+    font-size: 1.5rem;
+  }
+}
+
+/* ----- DESKTOP (1024px - 1439px) ----- */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .landing-title {
+    font-size: 5.5rem;
+    letter-spacing: 14px;
+  }
+
+  .landing-subtitle {
+    font-size: 1.4rem;
+  }
+
+  .landing-divider {
+    width: 220px;
+    margin: 35px 0;
+  }
+
+  #btn-start-game {
+    padding: 16px 60px;
+    font-size: 1.4rem;
+  }
+}
+
+/* ----- TABLET (768px - 1023px) ----- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .landing-title {
+    font-size: 4.5rem;
+    letter-spacing: 10px;
+  }
+
+  .landing-subtitle {
+    font-size: 1.25rem;
+  }
+
+  .landing-divider {
+    width: 180px;
+    margin: 28px 0;
+  }
+
+  #player-select select {
+    padding: 11px 22px;
+    min-width: 200px;
+  }
+
+  #btn-start-game {
+    padding: 14px 50px;
+    font-size: 1.3rem;
+  }
+}
+
+/* ----- LARGE MOBILE (481px - 767px) ----- */
+@media (min-width: 481px) and (max-width: 767px) {
+  .landing-title {
+    font-size: 4rem;
+    letter-spacing: 10px;
+  }
+
+  .landing-subtitle {
+    font-size: 1.15rem;
+  }
+
+  .landing-divider {
+    width: 160px;
+    margin: 24px 0;
+  }
+
+  #btn-start-game {
+    padding: 14px 45px;
+    font-size: 1.25rem;
+  }
+}
+
+/* ----- SMALL MOBILE (max-width: 480px) ----- */
 @media (max-width: 480px) {
   .landing-title {
     font-size: 3.5rem;
@@ -553,6 +713,16 @@ body {
 
   .landing-divider {
     width: 150px;
+    margin: 22px 0;
+  }
+
+  #player-select {
+    margin-bottom: 24px;
+  }
+
+  #player-select select {
+    padding: 10px 20px;
+    min-width: 190px;
   }
 
   #btn-start-game {
@@ -561,19 +731,63 @@ body {
   }
 }
 
+/* ----- EXTRA SMALL (max-width: 380px / 320px minimum) ----- */
+@media (max-width: 380px) {
+  .landing-title {
+    font-size: 2.8rem;
+    letter-spacing: 6px;
+  }
+
+  .landing-subtitle {
+    font-size: 1rem;
+  }
+
+  .landing-divider {
+    width: 120px;
+    margin: 18px 0;
+  }
+
+  #player-select {
+    margin-bottom: 20px;
+  }
+
+  #player-select label {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+
+  #player-select select {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    min-width: 180px;
+  }
+
+  #btn-start-game {
+    padding: 12px 35px;
+    font-size: 1.1rem;
+  }
+}
+
 /* ================================
    Betting / Chips Display
    ================================ */
+
+/* Chips and pot container in header */
+#chips-and-pot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
 
 /* Chip display in header */
 #chip-display {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: 1px solid rgba(212, 168, 85, 0.3);
+  padding: var(--space-sm) var(--space-base);
+  border-radius: var(--space-base-lg);
+  border: 1px solid var(--border-accent);
 }
 
 .chip-icon::before {
@@ -584,57 +798,52 @@ body {
 #player-chips {
   font-weight: bold;
   color: var(--gold-accent);
-  font-size: 1.1rem;
+  font-size: var(--font-size-lg);
   min-width: 50px;
   text-align: right;
 }
 
-/* Pot display on table */
+/* Pot display in header */
 #pot-display {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  background: linear-gradient(135deg, rgba(45, 90, 61, 0.9), rgba(27, 67, 50, 0.9));
-  padding: 12px 24px;
-  border-radius: 12px;
-  border: 2px solid var(--gold-accent);
-  box-shadow:
-    0 4px 15px rgba(0, 0, 0, 0.3),
-    0 0 20px rgba(212, 168, 85, 0.2);
-  min-width: 80px;
+  gap: var(--space-xs);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
+  padding: var(--space-sm) var(--space-base);
+  border-radius: var(--space-base-lg);
+  border: 1px solid var(--success);
 }
 
 .pot-label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   color: var(--text-muted);
 }
 
 #pot-amount {
-  font-size: 1.5rem;
+  font-size: var(--font-size-lg);
   font-weight: bold;
-  color: var(--gold-accent);
+  color: var(--success);
 }
 
 #pot-amount::before {
   content: '\1FA99 ';
-  font-size: 1.2rem;
+  font-size: var(--font-size-base);
 }
 
 /* Betting controls */
 #betting-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-left: 16px;
-  padding-left: 16px;
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  gap: var(--space-sm);
+  margin-left: var(--space-base);
+  padding-left: var(--space-base);
+  border-left: 1px solid var(--border-subtle);
 }
 
 .bet-label {
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
   color: var(--text-muted);
   margin-right: 4px;
 }
@@ -703,12 +912,16 @@ body {
     font-size: 0.8rem;
   }
 
+  #chips-and-pot {
+    gap: 8px;
+  }
+
   #pot-display {
-    padding: 8px 16px;
+    padding: 6px 12px;
   }
 
   #pot-amount {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 
   #chip-display {
@@ -721,6 +934,31 @@ body {
 }
 
 @media (max-width: 480px) {
+  #chips-and-pot {
+    gap: 6px;
+  }
+
+  #pot-display,
+  #chip-display {
+    padding: 4px 10px;
+  }
+
+  #pot-amount,
+  #player-chips {
+    font-size: 0.9rem;
+    min-width: 40px;
+  }
+
+  .pot-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
+  }
+
+  #pot-amount::before,
+  .chip-icon::before {
+    font-size: 0.9rem;
+  }
+
   #betting-controls {
     gap: 4px;
   }
@@ -846,7 +1084,17 @@ body {
 }
 
 #btn-continue-round:hover {
-  background: #218838;
+  background: var(--success-hover);
+}
+
+#btn-new-game:focus,
+#btn-continue-round:focus {
+  outline: 2px solid var(--gold-accent);
+  outline-offset: 2px;
+}
+
+#btn-continue-round:focus {
+  outline-color: var(--success);
 }
 
 /* Rules Modal */
@@ -903,15 +1151,285 @@ body {
   opacity: 1;
 }
 
-/* Draw button */
-#btn-draw {
-  background: #6c5ce7;
-  color: white;
+.modal-close:focus {
+  outline: 2px solid var(--gold-accent);
+  outline-offset: 2px;
+  opacity: 1;
 }
 
-#btn-draw:hover:not(:disabled) {
-  background: #5b4cdb;
-  transform: translateY(-2px);
+/* =============================================================
+   MODAL RESPONSIVE SYSTEM
+   Breakpoints per skill standards: 320px, 768px, 1024px, 1440px
+   ============================================================= */
+
+/* ----- LARGE DESKTOP (1440px+) ----- */
+@media (min-width: 1440px) {
+  .modal-content {
+    max-width: min(650px, calc(100vw - 96px));
+    padding: 50px;
+  }
+
+  .modal-content h2 {
+    font-size: 2.8rem;
+    margin-bottom: 20px;
+  }
+
+  .modal-content p {
+    font-size: 1.3rem;
+  }
+
+  .rules-content {
+    max-width: min(750px, calc(100vw - 96px));
+  }
+
+  .rules-content h3 {
+    font-size: 1.3rem;
+  }
+
+  .rules-content p,
+  .rules-content li {
+    font-size: 1.1rem;
+  }
+
+  #btn-new-game,
+  #btn-continue-round {
+    padding: 18px 50px;
+    font-size: 1.4rem;
+  }
+}
+
+/* ----- DESKTOP (1024px - 1439px) ----- */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .modal-content {
+    max-width: min(580px, calc(100vw - 64px));
+    padding: 45px;
+  }
+
+  .modal-content h2 {
+    font-size: 2.5rem;
+  }
+
+  .rules-content {
+    max-width: min(650px, calc(100vw - 64px));
+  }
+}
+
+/* ----- TABLET (768px - 1023px) ----- */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .modal-content {
+    max-width: min(520px, calc(100vw - 48px));
+    padding: 35px;
+  }
+
+  .modal-content h2 {
+    font-size: 2.2rem;
+    margin-bottom: 12px;
+  }
+
+  .modal-content p {
+    font-size: 1.1rem;
+  }
+
+  .rules-content {
+    max-width: min(560px, calc(100vw - 48px));
+    max-height: 75vh;
+  }
+
+  .rules-content h3 {
+    font-size: 1.05rem;
+    margin: 16px 0 8px 0;
+  }
+
+  #btn-new-game,
+  #btn-continue-round {
+    padding: 14px 35px;
+    font-size: 1.1rem;
+  }
+
+  #game-over-buttons {
+    gap: 12px;
+  }
+}
+
+/* ----- LARGE MOBILE (481px - 767px) ----- */
+@media (min-width: 481px) and (max-width: 767px) {
+  .modal-content {
+    max-width: min(420px, calc(100vw - 32px));
+    padding: 28px;
+  }
+
+  .modal-content h2 {
+    font-size: 1.9rem;
+    margin-bottom: 10px;
+  }
+
+  .modal-content p {
+    font-size: 1rem;
+    margin-bottom: 14px;
+  }
+
+  .rules-content {
+    max-width: min(450px, calc(100vw - 32px));
+    max-height: 70vh;
+  }
+
+  .rules-content h3 {
+    font-size: 1rem;
+    margin: 14px 0 8px 0;
+  }
+
+  .rules-content p,
+  .rules-content li {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  #btn-new-game,
+  #btn-continue-round {
+    padding: 12px 28px;
+    font-size: 1rem;
+  }
+
+  #final-scores {
+    padding: 12px;
+    margin-bottom: 18px;
+  }
+}
+
+/* ----- SMALL MOBILE (max-width: 480px) ----- */
+@media (max-width: 480px) {
+  .modal-content {
+    max-width: calc(100vw - 24px);
+    width: 95%;
+    padding: 22px 18px;
+  }
+
+  .modal-content h2 {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+  }
+
+  .modal-content p {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+  }
+
+  .rules-content {
+    max-width: calc(100vw - 24px);
+    max-height: 70vh;
+    padding: 20px 16px;
+  }
+
+  .rules-content h2 {
+    margin-bottom: 18px;
+  }
+
+  .rules-content h3 {
+    font-size: 0.95rem;
+    margin: 12px 0 6px 0;
+  }
+
+  .rules-content p {
+    margin-bottom: 10px;
+    line-height: 1.45;
+    font-size: 0.9rem;
+  }
+
+  .rules-content ul,
+  .rules-content ol {
+    margin: 8px 0 12px 16px;
+    line-height: 1.5;
+  }
+
+  .rules-content li {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+  }
+
+  .modal-close {
+    top: 10px;
+    right: 14px;
+    font-size: 1.6rem;
+  }
+
+  #btn-new-game,
+  #btn-continue-round {
+    padding: 12px 24px;
+    font-size: 0.95rem;
+  }
+
+  #game-over-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #final-scores {
+    padding: 10px;
+    margin-bottom: 16px;
+  }
+
+  #final-scores .score-row {
+    padding: 6px 0;
+    font-size: 0.9rem;
+  }
+}
+
+/* ----- EXTRA SMALL (max-width: 380px / 320px minimum) ----- */
+@media (max-width: 380px) {
+  .modal-content {
+    max-width: calc(100vw - 16px);
+    width: 98%;
+    padding: 18px 14px;
+  }
+
+  .modal-content h2 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+
+  .modal-content p {
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+  }
+
+  .rules-content {
+    max-width: calc(100vw - 16px);
+    max-height: 65vh;
+    padding: 16px 12px;
+  }
+
+  .rules-content h3 {
+    font-size: 0.9rem;
+    margin: 10px 0 5px 0;
+  }
+
+  .rules-content p,
+  .rules-content li {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .rules-content ul,
+  .rules-content ol {
+    margin: 6px 0 10px 14px;
+  }
+
+  .modal-close {
+    top: 8px;
+    right: 10px;
+    font-size: 1.4rem;
+  }
+
+  #btn-new-game,
+  #btn-continue-round {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  #final-scores .score-row {
+    padding: 5px 0;
+    font-size: 0.8rem;
+  }
 }
 
 /* Button styles */

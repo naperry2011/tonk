@@ -140,33 +140,45 @@ export class GameUI {
 
     // Rules modal
     this.elements.btnRules.addEventListener('click', () => {
-      this.elements.rulesModal.classList.remove('hidden');
+      this.openModal(this.elements.rulesModal, this.elements.btnCloseRules);
     });
 
     this.elements.btnCloseRules.addEventListener('click', () => {
-      this.elements.rulesModal.classList.add('hidden');
+      this.closeModal(this.elements.rulesModal, this.elements.btnRules);
     });
 
     // Close rules modal when clicking outside content
     this.elements.rulesModal.addEventListener('click', (e) => {
       if (e.target === this.elements.rulesModal) {
-        this.elements.rulesModal.classList.add('hidden');
+        this.closeModal(this.elements.rulesModal, this.elements.btnRules);
       }
     });
 
     // Settings modal
     this.elements.btnSettings.addEventListener('click', () => {
-      this.elements.settingsModal.classList.remove('hidden');
+      this.openModal(this.elements.settingsModal, this.elements.btnCloseSettings);
     });
 
     this.elements.btnCloseSettings.addEventListener('click', () => {
-      this.elements.settingsModal.classList.add('hidden');
+      this.closeModal(this.elements.settingsModal, this.elements.btnSettings);
     });
 
     // Close settings modal when clicking outside content
     this.elements.settingsModal.addEventListener('click', (e) => {
       if (e.target === this.elements.settingsModal) {
-        this.elements.settingsModal.classList.add('hidden');
+        this.closeModal(this.elements.settingsModal, this.elements.btnSettings);
+      }
+    });
+
+    // Global escape key handler for modals
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (!this.elements.rulesModal.classList.contains('hidden')) {
+          this.closeModal(this.elements.rulesModal, this.elements.btnRules);
+        }
+        if (!this.elements.settingsModal.classList.contains('hidden')) {
+          this.closeModal(this.elements.settingsModal, this.elements.btnSettings);
+        }
       }
     });
 
@@ -647,37 +659,12 @@ export class GameUI {
   }
 
   /**
-   * Render turn indicator
+   * Render turn indicator (disabled - element removed from UI)
    */
   renderTurnIndicator() {
-    const currentPlayer = this.game.getCurrentPlayer();
-    const isHumanTurn = currentPlayer.isHuman;
-
-    if (this.game.phase === PHASES.GAME_OVER) {
-      this.elements.turnIndicator.textContent = 'Game Over';
-      this.elements.turnIndicator.classList.remove('your-turn');
-    } else if (isHumanTurn) {
-      let phaseText = 'Your turn';
-      if (this.game.phase === PHASES.START_OF_TURN) {
-        phaseText = 'Spread cards or click Draw';
-      } else if (this.game.phase === PHASES.DRAW) {
-        phaseText = 'Draw a card';
-      } else if (this.game.phase === PHASES.ACTION) {
-        phaseText = 'Play cards or discard';
-      }
-      this.elements.turnIndicator.textContent = phaseText;
-      this.elements.turnIndicator.classList.add('your-turn');
-    } else {
-      this.elements.turnIndicator.innerHTML = `
-        <span class="thinking-indicator">
-          ${currentPlayer.name} thinking
-          <span class="thinking-dots">
-            <span></span><span></span><span></span>
-          </span>
-        </span>
-      `;
-      this.elements.turnIndicator.classList.remove('your-turn');
-    }
+    // Turn indicator has been removed from the UI
+    // This method is kept for compatibility but does nothing
+    if (!this.elements.turnIndicator) return;
   }
 
   /**
@@ -1178,6 +1165,84 @@ export class GameUI {
     // Save to storage
     if (save) {
       saveDeckTheme(theme);
+    }
+  }
+
+  /**
+   * Open a modal with focus management
+   */
+  openModal(modal, focusElement) {
+    this.lastFocusedElement = document.activeElement;
+    modal.classList.remove('hidden');
+
+    // Focus the first focusable element or the specified element
+    if (focusElement) {
+      focusElement.focus();
+    } else {
+      const focusable = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusable) focusable.focus();
+    }
+
+    // Set up focus trap
+    this.setupFocusTrap(modal);
+  }
+
+  /**
+   * Close a modal and restore focus
+   */
+  closeModal(modal, returnFocusTo) {
+    modal.classList.add('hidden');
+    this.removeFocusTrap(modal);
+
+    // Return focus to the element that opened the modal
+    if (returnFocusTo) {
+      returnFocusTo.focus();
+    } else if (this.lastFocusedElement) {
+      this.lastFocusedElement.focus();
+    }
+  }
+
+  /**
+   * Set up focus trap within a modal
+   */
+  setupFocusTrap(modal) {
+    const focusableElements = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+
+    if (focusableElements.length === 0) return;
+
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+
+    modal._focusTrapHandler = (e) => {
+      if (e.key !== 'Tab') return;
+
+      if (e.shiftKey) {
+        // Shift + Tab
+        if (document.activeElement === firstFocusable) {
+          e.preventDefault();
+          lastFocusable.focus();
+        }
+      } else {
+        // Tab
+        if (document.activeElement === lastFocusable) {
+          e.preventDefault();
+          firstFocusable.focus();
+        }
+      }
+    };
+
+    modal.addEventListener('keydown', modal._focusTrapHandler);
+  }
+
+  /**
+   * Remove focus trap from a modal
+   */
+  removeFocusTrap(modal) {
+    if (modal._focusTrapHandler) {
+      modal.removeEventListener('keydown', modal._focusTrapHandler);
+      delete modal._focusTrapHandler;
     }
   }
 }
