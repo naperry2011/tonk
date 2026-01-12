@@ -11,6 +11,9 @@ export class Player {
     this.hand = [];
     this.isHuman = isHuman;
     this.spreads = []; // Spreads this player has laid down
+    this.chips = 0; // Chips for betting (initialized by Game)
+    this.currentBet = 0; // Current bet this round
+    this.isEliminated = false; // True if player has no chips
   }
 
   /**
@@ -150,6 +153,57 @@ export class Player {
   }
 
   /**
+   * Reorder a card in hand from one position to another
+   */
+  reorderCard(fromIndex, toIndex) {
+    if (fromIndex < 0 || fromIndex >= this.hand.length) return;
+    if (toIndex < 0 || toIndex >= this.hand.length) return;
+    if (fromIndex === toIndex) return;
+
+    const [card] = this.hand.splice(fromIndex, 1);
+    this.hand.splice(toIndex, 0, card);
+  }
+
+  /**
+   * Place a bet (deduct chips)
+   * Returns actual amount bet (may be less if all-in)
+   */
+  bet(amount) {
+    const actualBet = Math.min(amount, this.chips);
+    this.chips -= actualBet;
+    this.currentBet += actualBet;
+    return actualBet;
+  }
+
+  /**
+   * Receive chips (winnings)
+   */
+  receiveChips(amount) {
+    this.chips += amount;
+  }
+
+  /**
+   * Reset betting state for new round
+   */
+  resetBet() {
+    this.currentBet = 0;
+  }
+
+  /**
+   * Check if player can afford a bet
+   */
+  canAfford(amount) {
+    return this.chips >= amount;
+  }
+
+  /**
+   * Check if player is all-in (has bet all chips)
+   */
+  isAllIn() {
+    return this.chips === 0 && this.currentBet > 0;
+  }
+
+  /**
    * Serialize player state to JSON
    */
   toJSON() {
@@ -158,7 +212,10 @@ export class Player {
       name: this.name,
       hand: this.hand.map(c => c.toJSON()),
       isHuman: this.isHuman,
-      spreads: this.spreads.map(s => s.toJSON())
+      spreads: this.spreads.map(s => s.toJSON()),
+      chips: this.chips,
+      currentBet: this.currentBet,
+      isEliminated: this.isEliminated
     };
   }
 }

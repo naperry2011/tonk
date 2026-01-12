@@ -333,14 +333,65 @@ body {
   background: var(--success);
 }
 
-/* Start Screen */
+/* ================================
+   Landing Page / Start Screen
+   ================================ */
+
+/* Entrance Animation Keyframes */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes expandFromCenter {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes subtleGlow {
+  0%, 100% {
+    text-shadow:
+      3px 3px 6px rgba(0, 0, 0, 0.5),
+      0 0 30px rgba(212, 168, 85, 0.3);
+  }
+  50% {
+    text-shadow:
+      3px 3px 6px rgba(0, 0, 0, 0.5),
+      0 0 50px rgba(212, 168, 85, 0.5);
+  }
+}
+
+/* Start Screen Container */
 #start-screen {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-table) 50%, var(--bg-primary) 100%);
+  background:
+    radial-gradient(ellipse at center, rgba(27, 67, 50, 0.4) 0%, transparent 70%),
+    linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-table) 50%, var(--bg-primary) 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -352,55 +403,336 @@ body {
   display: none;
 }
 
-#start-screen h1 {
-  font-size: 4rem;
+/* Landing Content Wrapper */
+.landing-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Title - TONK */
+.landing-title {
+  font-size: 5rem;
   color: var(--gold-accent);
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
-  letter-spacing: 8px;
-  margin-bottom: 10px;
+  text-shadow:
+    3px 3px 6px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(212, 168, 85, 0.3);
+  letter-spacing: 12px;
+  margin-bottom: 8px;
+  font-weight: bold;
+  opacity: 0;
+  animation:
+    fadeInScale 0.6s ease-out forwards,
+    subtleGlow 3s ease-in-out 1.5s infinite;
 }
 
-#start-screen p {
-  font-size: 1.2rem;
-  margin-bottom: 40px;
-  opacity: 0.8;
+/* Subtitle */
+.landing-subtitle {
+  font-size: 1.3rem;
+  color: var(--text-light);
+  margin-bottom: 0;
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out 0.3s forwards;
+  font-style: italic;
+  letter-spacing: 2px;
 }
 
+/* Decorative Divider */
+.landing-divider {
+  width: 200px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--gold-accent) 20%,
+    var(--gold-accent) 80%,
+    transparent 100%
+  );
+  margin: 30px 0;
+  transform: scaleX(0);
+  animation: expandFromCenter 0.4s ease-out 0.5s forwards;
+}
+
+/* Player Select */
 #player-select {
   margin-bottom: 30px;
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out 0.7s forwards;
 }
 
 #player-select label {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 1.1rem;
+  color: var(--text-light);
+  letter-spacing: 1px;
 }
 
 #player-select select {
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-size: 1rem;
   border-radius: 8px;
-  border: none;
+  border: 2px solid transparent;
   background: var(--card-white);
   color: var(--text-dark);
   cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 220px;
 }
 
+#player-select select:hover {
+  border-color: var(--gold-accent);
+}
+
+#player-select select:focus {
+  outline: none;
+  border-color: var(--gold-accent);
+  box-shadow: 0 0 15px rgba(212, 168, 85, 0.3);
+}
+
+/* Start Game Button */
 #btn-start-game {
-  padding: 15px 50px;
-  font-size: 1.3rem;
-  background: var(--gold-accent);
+  padding: 16px 60px;
+  font-size: 1.4rem;
+  background: linear-gradient(135deg, var(--gold-accent) 0%, var(--gold-dark) 100%);
   color: var(--text-dark);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: fadeInScale 0.5s ease-out 0.9s forwards;
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(212, 168, 85, 0.2);
 }
 
 #btn-start-game:hover {
-  background: var(--gold-dark);
+  background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-accent) 100%);
+  transform: scale(1.05) translateY(-2px);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.4),
+    0 0 35px rgba(212, 168, 85, 0.4);
+}
+
+#btn-start-game:active {
+  transform: scale(1.02) translateY(0);
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .landing-title,
+  .landing-subtitle,
+  .landing-divider,
+  #player-select,
+  #btn-start-game {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .landing-divider {
+    transform: scaleX(1);
+  }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 480px) {
+  .landing-title {
+    font-size: 3.5rem;
+    letter-spacing: 8px;
+  }
+
+  .landing-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .landing-divider {
+    width: 150px;
+  }
+
+  #btn-start-game {
+    padding: 14px 40px;
+    font-size: 1.2rem;
+  }
+}
+
+/* ================================
+   Betting / Chips Display
+   ================================ */
+
+/* Chip display in header */
+#chip-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(212, 168, 85, 0.3);
+}
+
+.chip-icon::before {
+  content: '\1FA99';
+  font-size: 1.2rem;
+}
+
+#player-chips {
+  font-weight: bold;
+  color: var(--gold-accent);
+  font-size: 1.1rem;
+  min-width: 50px;
+  text-align: right;
+}
+
+/* Pot display on table */
+#pot-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(135deg, rgba(45, 90, 61, 0.9), rgba(27, 67, 50, 0.9));
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 2px solid var(--gold-accent);
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(212, 168, 85, 0.2);
+  min-width: 80px;
+}
+
+.pot-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+}
+
+#pot-amount {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--gold-accent);
+}
+
+#pot-amount::before {
+  content: '\1FA99 ';
+  font-size: 1.2rem;
+}
+
+/* Betting controls */
+#betting-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.bet-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+.raise-btn {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  background: linear-gradient(135deg, var(--gold-accent), var(--gold-dark));
+  color: var(--text-dark);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.raise-btn:hover:not(:disabled) {
   transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(212, 168, 85, 0.4);
+}
+
+.raise-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Chips won message in game over modal */
+.chips-won-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(212, 168, 85, 0.2), rgba(184, 146, 62, 0.1));
+  padding: 12px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(212, 168, 85, 0.3);
+}
+
+.chips-won-message .pot-icon::before {
+  content: '\1FA99';
+  font-size: 1.5rem;
+}
+
+.chips-won-message strong {
+  color: var(--gold-accent);
+  font-size: 1.2rem;
+}
+
+/* Mobile adjustments for betting */
+@media (max-width: 768px) {
+  #betting-controls {
+    margin-left: 0;
+    margin-top: 10px;
+    padding-left: 0;
+    border-left: none;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .raise-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  #pot-display {
+    padding: 8px 16px;
+  }
+
+  #pot-amount {
+    font-size: 1.2rem;
+  }
+
+  #chip-display {
+    padding: 6px 12px;
+  }
+
+  #player-chips {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #betting-controls {
+    gap: 4px;
+  }
+
+  .raise-btn {
+    padding: 5px 8px;
+    font-size: 0.75rem;
+  }
+
+  .bet-label {
+    display: none;
+  }
 }
 
 /* Game Over Modal */

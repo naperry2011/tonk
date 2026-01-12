@@ -18,6 +18,10 @@
         <button id="btn-settings">Settings</button>
       </div>
       <div id="match-scores"></div>
+      <div id="chip-display">
+        <span class="chip-icon"></span>
+        <span id="player-chips">1000</span>
+      </div>
       <div id="turn-indicator"></div>
     </header>
 
@@ -31,6 +35,10 @@
 
     <div id="table-area">
       <div id="spreads-area"></div>
+      <div id="pot-display">
+        <span class="pot-label">Pot</span>
+        <span id="pot-amount">0</span>
+      </div>
       <div id="deck-area">
         <div id="deck" class="card-stack">
           <div class="card card-back"></div>
@@ -61,6 +69,13 @@
       <button id="btn-knock" disabled>Drop</button>
       <button id="btn-draw" disabled>Draw Card</button>
       <button id="btn-discard" disabled>Discard</button>
+      <div id="betting-controls">
+        <span class="bet-label">Raise:</span>
+        <button class="raise-btn" data-amount="10" disabled>+10</button>
+        <button class="raise-btn" data-amount="25" disabled>+25</button>
+        <button class="raise-btn" data-amount="50" disabled>+50</button>
+        <button class="raise-btn" data-amount="100" disabled>+100</button>
+      </div>
     </div>
 
     <div id="message-area"></div>
@@ -160,17 +175,20 @@
     </div>
 
     <div id="start-screen">
-      <h1>TONK</h1>
-      <p>A classic card game</p>
-      <div id="player-select">
-        <label>Number of Players:</label>
-        <select id="num-players">
-          <option value="2">2 Players (You + 1 AI)</option>
-          <option value="3">3 Players (You + 2 AI)</option>
-          <option value="4">4 Players (You + 3 AI)</option>
-        </select>
+      <div class="landing-content">
+        <h1 class="landing-title">TONK</h1>
+        <p class="landing-subtitle">A classic card game</p>
+        <div class="landing-divider"></div>
+        <div id="player-select">
+          <label>Number of Players:</label>
+          <select id="num-players">
+            <option value="2">2 Players (You + 1 AI)</option>
+            <option value="3">3 Players (You + 2 AI)</option>
+            <option value="4">4 Players (You + 3 AI)</option>
+          </select>
+        </div>
+        <button id="btn-start-game">Start Game</button>
       </div>
-      <button id="btn-start-game">Start Game</button>
     </div>
   </div>
 

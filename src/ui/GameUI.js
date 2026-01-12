@@ -16,6 +16,10 @@ export class GameUI {
     this.messageTimeout = null;
     this.layoutManager = new CardLayoutManager();
 
+    // Drag and drop state
+    this.draggedCardIndex = null;
+    this.touchDragState = null;
+
     this.cacheElements();
     this.bindEvents();
     this.bindGameEvents();
@@ -66,7 +70,14 @@ export class GameUI {
       settingsModal: document.getElementById('settings-modal'),
       btnSettings: document.getElementById('btn-settings'),
       btnCloseSettings: document.getElementById('btn-close-settings'),
-      themeOptions: document.querySelectorAll('.theme-option')
+      themeOptions: document.querySelectorAll('.theme-option'),
+      // Betting elements
+      chipDisplay: document.getElementById('chip-display'),
+      playerChips: document.getElementById('player-chips'),
+      potDisplay: document.getElementById('pot-display'),
+      potAmount: document.getElementById('pot-amount'),
+      bettingControls: document.getElementById('betting-controls'),
+      raiseButtons: document.querySelectorAll('.raise-btn')
     };
   }
 
@@ -166,6 +177,14 @@ export class GameUI {
         this.setDeckTheme(theme);
       });
     });
+
+    // Raise buttons
+    this.elements.raiseButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const amount = parseInt(btn.dataset.amount, 10);
+        this.handleRaise(amount);
+      });
+    });
   }
 
   /**
@@ -229,6 +248,8 @@ export class GameUI {
     this.renderPlayerInfo();
     this.renderTurnIndicator();
     this.renderMatchScores();
+    this.renderChips();
+    this.renderPot();
     this.updateActionButtons();
   }
 
@@ -392,24 +413,175 @@ export class GameUI {
     const canSelect = isPlayerTurn &&
       (this.game.phase === PHASES.ACTION || this.game.phase === PHASES.START_OF_TURN);
 
-    for (const card of player.hand) {
+    player.hand.forEach((card, index) => {
       const cardEl = CardRenderer.createCardElement(card, true, canSelect);
+      cardEl.dataset.handIndex = index;
 
       if (this.selectedCards.includes(card.id)) {
         cardEl.classList.add('selected');
       }
 
+      // Enable drag and drop for reordering (always available during player's turn)
+      if (isPlayerTurn) {
+        cardEl.draggable = true;
+        this.setupCardDragHandlers(cardEl, index, player);
+      }
+
       if (canSelect) {
-        cardEl.addEventListener('click', () => {
+        cardEl.addEventListener('click', (e) => {
+          // Don't toggle selection if we just finished a drag
+          if (this.draggedCardIndex !== null) return;
           this.toggleCardSelection(card.id);
         });
       }
 
       this.elements.playerHand.appendChild(cardEl);
-    }
+    });
 
     // Register player hand for dynamic layout
     this.layoutManager.observe(this.elements.playerHand, 'hand');
+  }
+
+  /**
+   * Set up drag and drop handlers for a card element
+   */
+  setupCardDragHandlers(cardEl, index, player) {
+    // Mouse drag handlers
+    cardEl.addEventListener('dragstart', (e) => {
+      this.draggedCardIndex = index;
+      cardEl.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', index.toString());
+    });
+
+    cardEl.addEventListener('dragend', () => {
+      cardEl.classList.remove('dragging');
+      this.clearDragOverStates();
+      this.draggedCardIndex = null;
+    });
+
+    cardEl.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      if (this.draggedCardIndex === null || this.draggedCardIndex === index) return;
+
+      e.dataTransfer.dropEffect = 'move';
+      this.clearDragOverStates();
+      cardEl.classList.add('drag-over');
+    });
+
+    cardEl.addEventListener('dragleave', () => {
+      cardEl.classList.remove('drag-over');
+    });
+
+    cardEl.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (this.draggedCardIndex === null || this.draggedCardIndex === index) return;
+
+      player.reorderCard(this.draggedCardIndex, index);
+      this.clearDragOverStates();
+      this.draggedCardIndex = null;
+      this.renderPlayerHand();
+    });
+
+    // Touch drag handlers for mobile
+    this.setupTouchDragHandlers(cardEl, index, player);
+  }
+
+  /**
+   * Set up touch drag handlers for mobile devices
+   */
+  setupTouchDragHandlers(cardEl, index, player) {
+    let touchTimeout = null;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    cardEl.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+
+      // Start a timer to detect hold for drag
+      touchTimeout = setTimeout(() => {
+        isDragging = true;
+        this.draggedCardIndex = index;
+        cardEl.classList.add('dragging');
+
+        // Provide haptic feedback if available
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+      }, 150);
+    }, { passive: true });
+
+    cardEl.addEventListener('touchmove', (e) => {
+      const touchX = e.touches[0].clientX;
+      const touchY = e.touches[0].clientY;
+
+      // Cancel drag initiation if user moves finger before hold threshold
+      if (!isDragging && touchTimeout) {
+        const moveDistance = Math.sqrt(
+          Math.pow(touchX - startX, 2) + Math.pow(touchY - startY, 2)
+        );
+        if (moveDistance > 10) {
+          clearTimeout(touchTimeout);
+          touchTimeout = null;
+        }
+      }
+
+      if (!isDragging) return;
+
+      e.preventDefault();
+
+      // Find card under touch point
+      const elemBelow = document.elementFromPoint(touchX, touchY);
+      const cardBelow = elemBelow?.closest('.card[data-hand-index]');
+
+      this.clearDragOverStates();
+      if (cardBelow && cardBelow !== cardEl) {
+        cardBelow.classList.add('drag-over');
+      }
+    }, { passive: false });
+
+    cardEl.addEventListener('touchend', (e) => {
+      clearTimeout(touchTimeout);
+      touchTimeout = null;
+
+      if (!isDragging) return;
+
+      isDragging = false;
+      cardEl.classList.remove('dragging');
+
+      // Find card under final touch point
+      const touch = e.changedTouches[0];
+      const elemBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+      const cardBelow = elemBelow?.closest('.card[data-hand-index]');
+
+      if (cardBelow && cardBelow !== cardEl) {
+        const targetIndex = parseInt(cardBelow.dataset.handIndex, 10);
+        player.reorderCard(this.draggedCardIndex, targetIndex);
+        this.renderPlayerHand();
+      }
+
+      this.clearDragOverStates();
+      this.draggedCardIndex = null;
+    });
+
+    cardEl.addEventListener('touchcancel', () => {
+      clearTimeout(touchTimeout);
+      touchTimeout = null;
+      isDragging = false;
+      cardEl.classList.remove('dragging');
+      this.clearDragOverStates();
+      this.draggedCardIndex = null;
+    });
+  }
+
+  /**
+   * Clear drag-over visual states from all cards
+   */
+  clearDragOverStates() {
+    const cards = this.elements.playerHand.querySelectorAll('.card');
+    cards.forEach(card => card.classList.remove('drag-over'));
   }
 
   /**
@@ -438,6 +610,39 @@ export class GameUI {
         <span class="points">${score} pts</span>
       `;
       this.elements.matchScores.appendChild(scoreEl);
+    }
+  }
+
+  /**
+   * Render player's chip count
+   */
+  renderChips() {
+    const player = this.getHumanPlayer();
+    if (!player) return;
+
+    this.elements.playerChips.textContent = player.chips;
+  }
+
+  /**
+   * Render the pot amount
+   */
+  renderPot() {
+    this.elements.potAmount.textContent = this.game.getPot();
+  }
+
+  /**
+   * Handle raise button click
+   */
+  handleRaise(amount) {
+    try {
+      const player = this.getHumanPlayer();
+      if (!player || !this.game.isHumanTurn()) return;
+
+      this.game.placeBet(player, amount);
+      this.showMessage(`You raised ${amount} chips`, 'info');
+      this.render();
+    } catch (error) {
+      this.showMessage(error.message, 'error');
     }
   }
 
@@ -512,6 +717,13 @@ export class GameUI {
     // Discard button (only in ACTION phase)
     const canDiscard = isPlayerTurn && inActionPhase && this.selectedCards.length === 1;
     this.elements.btnDiscard.disabled = !canDiscard;
+
+    // Raise buttons (available during player's turn in ACTION phase)
+    const canBet = isPlayerTurn && inActionPhase;
+    this.elements.raiseButtons.forEach(btn => {
+      const amount = parseInt(btn.dataset.amount, 10);
+      btn.disabled = !canBet || !player.canAfford(amount);
+    });
   }
 
   /**
@@ -814,6 +1026,9 @@ export class GameUI {
     const { winner, condition, knocker } = data;
     const isHumanWinner = winner.isHuman;
 
+    // Award pot to winner
+    const potWinnings = this.game.awardPot(winner);
+
     // Apply round scoring
     const losers = this.game.applyRoundScoring();
 
@@ -864,13 +1079,22 @@ export class GameUI {
     // Show scores with match totals
     this.elements.finalScores.innerHTML = '';
 
+    // Show pot winnings message
+    const chipsMessage = document.createElement('div');
+    chipsMessage.className = 'chips-won-message';
+    chipsMessage.innerHTML = `
+      <span class="pot-icon"></span>
+      <span>${winner.isHuman ? 'You' : winner.name} won <strong>${potWinnings}</strong> chips!</span>
+    `;
+    this.elements.finalScores.appendChild(chipsMessage);
+
     // Add header for scores
     const headerRow = document.createElement('div');
     headerRow.className = 'score-row score-header';
     headerRow.innerHTML = `
       <span>Player</span>
       <span>Hand</span>
-      <span>Match Total</span>
+      <span>Chips</span>
     `;
     this.elements.finalScores.appendChild(headerRow);
 
@@ -884,14 +1108,10 @@ export class GameUI {
         row.classList.add('winner');
       }
 
-      // Find if this player had points added
-      const loserInfo = losers.find(l => l.player === score.player);
-      const pointsAddedText = loserInfo ? ` (+${loserInfo.pointsAdded})` : '';
-
       row.innerHTML = `
         <span>${score.player.isHuman ? 'You' : score.player.name}</span>
         <span>${score.points} pts</span>
-        <span>${score.matchScore}${pointsAddedText}</span>
+        <span>${score.player.chips}</span>
       `;
       this.elements.finalScores.appendChild(row);
     }

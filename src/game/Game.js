@@ -8,7 +8,8 @@ import {
   determineKnockWinner,
   PHASES,
   WIN_CONDITIONS,
-  MATCH_POINT_LIMIT
+  MATCH_POINT_LIMIT,
+  BETTING
 } from './rules.js';
 
 // Pool of random names for AI players
@@ -44,10 +45,14 @@ export class Game {
     this.eventListeners = {};
 
     // Match scoring
-    this.matchScores = {};  // { odplayerId: totalPoints }
+    this.matchScores = {};  // { playerId: totalPoints }
     this.pointLimit = MATCH_POINT_LIMIT;
     this.matchWinner = null;
     this.roundNumber = 0;
+
+    // Betting system
+    this.pot = 0;
+    this.highestBet = 0;
   }
 
   /**
@@ -81,6 +86,17 @@ export class Game {
       this.matchScores[player.id] = 0;
     }
 
+    // Initialize chips for all players
+    for (const player of this.players) {
+      player.chips = BETTING.STARTING_CHIPS;
+      player.currentBet = 0;
+      player.isEliminated = false;
+    }
+
+    // Reset betting state
+    this.pot = 0;
+    this.highestBet = 0;
+
     // Deal cards and check initial tonk (may redeal if multiple players have 49-50)
     this.dealAndCheckInitialTonk();
 
@@ -91,6 +107,9 @@ export class Game {
    * Deal cards and check for initial tonk, redealing if multiple players have 49-50
    */
   dealAndCheckInitialTonk() {
+    // Collect antes before dealing
+    this.collectAntes();
+
     this.deal();
 
     // Check for initial tonk
@@ -483,6 +502,7 @@ export class Game {
     // Reset players' hands and spreads
     for (const player of this.players) {
       player.reset();
+      player.resetBet();
     }
 
     // Reset round state
@@ -491,6 +511,10 @@ export class Game {
     this.winCondition = null;
     this.hasDrawnThisTurn = false;
     this.turnActions = [];
+
+    // Reset betting
+    this.pot = 0;
+    this.highestBet = 0;
 
     // Create new deck and deal
     this.deck = new Deck();
@@ -566,6 +590,98 @@ export class Game {
     }
   }
 
+  // ==================
+  // BETTING METHODS
+  // ==================
+
+  /**
+   * Collect antes from all players at round start
+   */
+  collectAntes() {
+    this.pot = 0;
+    this.highestBet = BETTING.ANTE_AMOUNT;
+
+    for (const player of this.players) {
+      if (!player.isEliminated) {
+        player.resetBet();
+        const actualAnte = player.bet(BETTING.ANTE_AMOUNT);
+        this.pot += actualAnte;
+      }
+    }
+
+    this.emit('antesCollected', { pot: this.pot, ante: BETTING.ANTE_AMOUNT });
+  }
+
+  /**
+   * Player places a raise bet
+   */
+  placeBet(player, amount) {
+    if (player.isEliminated) {
+      throw new Error('Eliminated players cannot bet');
+    }
+
+    const actualBet = player.bet(amount);
+    this.pot += actualBet;
+
+    // Update highest bet if this is a raise
+    if (player.currentBet > this.highestBet) {
+      this.highestBet = player.currentBet;
+    }
+
+    this.emit('betPlaced', { player, amount: actualBet, pot: this.pot });
+    return actualBet;
+  }
+
+  /**
+   * Award the pot to the winner
+   */
+  awardPot(winner) {
+    const winnings = this.pot;
+    winner.receiveChips(winnings);
+    this.pot = 0;
+
+    this.emit('potAwarded', { winner, amount: winnings });
+    return winnings;
+  }
+
+  /**
+   * Reset betting state for new round
+   */
+  resetBetting() {
+    this.pot = 0;
+    this.highestBet = 0;
+    for (const player of this.players) {
+      player.resetBet();
+    }
+  }
+
+  /**
+   * Get current pot amount
+   */
+  getPot() {
+    return this.pot;
+  }
+
+  /**
+   * Get player chips info
+   */
+  getChipsInfo() {
+    return this.players.map(player => ({
+      player,
+      chips: player.chips,
+      currentBet: player.currentBet,
+      isEliminated: player.isEliminated
+    }));
+  }
+
+  /**
+   * Check if human player can afford to raise
+   */
+  canPlayerRaise(amount) {
+    const humanPlayer = this.players.find(p => p.isHuman);
+    return humanPlayer && humanPlayer.canAfford(amount);
+  }
+
   /**
    * Serialize game state
    */
@@ -578,7 +694,9 @@ export class Game {
       spreadsOnTable: this.spreadsOnTable.map(s => s.toJSON()),
       winner: this.winner?.id || null,
       winCondition: this.winCondition,
-      hasDrawnThisTurn: this.hasDrawnThisTurn
+      hasDrawnThisTurn: this.hasDrawnThisTurn,
+      pot: this.pot,
+      highestBet: this.highestBet
     };
   }
 }

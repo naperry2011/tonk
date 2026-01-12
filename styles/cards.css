@@ -53,6 +53,32 @@
   outline-offset: -1px;
 }
 
+/* Drag and drop states */
+.card.dragging {
+  opacity: 0.6;
+  transform: scale(1.05) rotate(2deg);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(212, 168, 85, 0.3);
+  z-index: 100;
+  cursor: grabbing;
+}
+
+.card.drag-over {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.25),
+    -4px 0 0 var(--gold-accent);
+}
+
+.card[draggable="true"] {
+  cursor: grab;
+}
+
+.card[draggable="true"]:active {
+  cursor: grabbing;
+}
+
 /* Card colors based on suit */
 .card[data-suit="hearts"],
 .card[data-suit="diamonds"] {
@@ -440,7 +466,9 @@
   .card.flipping,
   .card.sliding,
   .card.discarding,
-  .card.drawing {
+  .card.drawing,
+  .card.dragging,
+  .card.drag-over {
     animation: none;
     transition: none;
   }

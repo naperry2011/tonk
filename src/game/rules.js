@@ -11,6 +11,13 @@ export const MAX_PLAYERS = 4;
 export const MIN_PLAYERS = 2;
 export const MATCH_POINT_LIMIT = 100; // First to this score loses the match
 
+// Betting constants
+export const BETTING = {
+  STARTING_CHIPS: 1000,
+  ANTE_AMOUNT: 10,
+  RAISE_OPTIONS: [10, 25, 50, 100]
+};
+
 /**
  * Get the number of cards to deal per player (always 5)
  */

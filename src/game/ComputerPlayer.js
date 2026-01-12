@@ -1,5 +1,6 @@
 import { Player } from './Player.js';
 import { Spread, findPossibleSpreads } from './Spread.js';
+import { BETTING } from './rules.js';
 
 /**
  * Computer-controlled player with AI decision making
@@ -268,5 +269,82 @@ export class ComputerPlayer extends Player {
     }
 
     return actions;
+  }
+
+  // ==================
+  // BETTING AI
+  // ==================
+
+  /**
+   * Decide whether to raise and by how much
+   * Returns 0 if no raise, otherwise the raise amount
+   */
+  decideBet() {
+    // Don't bet if we can't afford it
+    if (this.chips <= 0) return 0;
+
+    const points = this.calculatePoints();
+    const spreadPotential = this.countSpreadPotential();
+    let raiseChance = 0;
+    let maxRaiseIndex = 0;
+
+    // Strong hand (can form spreads) - higher chance to raise
+    if (spreadPotential > 0) {
+      raiseChance = 0.30;
+      maxRaiseIndex = 2; // Up to 50 chips
+    }
+    // Low points - decent chance to raise
+    else if (points < 20) {
+      raiseChance = 0.20;
+      maxRaiseIndex = 1; // Up to 25 chips
+    }
+    // Average hand - small chance for small raise
+    else if (points < 35) {
+      raiseChance = 0.10;
+      maxRaiseIndex = 0; // Only 10 chips
+    }
+    // High points - rarely raise
+    else {
+      raiseChance = 0.05;
+      maxRaiseIndex = 0;
+    }
+
+    // Roll the dice
+    if (Math.random() < raiseChance) {
+      // Pick a random raise amount up to maxRaiseIndex
+      const raiseIndex = Math.floor(Math.random() * (maxRaiseIndex + 1));
+      const raiseAmount = BETTING.RAISE_OPTIONS[raiseIndex];
+
+      // Make sure we can afford it
+      if (this.canAfford(raiseAmount)) {
+        return raiseAmount;
+      } else if (this.chips > 0) {
+        // All-in with remaining chips
+        return this.chips;
+      }
+    }
+
+    return 0;
+  }
+
+  /**
+   * Decide if AI should call/match a raise
+   * AI almost always calls unless chips are very low
+   */
+  shouldCall(amountToCall) {
+    // Always call if we can afford it and amount is reasonable
+    if (!this.canAfford(amountToCall)) {
+      // Go all-in if we're committed
+      return this.chips > 0;
+    }
+
+    // Only fold if the amount is very high relative to our chips
+    // and we have a bad hand
+    const points = this.calculatePoints();
+    if (amountToCall > this.chips * 0.5 && points > 40) {
+      return Math.random() < 0.7; // 70% chance to still call
+    }
+
+    return true;
   }
 }
