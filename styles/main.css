@@ -109,7 +109,8 @@
 
 html, body {
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 body {
@@ -134,13 +135,12 @@ body {
   row-gap: var(--space-sm);
   height: 100vh;
   height: 100dvh;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   padding: var(--space-sm) var(--space-base);
+  padding-top: 0;
   position: relative;
   background: radial-gradient(ellipse at center, var(--bg-table) 0%, var(--bg-table-dark) 70%, var(--bg-primary) 100%);
-  border-left: 1px solid var(--border-subtle);
-  border-right: 1px solid var(--border-subtle);
 }
 
 /* 3 players - circular layout: opponents on left and right */
@@ -227,6 +227,8 @@ body {
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-accent);
   box-shadow: var(--shadow-md);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 #header-left {
@@ -1466,59 +1468,106 @@ button:disabled {
 @media (max-width: 480px) {
   #game-container[data-player-count="3"] {
     --card-scale-player: 0.7;
-    --opponent-area-min: 50px;
-    --spreads-area-min: 45px;
-    grid-template-columns: minmax(45px, auto) minmax(0, 1fr) minmax(45px, auto);
-    grid-template-rows: auto minmax(60px, 1fr) auto auto;
+    --opponent-area-min: 45px;
+    --spreads-area-min: 40px;
+    grid-template-columns: minmax(40px, auto) minmax(0, 1fr) minmax(40px, auto);
+    grid-template-rows: auto minmax(50px, 1fr) auto auto;
     column-gap: 2px;
+    row-gap: 2px;
   }
 
   #game-container[data-player-count="4"] {
-    --card-scale-player: 0.65;
-    --opponent-area-min: 50px;
-    --spreads-area-min: 45px;
-    grid-template-columns: minmax(40px, auto) minmax(0, 1fr) minmax(40px, auto);
-    grid-template-rows: auto auto minmax(60px, 1fr) auto auto;
-    column-gap: 2px;
+    --card-scale-player: 0.6;
+    --card-scale-opponent: 0.4;
+    --opponent-area-min: 40px;
+    --spreads-area-min: 35px;
+    --table-area-min: 60px;
+    grid-template-columns: minmax(32px, auto) minmax(0, 1fr) minmax(32px, auto);
+    grid-template-rows: auto auto minmax(45px, 1fr) auto auto;
+    column-gap: 1px;
+    row-gap: 1px;
+    padding: 2px 4px;
+  }
+
+  /* Hide opponent names on 4-player mobile to save space */
+  #game-container[data-player-count="4"] .opponent-name {
+    display: none;
+  }
+
+  /* Compact top opponent for 4 players */
+  #game-container[data-player-count="4"] #opponent-area {
+    min-height: 35px;
+    padding: 1px;
   }
 }
 
 /* Extra small screens */
 @media (max-width: 380px) {
   #game-container[data-player-count="3"] {
-    --card-scale-player: 0.6;
-    --opponent-area-min: 40px;
-    --spreads-area-min: 35px;
-    grid-template-columns: minmax(35px, auto) minmax(0, 1fr) minmax(35px, auto);
-    grid-template-rows: auto minmax(50px, 1fr) auto auto;
+    --card-scale-player: 0.55;
+    --opponent-area-min: 35px;
+    --spreads-area-min: 30px;
+    grid-template-columns: minmax(30px, auto) minmax(0, 1fr) minmax(30px, auto);
+    grid-template-rows: auto minmax(40px, 1fr) auto auto;
     column-gap: 1px;
+    row-gap: 1px;
   }
 
   #game-container[data-player-count="4"] {
-    --card-scale-player: 0.55;
-    --opponent-area-min: 40px;
-    --spreads-area-min: 35px;
-    grid-template-columns: minmax(30px, auto) minmax(0, 1fr) minmax(30px, auto);
-    grid-template-rows: auto auto minmax(50px, 1fr) auto auto;
-    column-gap: 1px;
+    --card-scale-player: 0.5;
+    --card-scale-opponent: 0.35;
+    --opponent-area-min: 30px;
+    --spreads-area-min: 25px;
+    --table-area-min: 50px;
+    grid-template-columns: minmax(25px, auto) minmax(0, 1fr) minmax(25px, auto);
+    grid-template-rows: auto auto minmax(35px, 1fr) auto auto;
+    column-gap: 0;
+    row-gap: 0;
+    padding: 1px 2px;
+  }
+
+  /* Extra compact for 4-player on tiny screens */
+  #game-container[data-player-count="4"] #opponent-area {
+    min-height: 28px;
+    padding: 0;
+  }
+
+  #game-container[data-player-count="4"] .opponent-left-area,
+  #game-container[data-player-count="4"] .opponent-right-area {
+    min-width: 22px;
+    padding: 0;
   }
 }
 
 /* Landscape mobile: adjust for short screens */
 @media (max-height: 500px) and (orientation: landscape) {
   #game-container[data-player-count="3"] {
-    --card-scale-player: 0.55;
-    --opponent-area-min: 35px;
-    --spreads-area-min: 30px;
-    grid-template-columns: minmax(45px, auto) minmax(0, 1fr) minmax(45px, auto);
-    grid-template-rows: auto minmax(40px, 1fr) auto auto;
+    --card-scale-player: 0.5;
+    --opponent-area-min: 30px;
+    --spreads-area-min: 25px;
+    grid-template-columns: minmax(35px, auto) minmax(0, 1fr) minmax(35px, auto);
+    grid-template-rows: auto minmax(35px, 1fr) auto auto;
   }
 
   #game-container[data-player-count="4"] {
-    --card-scale-player: 0.5;
-    --opponent-area-min: 35px;
-    --spreads-area-min: 30px;
-    grid-template-columns: minmax(40px, auto) minmax(0, 1fr) minmax(40px, auto);
-    grid-template-rows: auto auto minmax(40px, 1fr) auto auto;
+    --card-scale-player: 0.45;
+    --card-scale-opponent: 0.35;
+    --opponent-area-min: 25px;
+    --spreads-area-min: 20px;
+    --table-area-min: 40px;
+    grid-template-columns: minmax(28px, auto) minmax(0, 1fr) minmax(28px, auto);
+    grid-template-rows: auto auto minmax(30px, 1fr) auto auto;
+    row-gap: 0;
+    padding: 1px 2px;
+  }
+
+  /* Ultra compact 4-player landscape */
+  #game-container[data-player-count="4"] .opponent-name {
+    display: none;
+  }
+
+  #game-container[data-player-count="4"] #opponent-area {
+    min-height: 22px;
+    padding: 0;
   }
 }

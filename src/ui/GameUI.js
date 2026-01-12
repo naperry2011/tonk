@@ -77,6 +77,7 @@ export class GameUI {
       potDisplay: document.getElementById('pot-display'),
       potAmount: document.getElementById('pot-amount'),
       bettingControls: document.getElementById('betting-controls'),
+      bettingToggle: document.getElementById('betting-toggle'),
       raiseButtons: document.querySelectorAll('.raise-btn')
     };
   }
@@ -188,6 +189,15 @@ export class GameUI {
         const theme = option.dataset.theme;
         this.setDeckTheme(theme);
       });
+
+      // Keyboard support for theme options
+      option.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const theme = option.dataset.theme;
+          this.setDeckTheme(theme);
+        }
+      });
     });
 
     // Raise buttons
@@ -197,6 +207,31 @@ export class GameUI {
         this.handleRaise(amount);
       });
     });
+
+    // Betting toggle for mobile
+    if (this.elements.bettingToggle) {
+      this.elements.bettingToggle.addEventListener('click', () => {
+        this.toggleBettingControls();
+      });
+    }
+  }
+
+  /**
+   * Toggle betting controls visibility on mobile
+   */
+  toggleBettingControls() {
+    const controls = this.elements.bettingControls;
+    const toggle = this.elements.bettingToggle;
+
+    if (controls.classList.contains('expanded')) {
+      controls.classList.remove('expanded');
+      toggle.classList.remove('active');
+      toggle.textContent = 'Raise Bet';
+    } else {
+      controls.classList.add('expanded');
+      toggle.classList.add('active');
+      toggle.textContent = 'Hide Bets';
+    }
   }
 
   /**
@@ -1153,12 +1188,15 @@ export class GameUI {
 
     // Update selected state on theme options
     this.elements.themeOptions.forEach(option => {
-      if (option.dataset.theme === theme) {
+      const isSelected = option.dataset.theme === theme;
+      if (isSelected) {
         option.classList.add('selected');
         option.querySelector('.theme-preview').classList.add('selected');
+        option.setAttribute('aria-checked', 'true');
       } else {
         option.classList.remove('selected');
         option.querySelector('.theme-preview').classList.remove('selected');
+        option.setAttribute('aria-checked', 'false');
       }
     });
 

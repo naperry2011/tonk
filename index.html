@@ -65,11 +65,12 @@
     </div>
 
     <div id="action-buttons" role="toolbar" aria-label="Game actions">
-      <button id="btn-form-spread" disabled aria-label="Form spread from selected cards">Form Spread</button>
-      <button id="btn-hit-spread" disabled aria-label="Add selected card to existing spread">Hit Spread</button>
+      <button id="btn-form-spread" disabled aria-label="Form spread from selected cards">Spread</button>
+      <button id="btn-hit-spread" disabled aria-label="Add selected card to existing spread">Hit</button>
       <button id="btn-knock" disabled aria-label="Drop and end round">Drop</button>
-      <button id="btn-draw" disabled aria-label="Draw card from deck">Draw Card</button>
+      <button id="btn-draw" disabled aria-label="Draw card from deck">Draw</button>
       <button id="btn-discard" disabled aria-label="Discard selected card">Discard</button>
+      <button id="betting-toggle" aria-label="Toggle betting options">Raise Bet</button>
       <div id="betting-controls" role="group" aria-label="Betting options">
         <span class="bet-label" aria-hidden="true">Raise:</span>
         <button class="raise-btn" data-amount="10" disabled aria-label="Raise bet by 10 chips">+10</button>
@@ -149,24 +150,24 @@
 
         <div class="settings-section">
           <h3>Deck Style</h3>
-          <div class="theme-options">
-            <div class="theme-option" data-theme="classic">
+          <div class="theme-options" role="radiogroup" aria-label="Deck style options">
+            <div class="theme-option" data-theme="classic" role="radio" tabindex="0" aria-checked="false" aria-label="Classic deck style">
               <div class="theme-preview theme-classic"></div>
               <span>Classic</span>
             </div>
-            <div class="theme-option" data-theme="royal">
+            <div class="theme-option" data-theme="royal" role="radio" tabindex="0" aria-checked="false" aria-label="Royal deck style">
               <div class="theme-preview theme-royal"></div>
               <span>Royal</span>
             </div>
-            <div class="theme-option" data-theme="midnight">
+            <div class="theme-option" data-theme="midnight" role="radio" tabindex="0" aria-checked="false" aria-label="Midnight deck style">
               <div class="theme-preview theme-midnight"></div>
               <span>Midnight</span>
             </div>
-            <div class="theme-option" data-theme="emerald">
+            <div class="theme-option" data-theme="emerald" role="radio" tabindex="0" aria-checked="false" aria-label="Emerald deck style">
               <div class="theme-preview theme-emerald"></div>
               <span>Emerald</span>
             </div>
-            <div class="theme-option" data-theme="crimson">
+            <div class="theme-option" data-theme="crimson" role="radio" tabindex="0" aria-checked="false" aria-label="Crimson deck style">
               <div class="theme-preview theme-crimson"></div>
               <span>Crimson</span>
             </div>
@@ -181,7 +182,7 @@
         <p class="landing-subtitle">A classic card game</p>
         <div class="landing-divider"></div>
         <div id="player-select">
-          <label>Number of Players:</label>
+          <label for="num-players">Number of Players:</label>
           <select id="num-players">
             <option value="2">2 Players (You + 1 AI)</option>
             <option value="3">3 Players (You + 2 AI)</option>

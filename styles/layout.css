@@ -12,7 +12,7 @@
   flex-wrap: wrap;
   align-items: flex-start;
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Compact opponent area for 3-4 players */
@@ -30,6 +30,7 @@
   justify-content: center;
   padding: var(--space-xs);
   min-width: 60px;
+  overflow: visible;
 }
 
 /* Side opponents have vertical card layout */
@@ -93,6 +94,7 @@
   flex-shrink: 1;
   min-width: 0;
   max-width: 100%;
+  overflow: visible;
 }
 
 .opponent-cards .card {
@@ -408,6 +410,51 @@
   grid-column: 1 / -1;
 }
 
+/* Collapsible betting on mobile */
+#betting-toggle {
+  display: none;
+  min-height: 32px;
+  padding: 6px 12px;
+  font-size: 0.7rem;
+  background: linear-gradient(135deg, var(--gold-accent) 0%, var(--gold-dark) 100%);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  grid-column: 1 / -1;
+  justify-self: center;
+  transition: all 0.2s ease;
+}
+
+#betting-toggle:hover {
+  transform: scale(1.02);
+}
+
+#betting-toggle.active {
+  background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-darker) 100%);
+}
+
+@media (max-width: 480px) {
+  #betting-toggle {
+    display: block;
+  }
+
+  #betting-controls {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+  }
+
+  #betting-controls.expanded {
+    max-height: 50px;
+    opacity: 1;
+    padding: 4px 0;
+  }
+}
+
 /* =============================================================
    ACTION BUTTONS RESPONSIVE SYSTEM
    Breakpoints per skill standards: 320px, 480px, 768px, 1024px
@@ -416,47 +463,31 @@
 /* ----- EXTRA SMALL (≤380px) ----- */
 @media (max-width: 380px) {
   #action-buttons {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-      "draw discard"
-      "spread hit"
-      "drop drop"
-      "betting betting";
-    gap: 4px;
-    padding: 6px;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-areas: none;
+    gap: 3px;
+    padding: 4px 3px;
   }
 
-  #btn-draw { grid-area: draw; }
-  #btn-discard { grid-area: discard; }
-  #btn-form-spread { grid-area: spread; }
-  #btn-hit-spread { grid-area: hit; }
-  #btn-knock { grid-area: drop; }
-  #betting-controls { grid-area: betting; }
-
-  #btn-draw,
-  #btn-discard {
-    min-height: 44px;
-    font-size: 0.7rem;
-  }
-
-  #btn-form-spread,
-  #btn-hit-spread,
-  #btn-knock {
-    min-height: 38px;
-    font-size: 0.6rem;
+  #action-buttons button {
+    grid-area: unset;
+    min-height: 36px;
+    font-size: 0.55rem;
     padding: 4px 2px;
+    letter-spacing: 0;
   }
 
   #betting-controls {
+    grid-column: 1 / -1;
     justify-content: center;
-    padding: 4px 0;
-    gap: 4px;
+    padding: 3px 0;
+    gap: 3px;
   }
 
   .raise-btn {
-    min-height: 32px;
-    padding: 4px 8px;
-    font-size: 0.65rem;
+    min-height: 28px;
+    padding: 3px 6px;
+    font-size: 0.6rem;
   }
 
   .bet-label {
@@ -467,47 +498,31 @@
 /* ----- SMALL MOBILE (381px - 480px) ----- */
 @media (min-width: 381px) and (max-width: 480px) {
   #action-buttons {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-      "draw discard"
-      "spread hit"
-      "drop drop"
-      "betting betting";
-    gap: 6px;
-    padding: 8px;
-  }
-
-  #btn-draw { grid-area: draw; }
-  #btn-discard { grid-area: discard; }
-  #btn-form-spread { grid-area: spread; }
-  #btn-hit-spread { grid-area: hit; }
-  #btn-knock { grid-area: drop; }
-  #betting-controls { grid-area: betting; }
-
-  #btn-draw,
-  #btn-discard {
-    min-height: 48px;
-    font-size: 0.8rem;
-  }
-
-  #btn-form-spread,
-  #btn-hit-spread,
-  #btn-knock {
-    min-height: 42px;
-    font-size: 0.7rem;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-areas: none;
+    gap: 4px;
     padding: 6px 4px;
   }
 
+  #action-buttons button {
+    grid-area: unset;
+    min-height: 38px;
+    font-size: 0.65rem;
+    padding: 5px 3px;
+    letter-spacing: 0;
+  }
+
   #betting-controls {
+    grid-column: 1 / -1;
     justify-content: center;
-    padding: 6px 0;
-    gap: 6px;
+    padding: 4px 0;
+    gap: 4px;
   }
 
   .raise-btn {
-    min-height: 36px;
-    padding: 6px 12px;
-    font-size: 0.75rem;
+    min-height: 30px;
+    padding: 4px 8px;
+    font-size: 0.65rem;
   }
 }
 
@@ -937,6 +952,7 @@
     padding: var(--space-base) var(--space-xl);
     row-gap: var(--space-base);
     max-width: 1400px;
+    margin: 0 auto;
   }
 
   .opponent-name {
@@ -1155,18 +1171,18 @@
   :root {
     --card-width: 50px;
     --card-height: 72px;
-    --card-scale-opponent: 0.5;
-    --card-scale-spread: 0.55;
-    --gap-opponent: 5px;
-    --gap-deck: 15px;
-    --gap-buttons: 4px;
-    --gap-player-hand: 4px;
-    --gap-spreads: 6px;
-    --opponent-area-min: 55px;
-    --table-area-min: 80px;
-    --spreads-area-min: 45px;
-    --space-lg: 12px;
-    --space-xl: 20px;
+    --card-scale-opponent: 0.45;
+    --card-scale-spread: 0.5;
+    --gap-opponent: 4px;
+    --gap-deck: 12px;
+    --gap-buttons: 3px;
+    --gap-player-hand: 3px;
+    --gap-spreads: 4px;
+    --opponent-area-min: 45px;
+    --table-area-min: 65px;
+    --spreads-area-min: 35px;
+    --space-lg: 10px;
+    --space-xl: 16px;
     /* Account for wrapped header on small screens */
     --message-area-top: calc(var(--header-height) + 40px + var(--space-base));
   }
@@ -1316,92 +1332,100 @@
 /* ===== LANDSCAPE MOBILE (short screens) ===== */
 @media (max-height: 500px) and (orientation: landscape) {
   :root {
-    --card-width: 45px;
-    --card-height: 65px;
-    --card-scale-opponent: 0.45;
-    --card-scale-spread: 0.5;
-    --gap-opponent: 8px;
-    --gap-buttons: 4px;
-    --gap-deck: 12px;
-    --opponent-area-min: 40px;
-    --table-area-min: 60px;
-    --spreads-area-min: 35px;
-    --space-lg: 10px;
-    --space-xl: 16px;
+    --card-width: 42px;
+    --card-height: 60px;
+    --card-scale-opponent: 0.4;
+    --card-scale-spread: 0.45;
+    --gap-opponent: 4px;
+    --gap-buttons: 3px;
+    --gap-deck: 8px;
+    --opponent-area-min: 30px;
+    --table-area-min: 45px;
+    --spreads-area-min: 25px;
+    --space-lg: 8px;
+    --space-xl: 12px;
   }
 
   #game-container {
-    padding: 2px 4px;
-    row-gap: 2px;
+    padding: 1px 3px;
+    row-gap: 1px;
   }
 
   #game-header {
-    padding: 4px 8px;
+    padding: 3px 6px;
   }
 
   #game-header h1 {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
 
   #player-hand {
-    min-height: 50px;
+    min-height: 45px;
   }
 
   /* Compact deck area in landscape */
   #deck-area {
-    gap: 8px;
+    gap: 6px;
     padding: 1px;
   }
 
   #deck,
   #discard-pile {
-    transform: scale(0.7);
+    transform: scale(0.6);
   }
 
   #game-container[data-player-count="3"] #deck,
   #game-container[data-player-count="3"] #discard-pile,
   #game-container[data-player-count="4"] #deck,
   #game-container[data-player-count="4"] #discard-pile {
-    transform: scale(0.55);
+    transform: scale(0.5);
   }
 
   /* 3-4 player landscape adjustments */
   #game-container[data-player-count="3"] #player-hand {
-    min-height: 45px;
+    min-height: 38px;
   }
 
   #game-container[data-player-count="4"] #player-hand {
-    min-height: 40px;
+    min-height: 32px;
   }
 
-  /* Landscape: single row, compact */
+  /* Landscape: single row, ultra compact */
   #action-buttons {
     grid-template-columns: repeat(5, 1fr);
     grid-template-areas: none;
-    padding: 4px;
-    gap: 4px;
+    padding: 2px;
+    gap: 2px;
   }
 
   #action-buttons button {
     grid-area: unset;
-    min-height: 32px;
-    padding: 4px 6px;
-    font-size: 0.6rem;
+    min-height: 28px;
+    padding: 3px 4px;
+    font-size: 0.55rem;
   }
 
   #betting-controls {
     grid-column: 1 / -1;
+    padding: 2px 0;
+  }
+
+  #betting-toggle {
+    min-height: 26px;
+    padding: 3px 8px;
+    font-size: 0.55rem;
   }
 
   /* Side opponents in landscape */
   .opponent-left-area,
   .opponent-right-area {
-    min-width: 40px;
+    min-width: 30px;
+    padding: 1px;
   }
 
   .opponent-left-area .opponent-name,
   .opponent-right-area .opponent-name {
-    font-size: 0.55rem;
+    font-size: 0.5rem;
     writing-mode: vertical-rl;
     text-orientation: mixed;
   }
