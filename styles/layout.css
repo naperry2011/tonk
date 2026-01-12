@@ -162,14 +162,20 @@
 }
 
 #spreads-area:empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 150px;
-  flex: 0 0 auto;
+  display: none;
+  min-height: 0;
+  min-width: 0;
+  padding: 0;
 }
 
-/* Empty spreads area - no placeholder text needed */
+/* 2-player specific: center deck when spreads empty */
+#game-container[data-player-count="2"] #table-area {
+  justify-content: center;
+}
+
+#game-container[data-player-count="2"] #spreads-area:empty {
+  display: none;
+}
 
 /* Deck area */
 #deck-area {
@@ -422,8 +428,6 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  grid-column: 1 / -1;
-  justify-self: center;
   transition: all 0.2s ease;
 }
 
@@ -435,12 +439,32 @@
   background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold-darker) 100%);
 }
 
+/* Mobile: 3x2 grid layout for cleaner action buttons */
 @media (max-width: 480px) {
-  #betting-toggle {
-    display: block;
+  #action-buttons {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "spread hit drop"
+      "draw discard raise";
+    gap: 6px;
+    padding: 8px 6px;
+  }
+
+  #btn-form-spread { grid-area: spread; }
+  #btn-hit-spread { grid-area: hit; }
+  #btn-knock { grid-area: drop; }
+  #btn-draw { grid-area: draw; }
+  #btn-discard { grid-area: discard; }
+  #betting-toggle { grid-area: raise; display: block; }
+
+  #action-buttons button {
+    min-height: 40px;
+    font-size: 0.7rem;
+    padding: 6px 4px;
   }
 
   #betting-controls {
+    grid-column: 1 / -1;
     max-height: 0;
     overflow: hidden;
     padding: 0;
@@ -463,16 +487,24 @@
 /* ----- EXTRA SMALL (≤380px) ----- */
 @media (max-width: 380px) {
   #action-buttons {
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-areas: none;
-    gap: 3px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "spread hit drop"
+      "draw discard raise";
+    gap: 4px;
     padding: 4px 3px;
   }
 
+  #btn-form-spread { grid-area: spread; }
+  #btn-hit-spread { grid-area: hit; }
+  #btn-knock { grid-area: drop; }
+  #btn-draw { grid-area: draw; }
+  #btn-discard { grid-area: discard; }
+  #betting-toggle { grid-area: raise; display: block; }
+
   #action-buttons button {
-    grid-area: unset;
     min-height: 36px;
-    font-size: 0.55rem;
+    font-size: 0.6rem;
     padding: 4px 2px;
     letter-spacing: 0;
   }
@@ -496,35 +528,7 @@
 }
 
 /* ----- SMALL MOBILE (381px - 480px) ----- */
-@media (min-width: 381px) and (max-width: 480px) {
-  #action-buttons {
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-areas: none;
-    gap: 4px;
-    padding: 6px 4px;
-  }
-
-  #action-buttons button {
-    grid-area: unset;
-    min-height: 38px;
-    font-size: 0.65rem;
-    padding: 5px 3px;
-    letter-spacing: 0;
-  }
-
-  #betting-controls {
-    grid-column: 1 / -1;
-    justify-content: center;
-    padding: 4px 0;
-    gap: 4px;
-  }
-
-  .raise-btn {
-    min-height: 30px;
-    padding: 4px 8px;
-    font-size: 0.65rem;
-  }
-}
+/* Uses the same 3x2 grid as max-width: 480px above */
 
 /* ----- LARGE MOBILE / SMALL TABLET (481px - 767px) ----- */
 @media (min-width: 481px) and (max-width: 767px) {
@@ -532,18 +536,21 @@
     grid-template-columns: repeat(3, 1fr);
     grid-template-areas:
       "spread hit drop"
-      "draw draw discard"
-      "betting betting betting";
+      "draw discard raise";
     gap: 8px;
     padding: 10px;
   }
 
-  #btn-draw { grid-area: draw; }
-  #btn-discard { grid-area: discard; }
   #btn-form-spread { grid-area: spread; }
   #btn-hit-spread { grid-area: hit; }
   #btn-knock { grid-area: drop; }
-  #betting-controls { grid-area: betting; }
+  #btn-draw { grid-area: draw; }
+  #btn-discard { grid-area: discard; }
+  #betting-toggle { grid-area: raise; display: block; }
+
+  #betting-controls {
+    grid-column: 1 / -1;
+  }
 
   #action-buttons button {
     min-height: 44px;

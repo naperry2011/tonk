@@ -125,7 +125,7 @@ body {
 #game-container {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto auto 1fr auto auto;
+  grid-template-rows: auto auto auto 1fr auto;
   grid-template-areas:
     "header"
     "opponent-top"
@@ -1467,21 +1467,30 @@ button:disabled {
 /* Mobile: Adjust 2-player for smaller screens */
 @media (max-width: 480px) {
   #game-container[data-player-count="2"] {
-    --card-scale-player: 0.85;
-    --card-scale-opponent: 0.55;
-    --opponent-area-min: 55px;
-    --spreads-area-min: 45px;
-    --table-area-min: 80px;
-    row-gap: 4px;
+    --card-scale-player: 0.9;
+    --card-scale-opponent: 0.6;
+    --opponent-area-min: 50px;
+    --spreads-area-min: 0;
+    --table-area-min: 0;
+    row-gap: 6px;
   }
 
   #game-container[data-player-count="2"] #opponent-area {
-    min-height: 50px;
+    min-height: 45px;
+    padding: 6px;
+  }
+
+  #game-container[data-player-count="2"] #table-area {
     padding: 4px;
   }
 
   #game-container[data-player-count="2"] #player-hand {
-    min-height: 65px;
+    min-height: 80px;
+    width: 100%;
+  }
+
+  #game-container[data-player-count="2"] #player-area {
+    width: 100%;
   }
 }
 
@@ -1525,21 +1534,26 @@ button:disabled {
 /* Extra small screens */
 @media (max-width: 380px) {
   #game-container[data-player-count="2"] {
-    --card-scale-player: 0.7;
-    --card-scale-opponent: 0.45;
-    --opponent-area-min: 45px;
-    --spreads-area-min: 35px;
-    --table-area-min: 65px;
-    row-gap: 2px;
+    --card-scale-player: 0.8;
+    --card-scale-opponent: 0.5;
+    --opponent-area-min: 40px;
+    --spreads-area-min: 0;
+    --table-area-min: 0;
+    row-gap: 4px;
   }
 
   #game-container[data-player-count="2"] #opponent-area {
-    min-height: 40px;
-    padding: 2px;
+    min-height: 38px;
+    padding: 4px;
   }
 
   #game-container[data-player-count="2"] #player-hand {
-    min-height: 55px;
+    min-height: 70px;
+    width: 100%;
+  }
+
+  #game-container[data-player-count="2"] #player-area {
+    width: 100%;
   }
 
   #game-container[data-player-count="3"] {
