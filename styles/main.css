@@ -1464,6 +1464,27 @@ button:disabled {
 
 /* ==================== MULTI-PLAYER RESPONSIVE ==================== */
 
+/* Mobile: Adjust 2-player for smaller screens */
+@media (max-width: 480px) {
+  #game-container[data-player-count="2"] {
+    --card-scale-player: 0.85;
+    --card-scale-opponent: 0.55;
+    --opponent-area-min: 55px;
+    --spreads-area-min: 45px;
+    --table-area-min: 80px;
+    row-gap: 4px;
+  }
+
+  #game-container[data-player-count="2"] #opponent-area {
+    min-height: 50px;
+    padding: 4px;
+  }
+
+  #game-container[data-player-count="2"] #player-hand {
+    min-height: 65px;
+  }
+}
+
 /* Mobile: Adjust 3-player for smaller screens */
 @media (max-width: 480px) {
   #game-container[data-player-count="3"] {
@@ -1503,6 +1524,24 @@ button:disabled {
 
 /* Extra small screens */
 @media (max-width: 380px) {
+  #game-container[data-player-count="2"] {
+    --card-scale-player: 0.7;
+    --card-scale-opponent: 0.45;
+    --opponent-area-min: 45px;
+    --spreads-area-min: 35px;
+    --table-area-min: 65px;
+    row-gap: 2px;
+  }
+
+  #game-container[data-player-count="2"] #opponent-area {
+    min-height: 40px;
+    padding: 2px;
+  }
+
+  #game-container[data-player-count="2"] #player-hand {
+    min-height: 55px;
+  }
+
   #game-container[data-player-count="3"] {
     --card-scale-player: 0.55;
     --opponent-area-min: 35px;
@@ -1541,6 +1580,24 @@ button:disabled {
 
 /* Landscape mobile: adjust for short screens */
 @media (max-height: 500px) and (orientation: landscape) {
+  #game-container[data-player-count="2"] {
+    --card-scale-player: 0.6;
+    --card-scale-opponent: 0.4;
+    --opponent-area-min: 35px;
+    --spreads-area-min: 30px;
+    --table-area-min: 50px;
+    row-gap: 1px;
+  }
+
+  #game-container[data-player-count="2"] #opponent-area {
+    min-height: 30px;
+    padding: 1px;
+  }
+
+  #game-container[data-player-count="2"] #player-hand {
+    min-height: 45px;
+  }
+
   #game-container[data-player-count="3"] {
     --card-scale-player: 0.5;
     --opponent-area-min: 30px;
