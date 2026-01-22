@@ -2,8 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tonk Card Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Tonk">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0c0e14">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Tonk - A premium card game experience. Play against AI opponents in this classic card game.">
+
+  <!-- iOS Icons -->
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+
+  <title>Tonk - Premium Card Game</title>
+
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link rel="stylesheet" href="/styles/main.css">
   <link rel="stylesheet" href="/styles/cards.css">
   <link rel="stylesheet" href="/styles/layout.css">
@@ -151,17 +167,17 @@
         <div class="settings-section">
           <h3>Deck Style</h3>
           <div class="theme-options" role="radiogroup" aria-label="Deck style options">
-            <div class="theme-option" data-theme="classic" role="radio" tabindex="0" aria-checked="false" aria-label="Classic deck style">
-              <div class="theme-preview theme-classic"></div>
-              <span>Classic</span>
-            </div>
-            <div class="theme-option" data-theme="royal" role="radio" tabindex="0" aria-checked="false" aria-label="Royal deck style">
-              <div class="theme-preview theme-royal"></div>
-              <span>Royal</span>
+            <div class="theme-option selected" data-theme="rosegold" role="radio" tabindex="0" aria-checked="true" aria-label="Rose Gold deck style">
+              <div class="theme-preview theme-rosegold"></div>
+              <span>Rose Gold</span>
             </div>
             <div class="theme-option" data-theme="midnight" role="radio" tabindex="0" aria-checked="false" aria-label="Midnight deck style">
               <div class="theme-preview theme-midnight"></div>
               <span>Midnight</span>
+            </div>
+            <div class="theme-option" data-theme="royal" role="radio" tabindex="0" aria-checked="false" aria-label="Royal deck style">
+              <div class="theme-preview theme-royal"></div>
+              <span>Royal</span>
             </div>
             <div class="theme-option" data-theme="emerald" role="radio" tabindex="0" aria-checked="false" aria-label="Emerald deck style">
               <div class="theme-preview theme-emerald"></div>
@@ -170,6 +186,10 @@
             <div class="theme-option" data-theme="crimson" role="radio" tabindex="0" aria-checked="false" aria-label="Crimson deck style">
               <div class="theme-preview theme-crimson"></div>
               <span>Crimson</span>
+            </div>
+            <div class="theme-option" data-theme="ocean" role="radio" tabindex="0" aria-checked="false" aria-label="Ocean deck style">
+              <div class="theme-preview theme-ocean"></div>
+              <span>Ocean</span>
             </div>
           </div>
         </div>

@@ -1,33 +1,30 @@
-/* Deck Style Themes - CSS-only card back designs */
+/* ================================================
+   TONK - Premium Deck Themes
+   CSS-only card back designs with luxury finishes
+   ================================================ */
 
-/* Theme selection on body */
-[data-deck-theme="classic"] .card.card-back,
+/* ==================== ROSE GOLD (DEFAULT) ==================== */
+
+[data-deck-theme="rosegold"] .card.card-back,
 .card.card-back {
-  /* Classic Blue - Default theme */
   background:
     repeating-linear-gradient(
       45deg,
       transparent,
       transparent 5px,
-      rgba(255, 255, 255, 0.03) 5px,
-      rgba(255, 255, 255, 0.03) 10px
+      rgba(232, 180, 168, 0.04) 5px,
+      rgba(232, 180, 168, 0.04) 10px
     ),
-    repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 5px,
-      rgba(255, 255, 255, 0.03) 5px,
-      rgba(255, 255, 255, 0.03) 10px
-    ),
-    linear-gradient(135deg, #1a365d 0%, #2c5282 50%, #1a365d 100%);
-  border: 3px solid #4a7ab8;
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(232, 180, 168, 0.15) 0%, transparent 60%),
+    linear-gradient(150deg, #1a1e2e 0%, #242937 50%, #1a1e2e 100%);
+  border: 2px solid var(--accent-secondary);
   box-shadow:
-    inset 0 0 20px rgba(0, 0, 0, 0.3),
-    inset 0 0 60px rgba(255, 255, 255, 0.05),
-    0 4px 12px rgba(0, 0, 0, 0.4);
+    inset 0 0 25px rgba(0, 0, 0, 0.4),
+    inset 0 0 60px rgba(232, 180, 168, 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
-[data-deck-theme="classic"] .card.card-back::before,
+[data-deck-theme="rosegold"] .card.card-back::before,
 .card.card-back::before {
   content: '';
   position: absolute;
@@ -35,275 +32,321 @@
   left: 8px;
   right: 8px;
   bottom: 8px;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  border: 1.5px solid rgba(232, 180, 168, 0.25);
+  border-radius: calc(var(--card-radius) - 6px);
   pointer-events: none;
 }
 
-[data-deck-theme="classic"] .card.card-back::after,
+[data-deck-theme="rosegold"] .card.card-back::after,
 .card.card-back::after {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   transform: translate(-50%, -50%) rotate(45deg);
-  background: linear-gradient(135deg, #4a7ab8 0%, #2c5282 100%);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, rgba(232, 180, 168, 0.25), rgba(232, 180, 168, 0.1));
+  border: 1.5px solid rgba(232, 180, 168, 0.4);
+  border-radius: 4px;
   pointer-events: none;
 }
 
-/* Royal Purple - Elegant with gold filigree */
-[data-deck-theme="royal"] .card.card-back {
-  background:
-    radial-gradient(
-      ellipse at 30% 30%,
-      rgba(212, 168, 85, 0.1) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      ellipse at 70% 70%,
-      rgba(212, 168, 85, 0.1) 0%,
-      transparent 50%
-    ),
-    linear-gradient(135deg, #2d1b4e 0%, #4a2c7a 50%, #2d1b4e 100%);
-  border: 3px solid #8b6bb8;
-  box-shadow:
-    inset 0 0 20px rgba(0, 0, 0, 0.4),
-    inset 0 0 40px rgba(139, 107, 184, 0.1),
-    0 4px 12px rgba(0, 0, 0, 0.4);
-}
+/* ==================== MIDNIGHT GOLD ==================== */
 
-[data-deck-theme="royal"] .card.card-back::before {
-  content: '';
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  right: 6px;
-  bottom: 6px;
-  border: 2px solid rgba(212, 168, 85, 0.4);
-  border-radius: 6px;
-  pointer-events: none;
-}
-
-[data-deck-theme="royal"] .card.card-back::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 40px;
-  height: 40px;
-  transform: translate(-50%, -50%);
-  background:
-    radial-gradient(circle, rgba(212, 168, 85, 0.3) 0%, transparent 70%);
-  border: 2px solid rgba(212, 168, 85, 0.5);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-/* Midnight Gold - Art deco inspired */
 [data-deck-theme="midnight"] .card.card-back {
   background:
     repeating-linear-gradient(
       0deg,
       transparent,
-      transparent 8px,
-      rgba(212, 168, 85, 0.08) 8px,
-      rgba(212, 168, 85, 0.08) 9px
+      transparent 10px,
+      rgba(212, 168, 85, 0.05) 10px,
+      rgba(212, 168, 85, 0.05) 11px
     ),
     repeating-linear-gradient(
       90deg,
       transparent,
-      transparent 8px,
-      rgba(212, 168, 85, 0.08) 8px,
-      rgba(212, 168, 85, 0.08) 9px
+      transparent 10px,
+      rgba(212, 168, 85, 0.05) 10px,
+      rgba(212, 168, 85, 0.05) 11px
     ),
-    linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-  border: 3px solid #d4a855;
+    linear-gradient(180deg, #0a0c10 0%, #141820 50%, #0a0c10 100%);
+  border: 2.5px solid var(--gold-primary);
   box-shadow:
-    inset 0 0 30px rgba(0, 0, 0, 0.5),
-    inset 0 0 60px rgba(212, 168, 85, 0.05),
-    0 4px 12px rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(212, 168, 85, 0.1);
+    inset 0 0 30px rgba(0, 0, 0, 0.6),
+    inset 0 0 80px rgba(212, 168, 85, 0.05),
+    0 4px 16px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(212, 168, 85, 0.1);
 }
 
 [data-deck-theme="midnight"] .card.card-back::before {
-  content: '';
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  border: 1px solid rgba(212, 168, 85, 0.3);
-  pointer-events: none;
+  border: 1px solid rgba(212, 168, 85, 0.2);
 }
 
 [data-deck-theme="midnight"] .card.card-back::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  transform: translate(-50%, -50%) rotate(45deg);
-  background: #d4a855;
-  box-shadow: 0 0 10px rgba(212, 168, 85, 0.5);
-  pointer-events: none;
+  width: 22px;
+  height: 22px;
+  background: var(--gold-primary);
+  border: none;
+  box-shadow: 0 0 15px rgba(212, 168, 85, 0.5);
 }
 
-/* Emerald Green - Celtic-inspired */
+/* ==================== ROYAL VELVET ==================== */
+
+[data-deck-theme="royal"] .card.card-back {
+  background:
+    radial-gradient(ellipse 50% 40% at 25% 25%, rgba(212, 168, 85, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 75% 75%, rgba(212, 168, 85, 0.1) 0%, transparent 50%),
+    linear-gradient(145deg, #1a1228 0%, #2d1f4a 45%, #1a1228 100%);
+  border: 2px solid #7c5cbd;
+  box-shadow:
+    inset 0 0 25px rgba(0, 0, 0, 0.5),
+    inset 0 0 50px rgba(124, 92, 189, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+[data-deck-theme="royal"] .card.card-back::before {
+  border: 2px solid rgba(212, 168, 85, 0.3);
+  border-radius: 6px;
+}
+
+[data-deck-theme="royal"] .card.card-back::after {
+  width: 36px;
+  height: 36px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(212, 168, 85, 0.25) 0%, transparent 70%);
+  border: 2px solid rgba(212, 168, 85, 0.4);
+  border-radius: 50%;
+}
+
+/* ==================== EMERALD ISLE ==================== */
+
 [data-deck-theme="emerald"] .card.card-back {
   background:
-    radial-gradient(
-      circle at 25% 25%,
-      rgba(192, 192, 192, 0.1) 0%,
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 75% 75%,
-      rgba(192, 192, 192, 0.1) 0%,
-      transparent 30%
-    ),
-    linear-gradient(135deg, #064e3b 0%, #047857 50%, #064e3b 100%);
-  border: 3px solid #a7c4bc;
+    radial-gradient(circle at 30% 30%, rgba(167, 196, 188, 0.1) 0%, transparent 35%),
+    radial-gradient(circle at 70% 70%, rgba(167, 196, 188, 0.1) 0%, transparent 35%),
+    linear-gradient(145deg, #0a2118 0%, #145238 45%, #0a2118 100%);
+  border: 2px solid #5a9a82;
   box-shadow:
-    inset 0 0 20px rgba(0, 0, 0, 0.3),
-    inset 0 0 50px rgba(167, 196, 188, 0.08),
-    0 4px 12px rgba(0, 0, 0, 0.4);
+    inset 0 0 25px rgba(0, 0, 0, 0.4),
+    inset 0 0 60px rgba(90, 154, 130, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 [data-deck-theme="emerald"] .card.card-back::before {
-  content: '';
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  right: 8px;
-  bottom: 8px;
-  border: 2px solid rgba(192, 192, 192, 0.25);
+  border: 2px solid rgba(167, 196, 188, 0.2);
   border-radius: 8px;
-  pointer-events: none;
 }
 
 [data-deck-theme="emerald"] .card.card-back::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 35px;
-  height: 35px;
+  width: 30px;
+  height: 30px;
   transform: translate(-50%, -50%);
-  border: 3px solid rgba(192, 192, 192, 0.4);
+  background: transparent;
+  border: 3px solid rgba(167, 196, 188, 0.35);
   border-radius: 50%;
-  pointer-events: none;
 }
 
-/* Crimson Red - Vegas high-roller */
+/* ==================== CRIMSON CLUB ==================== */
+
 [data-deck-theme="crimson"] .card.card-back {
   background:
     repeating-linear-gradient(
       135deg,
       transparent,
-      transparent 10px,
-      rgba(0, 0, 0, 0.1) 10px,
-      rgba(0, 0, 0, 0.1) 20px
+      transparent 12px,
+      rgba(0, 0, 0, 0.15) 12px,
+      rgba(0, 0, 0, 0.15) 24px
     ),
-    linear-gradient(135deg, #4a0e0e 0%, #8b1a1a 50%, #4a0e0e 100%);
-  border: 3px solid #d44444;
+    linear-gradient(145deg, #2a0a0a 0%, #5a1a1a 45%, #2a0a0a 100%);
+  border: 2px solid #cc4444;
   box-shadow:
-    inset 0 0 25px rgba(0, 0, 0, 0.4),
-    inset 0 0 50px rgba(212, 68, 68, 0.1),
-    0 4px 12px rgba(0, 0, 0, 0.4);
+    inset 0 0 30px rgba(0, 0, 0, 0.5),
+    inset 0 0 60px rgba(204, 68, 68, 0.1),
+    0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 [data-deck-theme="crimson"] .card.card-back::before {
-  content: '';
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  right: 6px;
-  bottom: 6px;
-  border: 2px solid rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-  pointer-events: none;
+  border: 2px solid rgba(204, 68, 68, 0.2);
+  border-radius: 5px;
 }
 
 [data-deck-theme="crimson"] .card.card-back::after {
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #cc4444, #8b1a1a);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+
+/* ==================== OCEAN BLUE ==================== */
+
+[data-deck-theme="ocean"] .card.card-back {
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 100% 80% at 50% 100%, rgba(14, 165, 233, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #0c1929 0%, #1a365d 50%, #0c1929 100%);
+  border: 2px solid #4a8fd4;
+  box-shadow:
+    inset 0 0 25px rgba(0, 0, 0, 0.4),
+    inset 0 0 60px rgba(59, 130, 246, 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+[data-deck-theme="ocean"] .card.card-back::before {
+  border: 1.5px solid rgba(74, 143, 212, 0.2);
+  border-radius: 4px;
+}
+
+[data-deck-theme="ocean"] .card.card-back::after {
+  width: 26px;
+  height: 26px;
+  background: transparent;
+  border: 2px solid rgba(74, 143, 212, 0.4);
+  border-radius: 50%;
+}
+
+/* ==================== THEME PREVIEW CARDS ==================== */
+
+.theme-preview {
+  width: 48px;
+  height: 68px;
+  border-radius: 6px;
+  position: relative;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  overflow: hidden;
+}
+
+.theme-preview:hover {
+  transform: scale(1.08);
+}
+
+.theme-preview.selected {
+  box-shadow:
+    0 0 0 3px var(--accent-primary),
+    0 0 20px var(--accent-glow);
+}
+
+/* Preview inner decoration */
+.theme-preview::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+.theme-preview::after {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 24px;
-  height: 24px;
+  width: 12px;
+  height: 12px;
   transform: translate(-50%, -50%) rotate(45deg);
-  background: linear-gradient(135deg, #d44444 0%, #8b1a1a 100%);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
   pointer-events: none;
 }
 
-/* Theme Preview Cards (for settings modal) */
-.theme-preview {
-  width: 50px;
-  height: 70px;
-  border-radius: 6px;
-  position: relative;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.theme-preview.theme-rosegold {
+  background: linear-gradient(150deg, #1a1e2e 0%, #242937 100%);
+  border: 2px solid var(--accent-secondary);
 }
 
-.theme-preview:hover {
-  transform: scale(1.1);
-}
-
-.theme-preview.selected {
-  box-shadow: 0 0 0 3px var(--gold-accent), 0 0 15px rgba(212, 168, 85, 0.4);
-}
-
-.theme-preview.theme-classic {
-  background: linear-gradient(135deg, #1a365d 0%, #2c5282 50%, #1a365d 100%);
-  border: 2px solid #4a7ab8;
-}
-
-.theme-preview.theme-royal {
-  background: linear-gradient(135deg, #2d1b4e 0%, #4a2c7a 50%, #2d1b4e 100%);
-  border: 2px solid #8b6bb8;
+.theme-preview.theme-rosegold::after {
+  background: rgba(232, 180, 168, 0.3);
+  border-color: var(--accent-primary);
 }
 
 .theme-preview.theme-midnight {
-  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
-  border: 2px solid #d4a855;
+  background: linear-gradient(180deg, #0a0c10 0%, #141820 100%);
+  border: 2px solid var(--gold-primary);
+}
+
+.theme-preview.theme-midnight::after {
+  background: var(--gold-primary);
+  box-shadow: 0 0 8px rgba(212, 168, 85, 0.5);
+}
+
+.theme-preview.theme-royal {
+  background: linear-gradient(145deg, #1a1228 0%, #2d1f4a 100%);
+  border: 2px solid #7c5cbd;
+}
+
+.theme-preview.theme-royal::after {
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 168, 85, 0.3) 0%, transparent 70%);
+  border-color: rgba(212, 168, 85, 0.5);
 }
 
 .theme-preview.theme-emerald {
-  background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #064e3b 100%);
-  border: 2px solid #a7c4bc;
+  background: linear-gradient(145deg, #0a2118 0%, #145238 100%);
+  border: 2px solid #5a9a82;
+}
+
+.theme-preview.theme-emerald::after {
+  border-radius: 50%;
+  background: transparent;
+  border-color: rgba(167, 196, 188, 0.4);
 }
 
 .theme-preview.theme-crimson {
-  background: linear-gradient(135deg, #4a0e0e 0%, #8b1a1a 50%, #4a0e0e 100%);
-  border: 2px solid #d44444;
+  background: linear-gradient(145deg, #2a0a0a 0%, #5a1a1a 100%);
+  border: 2px solid #cc4444;
 }
 
-/* Settings Panel Styles */
+.theme-preview.theme-crimson::after {
+  background: linear-gradient(135deg, #cc4444, #8b1a1a);
+  border-radius: 1px;
+}
+
+.theme-preview.theme-ocean {
+  background: linear-gradient(180deg, #0c1929 0%, #1a365d 100%);
+  border: 2px solid #4a8fd4;
+}
+
+.theme-preview.theme-ocean::after {
+  border-radius: 50%;
+  background: transparent;
+  border-color: rgba(74, 143, 212, 0.5);
+}
+
+/* ==================== SETTINGS PANEL ==================== */
+
 #settings-modal .modal-content {
-  max-width: min(400px, calc(100vw - var(--space-lg) * 2));
+  max-width: min(420px, calc(100vw - var(--space-6)));
 }
 
 .settings-section {
-  margin-bottom: 25px;
+  margin-bottom: var(--space-6);
+}
+
+.settings-section:last-child {
+  margin-bottom: 0;
 }
 
 .settings-section h3 {
-  color: var(--gold-accent);
-  margin-bottom: 15px;
-  font-size: 1rem;
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-bottom: var(--space-4);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.08em;
 }
 
 .theme-options {
   display: flex;
-  gap: 15px;
+  gap: var(--space-3);
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -312,43 +355,68 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: 12px;
   cursor: pointer;
-  padding: 10px;
-  border-radius: 8px;
-  transition: background 0.2s ease;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  min-width: 70px;
 }
 
 .theme-option:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg);
 }
 
 .theme-option.selected {
-  background: rgba(212, 168, 85, 0.15);
+  background: var(--glass-highlight);
 }
 
 .theme-option span {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.03em;
+  text-align: center;
 }
 
 .theme-option.selected span {
-  color: var(--gold-accent);
+  color: var(--accent-primary);
+  font-weight: 600;
 }
 
-/* Focus styles for keyboard navigation */
+/* Focus states for accessibility */
 .theme-option:focus {
-  outline: 2px solid var(--gold-accent);
-  outline-offset: 2px;
-}
-
-.theme-option:focus:not(:focus-visible) {
   outline: none;
 }
 
 .theme-option:focus-visible {
-  outline: 2px solid var(--gold-accent);
+  outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 480px) {
+  .theme-preview {
+    width: 42px;
+    height: 60px;
+  }
+
+  .theme-preview::after {
+    width: 10px;
+    height: 10px;
+  }
+
+  .theme-option {
+    padding: var(--space-2);
+    min-width: 60px;
+  }
+
+  .theme-option span {
+    font-size: 0.6rem;
+  }
+
+  .theme-options {
+    gap: var(--space-2);
+  }
 }
