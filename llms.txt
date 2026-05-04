@@ -1,0 +1,54 @@
+# Tonk Card Game
+
+> Browser-based Tonk (Tunk) card game with AI opponents, built with vanilla JavaScript and Vite.
+
+## Project Overview
+
+**Tech Stack:** HTML5, CSS3, Vanilla JavaScript (ES6 modules), Vite
+**Status:** Active Development
+**Purpose:** Single-player card game for browser play against 1-3 AI opponents
+
+## Core Documentation
+
+- `README.md` — Setup and getting started
+- `CLAUDE.md` — AI assistant instructions, build commands, architecture
+- `CODE_MAP.md` — Feature-to-file map
+- `docs/ai/memory.md` — Project history and current state
+- `docs/ai/roadmap.md` — Forward-looking priorities
+- `docs/ai/tasks.md` — Active work
+- `docs/ai/decisions.md` — Architecture decisions
+- `docs/ai/architecture.md` — System design
+- `ENTRY_POINTS.md` — Where execution starts
+- `DATA_FLOW.md` — System-level data movement
+- `FEATURE_BOUNDARIES.md` — Component responsibilities
+
+## Key Files by Area
+
+### Game Logic
+- `src/game/Game.js` — Main game controller, state machine, event emitter
+- `src/game/rules.js` — Constants, phases, win conditions
+- `src/game/ComputerPlayer.js` — AI decision-making
+- `src/game/Spread.js` — Spread validation (books/runs)
+- `src/game/Player.js` — Hand and chip management
+- `src/game/Deck.js` — Deck and discard pile
+- `src/game/Card.js` — Card representation
+
+### UI
+- `src/ui/GameUI.js` — DOM rendering, input handling, modals
+- `src/ui/CardRenderer.js` — Card element factory
+- `src/ui/CardLayoutManager.js` — Responsive card sizing
+- `src/ui/animations.js` — CSS animation utilities
+
+### Utilities
+- `src/utils/storage.js` — localStorage persistence
+- `src/utils/helpers.js` — General utilities
+
+## Common Tasks
+
+**To run dev server:** `npm run dev` (serves at localhost:5173)
+**To build:** `npm run build` (outputs to dist/)
+**To debug:** Access `window.game` and `window.ui` in browser console during dev
+
+## Environment Variables
+
+- None required
