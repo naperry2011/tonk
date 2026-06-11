@@ -1,4 +1,3 @@
-import { RANKS } from './Card.js';
 import { MIN_SPREAD_SIZE } from './rules.js';
 
 /**
@@ -151,7 +150,7 @@ export function findPossibleSpreads(cards) {
 
   // Find books (same rank)
   const byRank = groupCardsByRank(cards);
-  for (const [rank, rankCards] of Object.entries(byRank)) {
+  for (const rankCards of Object.values(byRank)) {
     if (rankCards.length >= MIN_SPREAD_SIZE) {
       spreads.push({
         type: 'book',
@@ -162,7 +161,7 @@ export function findPossibleSpreads(cards) {
 
   // Find runs (sequential same suit)
   const bySuit = groupCardsBySuit(cards);
-  for (const [suit, suitCards] of Object.entries(bySuit)) {
+  for (const suitCards of Object.values(bySuit)) {
     const runs = findConsecutiveRuns(suitCards);
     spreads.push(...runs.map(runCards => ({
       type: 'run',

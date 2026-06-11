@@ -21,14 +21,17 @@ Running history of what's been built and current state. Update after major chang
 - Theme persistence via localStorage (stored in `tonk_settings.deckTheme`; other settings fields have defaults but no UI yet)
 
 ### Known Issues
-- No linting or testing framework configured
 - No save/load of active game state (new game each session; `tonk_game_state` API exists in storage.js but is unused)
-- `src/ui/animations.js` and `src/utils/helpers.js` are dead modules (never imported)
 
 ### In Progress
-- Working through codebase audit findings (see docs/audit/report.md)
+- Audit Horizon 2 complete (tests, lint, CI); next phase planning underway (see docs/audit/report.md Horizon 3)
 
 ## Implementation History
+
+### 2026-06-10 - Audit Horizon 2: Tests, Lint, CI
+**What was built:** Vitest with 60 tests over src/game/ (Card, Spread, rules, Player, Deck, Game), ESLint flat config (16 issues found and fixed, including 5 dead imports/vars), GitHub Actions CI (lint + test + build), deleted dead modules animations.js and helpers.js
+**Why:** Audit F-002 (no tests/lint/CI was the top operational gap) and F-005 (dead code)
+**Files affected:** tests/, eslint.config.js, .github/workflows/ci.yml, package.json, src/game/, src/ui/GameUI.js, src/utils/storage.js
 
 ### 2026-06-10 - Codebase Audit + Horizon 1 Fixes
 **What was built:** Full engineering audit (docs/audit/), then fixes: npm audit clean (was 4 vulns), statistics wired into gameOver and displayed in settings modal, dist/ untracked and gitignored, MIT LICENSE added, doc drift corrected (localStorage keys, theme list)

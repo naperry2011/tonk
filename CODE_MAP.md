@@ -41,7 +41,6 @@ Primary Files:
 * src/ui/GameUI.js - Main UI controller, event subscriptions, input handling, modals
 * src/ui/CardRenderer.js - Card DOM element factory (face-up, face-down, spreads)
 * src/ui/CardLayoutManager.js - Responsive card sizing via ResizeObserver
-* src/ui/animations.js - CSS-based animation utilities (deal, flip, move, shake, pulse) — not currently imported
 
 Supporting Files:
 * index.html - Game structure, modal templates
@@ -69,12 +68,12 @@ localStorage Keys:
 
 ---
 
-## Utilities
+## Tests
 
 Category: Other
 
 Primary Files:
-* src/utils/helpers.js - generateId, shuffleArray, delay, debounce, clamp, isMobile
+* tests/Card.test.js, tests/Spread.test.js, tests/rules.test.js, tests/Player.test.js, tests/Deck.test.js, tests/Game.test.js - Vitest suites over src/game/
 
 ---
 
@@ -84,7 +83,10 @@ Category: Infra
 
 Primary Files:
 * vite.config.js - Vite configuration
-* package.json - Project metadata, scripts
+* eslint.config.js - ESLint flat config
+* package.json - Project metadata, scripts (dev, build, preview, test, lint)
+* .github/workflows/ci.yml - CI: install, lint, test, build
 
 External Integrations:
-* Vite (dev dependency only)
+* Vite, Vitest, ESLint (dev dependencies only)
+* GitHub Actions

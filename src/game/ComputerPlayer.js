@@ -1,5 +1,5 @@
 import { Player } from './Player.js';
-import { Spread, findPossibleSpreads } from './Spread.js';
+import { findPossibleSpreads } from './Spread.js';
 import { BETTING } from './rules.js';
 
 /**
@@ -285,8 +285,8 @@ export class ComputerPlayer extends Player {
 
     const points = this.calculatePoints();
     const spreadPotential = this.countSpreadPotential();
-    let raiseChance = 0;
-    let maxRaiseIndex = 0;
+    let raiseChance;
+    let maxRaiseIndex;
 
     // Strong hand (can form spreads) - higher chance to raise
     if (spreadPotential > 0) {

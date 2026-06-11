@@ -26,7 +26,7 @@ Browser-based Tonk card game. Single-page application served as static files. Al
 ### UI Layer (src/ui/)
 - **Responsibility:** DOM rendering, user input, animations, modals
 - **Tech:** Vanilla JS DOM manipulation, CSS animations
-- **Key files:** GameUI.js, CardRenderer.js, CardLayoutManager.js, animations.js
+- **Key files:** GameUI.js, CardRenderer.js, CardLayoutManager.js
 - **Depends on:** Game engine (via event subscription)
 
 ### Persistence (src/utils/storage.js)

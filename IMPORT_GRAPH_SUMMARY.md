@@ -35,10 +35,9 @@ main.js
 
 * Game logic (src/game/) has zero DOM dependencies
 * UI layer (src/ui/) imports Spread.js from game layer (read-only validation)
-* CardRenderer.js, CardLayoutManager.js, animations.js are fully self-contained
-* animations.js is not imported by any src file (unused module)
+* CardRenderer.js and CardLayoutManager.js are fully self-contained
 * storage.js is fully self-contained
-* helpers.js is fully self-contained (not imported by any src file directly)
+* (animations.js and helpers.js were dead modules, deleted 2026-06-10)
 
 ## Potential Refactor Risk Areas
 

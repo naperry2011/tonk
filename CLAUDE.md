@@ -9,9 +9,11 @@ npm install        # Install dependencies
 npm run dev        # Start Vite dev server (http://localhost:5173)
 npm run build      # Bundle to dist/
 npm run preview    # Preview production build
+npm test           # Run Vitest suites (tests/)
+npm run lint       # Run ESLint
 ```
 
-No linting or testing framework is configured.
+CI (GitHub Actions) runs lint, test, and build on every push and PR to main.
 
 ## Architecture Overview
 

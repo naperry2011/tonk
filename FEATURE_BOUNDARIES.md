@@ -135,12 +135,12 @@ Isolation Level: Moderate (tightly coupled to Game via events)
 
 ---
 
-## Rendering (src/ui/CardRenderer.js, CardLayoutManager.js, animations.js)
+## Rendering (src/ui/CardRenderer.js, CardLayoutManager.js)
 
 Owns:
 * Card DOM element creation
 * Responsive card sizing and overlap
-* Animation effects (deal, flip, move, shake, pulse, fade)
+* Animation effects (CSS-driven, in styles/)
 
 Does NOT Own:
 * When to render (GameUI decides)

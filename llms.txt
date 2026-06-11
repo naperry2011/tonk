@@ -34,19 +34,22 @@
 - `src/game/Card.js` — Card representation
 
 ### UI
-- `src/ui/GameUI.js` — DOM rendering, input handling, modals
+- `src/ui/GameUI.js` — DOM rendering, input handling, modals, stats display
 - `src/ui/CardRenderer.js` — Card element factory
 - `src/ui/CardLayoutManager.js` — Responsive card sizing
-- `src/ui/animations.js` — CSS animation utilities
 
 ### Utilities
 - `src/utils/storage.js` — localStorage persistence
-- `src/utils/helpers.js` — General utilities
+
+### Tests
+- `tests/*.test.js` — Vitest suites over the game logic
 
 ## Common Tasks
 
 **To run dev server:** `npm run dev` (serves at localhost:5173)
 **To build:** `npm run build` (outputs to dist/)
+**To test:** `npm test` (Vitest)
+**To lint:** `npm run lint` (ESLint)
 **To debug:** Access `window.game` and `window.ui` in browser console during dev
 
 ## Environment Variables

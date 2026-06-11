@@ -712,7 +712,6 @@ export class GameUI {
     const isPlayerTurn = this.game.getCurrentPlayer() === player;
     const inActionPhase = this.game.phase === PHASES.ACTION;
     const inStartPhase = this.game.phase === PHASES.START_OF_TURN;
-    const inDrawPhase = this.game.phase === PHASES.DRAW;
     const canActOnCards = inActionPhase || inStartPhase;
 
     // Form Spread button (allowed in START_OF_TURN and ACTION phases)
@@ -937,7 +936,7 @@ export class GameUI {
         try {
           this.game.knock();
           return;
-        } catch (error) {
+        } catch {
           // Can't knock, continue with normal turn
         }
       }
@@ -952,7 +951,7 @@ export class GameUI {
             await this.delay(500);
 
             if (this.game.isGameOver()) return;
-          } catch (error) {
+          } catch {
             // Skip invalid spread
           }
         }
@@ -969,7 +968,7 @@ export class GameUI {
               await this.delay(400);
 
               if (this.game.isGameOver()) return;
-            } catch (error) {
+            } catch {
               // Skip invalid hit
             }
           }
@@ -1008,7 +1007,7 @@ export class GameUI {
 
           // Check if game ended
           if (this.game.isGameOver()) return;
-        } catch (error) {
+        } catch {
           // Skip invalid spread
         }
       }
@@ -1025,7 +1024,7 @@ export class GameUI {
             await this.delay(400);
 
             if (this.game.isGameOver()) return;
-          } catch (error) {
+          } catch {
             // Skip invalid hit
           }
         }
@@ -1060,7 +1059,7 @@ export class GameUI {
     const potWinnings = this.game.awardPot(winner);
 
     // Apply round scoring
-    const losers = this.game.applyRoundScoring();
+    this.game.applyRoundScoring();
 
     // Check if match has ended
     const matchEnded = this.game.checkMatchEnd();
@@ -1080,7 +1079,7 @@ export class GameUI {
       this.elements.gameOverTitle.textContent = `Round ${this.game.roundNumber} - ${isHumanWinner ? 'You Win!' : 'You Lose!'}`;
 
       // Set message based on condition
-      let message = '';
+      let message;
       switch (condition) {
         case 'tonk':
           message = `${winner.isHuman ? 'You went' : winner.name + ' went'} out with an empty hand!`;
