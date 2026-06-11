@@ -45,9 +45,9 @@ In dev mode (`npm run dev`), `window.game` and `window.ui` are available for con
 
 ### localStorage Keys
 
-- `tonk_deck_theme` - Selected card theme
-- `tonk_statistics` - Win/loss stats
-- `tonk_settings` - User preferences
+- `tonk_settings` - User preferences, including the selected deck theme (`deckTheme`)
+- `tonk_statistics` - Win/loss stats, recorded on each round's gameOver
+- `tonk_game_state` - Reserved in storage.js for save/load; not currently used
 
 ## Game Rules Quick Reference
 

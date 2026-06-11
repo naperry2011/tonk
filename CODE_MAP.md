@@ -41,7 +41,7 @@ Primary Files:
 * src/ui/GameUI.js - Main UI controller, event subscriptions, input handling, modals
 * src/ui/CardRenderer.js - Card DOM element factory (face-up, face-down, spreads)
 * src/ui/CardLayoutManager.js - Responsive card sizing via ResizeObserver
-* src/ui/animations.js - CSS-based animation utilities (deal, flip, move, shake, pulse)
+* src/ui/animations.js - CSS-based animation utilities (deal, flip, move, shake, pulse) — not currently imported
 
 Supporting Files:
 * index.html - Game structure, modal templates
@@ -63,9 +63,9 @@ External Integrations:
 * Browser localStorage
 
 localStorage Keys:
-* tonk_deck_theme
+* tonk_settings (includes deckTheme)
 * tonk_statistics
-* tonk_settings
+* tonk_game_state (reserved, unused)
 
 ---
 

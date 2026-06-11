@@ -167,6 +167,6 @@ Does NOT Own:
 * Data format definitions (uses own defaults)
 
 Communicates With:
-* GameUI.js (called by)
+* GameUI.js (called by — theme, statistics recording, and statistics display; saveGameState/loadGameState APIs currently uncalled)
 
 Isolation Level: Strong

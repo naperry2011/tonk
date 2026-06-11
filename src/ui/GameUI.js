@@ -2,7 +2,7 @@ import { CardRenderer } from './CardRenderer.js';
 import { CardLayoutManager } from './CardLayoutManager.js';
 import { Spread } from '../game/Spread.js';
 import { PHASES } from '../game/rules.js';
-import { loadDeckTheme, saveDeckTheme } from '../utils/storage.js';
+import { loadDeckTheme, saveDeckTheme, loadStatistics, updateStatistics } from '../utils/storage.js';
 
 /**
  * Main UI controller for the game
@@ -70,6 +70,7 @@ export class GameUI {
       settingsModal: document.getElementById('settings-modal'),
       btnSettings: document.getElementById('btn-settings'),
       btnCloseSettings: document.getElementById('btn-close-settings'),
+      statsDisplay: document.getElementById('stats-display'),
       themeOptions: document.querySelectorAll('.theme-option'),
       // Betting elements
       chipDisplay: document.getElementById('chip-display'),
@@ -157,6 +158,7 @@ export class GameUI {
 
     // Settings modal
     this.elements.btnSettings.addEventListener('click', () => {
+      this.renderStatistics();
       this.openModal(this.elements.settingsModal, this.elements.btnCloseSettings);
     });
 
@@ -1048,6 +1050,12 @@ export class GameUI {
     const { winner, condition, knocker } = data;
     const isHumanWinner = winner.isHuman;
 
+    // Record round statistics. 'caught' only counts against the human
+    // when the human was the knocker who got caught.
+    const statCondition =
+      condition === 'caught' && !isHumanWinner && !knocker?.isHuman ? null : condition;
+    updateStatistics(isHumanWinner, statCondition, winner.calculatePoints());
+
     // Award pot to winner
     const potWinnings = this.game.awardPot(winner);
 
@@ -1139,6 +1147,46 @@ export class GameUI {
     }
 
     this.elements.gameOverModal.classList.remove('hidden');
+  }
+
+  /**
+   * Render lifetime statistics into the settings modal
+   */
+  renderStatistics() {
+    if (!this.elements.statsDisplay) return;
+
+    const stats = loadStatistics();
+    const winRate = stats.gamesPlayed > 0
+      ? Math.round((stats.gamesWon / stats.gamesPlayed) * 100)
+      : 0;
+
+    const rows = [
+      ['Rounds played', stats.gamesPlayed],
+      ['Rounds won', stats.gamesWon],
+      ['Win rate', `${winRate}%`],
+      ['Tonks', stats.tonks],
+      ['Winning knocks', stats.knocks],
+      ['Caught knocking', stats.caughtKnocking],
+      ['Current win streak', stats.currentWinStreak],
+      ['Longest win streak', stats.longestWinStreak]
+    ];
+
+    this.elements.statsDisplay.innerHTML = '';
+    for (const [label, value] of rows) {
+      const row = document.createElement('div');
+      row.className = 'stat-row';
+
+      const labelEl = document.createElement('span');
+      labelEl.className = 'stat-label';
+      labelEl.textContent = label;
+
+      const valueEl = document.createElement('span');
+      valueEl.className = 'stat-value';
+      valueEl.textContent = String(value);
+
+      row.append(labelEl, valueEl);
+      this.elements.statsDisplay.appendChild(row);
+    }
   }
 
   /**

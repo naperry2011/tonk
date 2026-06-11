@@ -20,13 +20,16 @@ Downstream Consumers: Browser rendering engine
 
 Key Events:
 * gameInitialized → full UI setup
-* turnStart → enable/disable controls
+* roundStart / cardsDealt → deal animation, hand render
+* turnStart / turnEnd → enable/disable controls
+* phaseChanged → control state updates
 * cardDrawn → re-render hand
 * cardDiscarded → re-render hand, discard pile
 * spreadLaid → render spread area
 * spreadHit → update spread display
-* knock → trigger scoring
-* gameOver → show modal, update stats
+* knock / initialTonkDraw → trigger scoring
+* gameOver → show modal
+* antesCollected / betPlaced / potAwarded → betting UI updates
 
 ---
 
@@ -43,20 +46,20 @@ Downstream Consumers: Game.js emits events → GameUI renders
 ## Statistics Persistence
 
 Source: Game.js gameOver event
-Transport: GameUI handler calls storage functions
+Transport: GameUI.showGameOver() calls updateStatistics()
 Processor: storage.js updateStatistics()
 Storage: localStorage (tonk_statistics)
-Downstream Consumers: Stats display in UI
+Downstream Consumers: Stats display in settings modal (GameUI.renderStatistics())
 
 ---
 
-## Settings Persistence
+## Settings Persistence (theme only)
 
-Source: User changes in settings modal
-Transport: GameUI handler calls storage functions
-Processor: storage.js saveSettings()
-Storage: localStorage (tonk_settings)
-Downstream Consumers: GameUI reads on init
+Source: User selects deck theme in settings modal
+Transport: GameUI calls saveDeckTheme() → updateSetting() → saveSettings()
+Storage: localStorage (tonk_settings, deckTheme field)
+Downstream Consumers: GameUI.initializeTheme() on load
+Note: other settings fields (sound, difficulty, hints) have defaults in storage.js but no UI
 
 ---
 
@@ -64,6 +67,6 @@ Downstream Consumers: GameUI reads on init
 
 Source: User selects deck theme
 Transport: GameUI handler
-Processor: storage.js saveDeckTheme()
-Storage: localStorage (tonk_deck_theme)
+Processor: storage.js saveDeckTheme() (stores into tonk_settings)
+Storage: localStorage (tonk_settings)
 Downstream Consumers: CardRenderer applies CSS classes
