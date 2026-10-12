@@ -1,6 +1,7 @@
 // Generates the game's sound effects as 16-bit mono WAVs in assets/sfx/.
 // Fully synthesized (no samples), so the output is ours to ship.
 // Usage (from app/): node tool/gen_sfx.mjs
+import { Buffer } from 'node:buffer';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';

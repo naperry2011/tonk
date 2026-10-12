@@ -3,7 +3,8 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['dist/', 'node_modules/', 'docs/']
+    // app/ is the Flutter project; it has its own analyzer (flutter analyze).
+    ignores: ['dist/', 'node_modules/', 'docs/', 'app/']
   },
   js.configs.recommended,
   {
