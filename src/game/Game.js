@@ -105,9 +105,11 @@ export class Game {
   /**
    * Deal cards and check for initial tonk, redealing if multiple players have 49-50
    */
-  dealAndCheckInitialTonk() {
-    // Collect antes before dealing
-    this.collectAntes();
+  dealAndCheckInitialTonk(collectAntes = true) {
+    // Antes are collected once per round; a redeal keeps the existing pot
+    if (collectAntes) {
+      this.collectAntes();
+    }
 
     this.deal();
 
@@ -124,7 +126,7 @@ export class Game {
         player.reset();
       }
       this.deck = new Deck();
-      this.dealAndCheckInitialTonk(); // Recursive redeal
+      this.dealAndCheckInitialTonk(false); // Recursive redeal
     } else if (playersWithTonk.length === 1) {
       // Single player has initial tonk - they win
       this.winner = playersWithTonk[0];

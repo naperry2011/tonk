@@ -1,10 +1,15 @@
-# Tonk Card Game
+# Tonk
 
-A browser-based implementation of the classic Tonk card game, featuring single-player gameplay against AI opponents.
+The classic Tonk card game, two ways:
+
+- **Mobile app** (`app/`): Flutter for Android and iOS. Solo play against AI characters with personality and table talk, betting with folds, progression, and a daily challenge.
+- **Web game** (repo root): the original browser version in vanilla JavaScript.
+
+Both play against computer opponents, offline, with no accounts and no data collected.
 
 ## About the Game
 
-Tonk (also known as Tunk) is a fast-paced rummy-style card game where the objective is to be the first player to get rid of all your cards by forming spreads (sets and runs) or have the lowest point total when someone drops.
+Tonk (also known as Tunk) is a fast-paced rummy-style card game. Get rid of all your cards by forming spreads, or have the lowest hand when someone drops.
 
 ### Card Values
 - **Ace**: 1 point
@@ -12,110 +17,109 @@ Tonk (also known as Tunk) is a fast-paced rummy-style card game where the object
 - **J, Q, K**: 10 points each
 
 ### Key Rules
-- **Spreads**: Form books (3-4 cards of same rank) or runs (3+ sequential cards of same suit)
-- **Drop**: At the start of your turn, claim lowest points - but if you're wrong, you lose!
-- **Initial Tonk**: Start with 49 or 50 points for an automatic win
-- **Match Play**: First player to reach 100 points loses the match
+- **Spreads**: Books (3-4 cards of the same rank) or runs (3+ sequential cards of the same suit). You can also hit (add to) any spread on the table.
+- **Knock / drop**: At the start of your turn, claim the lowest hand. If someone has the same or fewer points, you're caught and they win.
+- **Tonk**: Empty your hand and you win the round.
+- **Initial Tonk**: Get dealt 49 or 50 points for an automatic win (if two players have it, it's a redeal).
+- **Stock runs out**: Lowest hand wins.
+- **Match**: Losers add their hand points to their score; first to 100 loses the match.
+- **Betting**: Everyone antes each round and the round winner takes the pot. In the mobile app, passing on a raise means folding: you sit out the round and can't win the pot.
 
-## Features
+## Mobile App (`app/`)
 
+### Features
+- 1-3 opponents drawn from 7 characters (Uncle Ray, Aunt Dot, Cousin Dre, Mr. Earl, Keisha, Lil Tre, Grandma Pearl), each with their own play style and clean, playful table talk
+- Raise, call, and fold, with AI opponents that raise too
+- Chip bankroll that carries between matches (1,000 buy-in, daily bonus, refill if you go broke). Chips are play money only.
+- XP and levels that unlock tables, card backs, and tougher opponents
+- Daily challenge: the same deal for everyone, every day, with streaks
+- 10 achievements and a stats screen
+- 3 tables (Card Room, Backyard Cookout, Rooftop) and 6 card backs
+- Sound effects, haptics, card animations, and a Tonk celebration
+- Saves automatically; pick up any match where you left off
+
+### Run it
+
+Requires the Flutter SDK (3.44+) and an Android emulator or device.
+
+```bash
+cd app
+flutter pub get
+flutter run          # debug build on a connected device or emulator
+flutter test         # engine, controller, content, and widget tests
+flutter analyze
+```
+
+### How it's built
+- `app/lib/engine/`: pure Dart game engine (a port of `src/game/`, no Flutter imports)
+- `app/lib/state/`: game controller, paced AI turns, table talk
+- `app/lib/meta/`: progression, profile, bankroll, daily challenge
+- `app/lib/ui/`: screens, widgets, themes, sound and haptics
+- `app/assets/content/characters.json`: the AI roster and every line they say (edit freely; tests check it)
+- `app/tool/`: scripts that generate the sound effects, app icon, and store art
+
+### Releasing
+
+See [`store/README.md`](store/README.md) for the release checklist: upload key, building the app bundle, Play Console answers, iOS notes, and draft listing copy. Store art and the privacy policy page are in `store/`.
+
+The app contains simulated gambling (betting play chips every round), so expect an 18+ rating on the App Store.
+
+## Web Game (repo root)
+
+### Features
 - Play against 1-3 AI opponents
-- Multiple deck themes (Classic, Royal, Midnight, Emerald, Crimson)
-- Form spreads (books and runs)
-- Hit existing spreads
-- Drop/knock mechanics
-- Match scoring system
-- Mobile-responsive design
-- Smooth card animations
+- Six deck themes (Rose Gold, Midnight Gold, Royal Velvet, Emerald Isle, Crimson Club, Ocean Blue)
+- Spreads, hits, knocking, betting, and match scoring
+- Win/loss statistics saved in the browser
+- Mobile-responsive layout with drag-to-reorder hand
 
-## Tech Stack
+### Run it
 
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Build Tool**: Vite
-- **No external dependencies** - pure vanilla JS implementation
-
-## Project Structure
-
-```
-tonk-game/
-├── index.html           # Main HTML
-├── src/
-│   ├── main.js          # Entry point
-│   ├── game/
-│   │   ├── Game.js      # Main game controller
-│   │   ├── Deck.js      # Deck management
-│   │   ├── Card.js      # Card class
-│   │   ├── Player.js    # Player class
-│   │   ├── ComputerPlayer.js  # AI logic
-│   │   ├── Spread.js    # Spread validation
-│   │   └── rules.js     # Game rules
-│   ├── ui/
-│   │   ├── GameUI.js    # UI rendering
-│   │   ├── CardRenderer.js
-│   │   └── animations.js
-│   └── utils/
-│       ├── storage.js   # LocalStorage helpers
-│       └── helpers.js
-└── styles/
-    ├── main.css
-    ├── cards.css
-    ├── layout.css
-    └── themes.css
-```
-
-## Getting Started
-
-### Prerequisites
-- Node.js (v16 or higher recommended)
-
-### Installation
+Requires Node.js (v18 or higher recommended).
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd tonk-game
-
-# Install dependencies
 npm install
-
-# Start development server
-npm run dev
+npm run dev        # dev server at http://localhost:5173
+npm test           # Vitest suites in tests/
+npm run lint       # ESLint
+npm run build      # production build to dist/
+npm run preview    # preview the production build
 ```
 
-### Build for Production
+`dist/` is static and can be deployed to any static host (Vercel, Netlify, GitHub Pages).
 
-```bash
-npm run build
+### Project Structure
+
+```
+index.html            # Page structure and modals
+src/
+  main.js             # Entry point
+  game/               # Pure game logic (no DOM)
+    Game.js           # Game controller and event emitter
+    Deck.js, Card.js, Player.js, Spread.js, rules.js
+    ComputerPlayer.js # AI decisions
+  ui/                 # DOM rendering and input
+    GameUI.js, CardRenderer.js, CardLayoutManager.js
+  utils/
+    storage.js        # localStorage (settings, statistics)
+styles/               # main.css, cards.css, layout.css, themes.css
+tests/                # Vitest suites over src/game/
 ```
 
-The built files will be in the `dist/` directory, ready for deployment.
+### How to Play
+1. Pick the number of opponents and start the game.
+2. On your turn, you can knock, lay spreads, or hit spreads first.
+3. Draw from the stock or the discard pile.
+4. Lay or hit spreads, then discard to end your turn.
+5. Win by emptying your hand, knocking with the lowest hand, or holding the lowest hand when the stock runs out.
 
-### Preview Production Build
+## Project Docs
 
-```bash
-npm run preview
-```
+- `CLAUDE.md`: working notes for both codebases
+- `docs/ai/`: memory, roadmap, tasks, and architecture decisions (ADRs)
+- `CODE_MAP.md` and the other map files: where things live
 
-## How to Play
-
-1. **Start**: Select the number of players and click "Start Game"
-2. **Your Turn**:
-   - At the start, you can form spreads, hit existing spreads, or drop
-   - Draw a card from the deck or discard pile
-   - Form spreads or hit existing ones
-   - Discard a card to end your turn
-3. **Winning**:
-   - Empty your hand by forming spreads
-   - Drop with the lowest points
-   - Have the lowest points when the deck runs out
-
-## Deployment
-
-Deploy to any static hosting service:
-
-- **Vercel**: `npm run build` → Deploy `dist/`
-- **Netlify**: Drag and drop `dist/` folder
-- **GitHub Pages**: Push `dist/` to `gh-pages` branch
+CI (GitHub Actions) runs the web lint, tests, and build plus the Flutter analyze and tests on every push and pull request to `main`.
 
 ## License
 

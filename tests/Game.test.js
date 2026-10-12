@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { Game } from '../src/game/Game.js';
 import { Card } from '../src/game/Card.js';
 import { PHASES, WIN_CONDITIONS, BETTING } from '../src/game/rules.js';
@@ -52,6 +52,31 @@ describe('Game.initialize', () => {
     } else {
       expect(game.phase).toBe(PHASES.START_OF_TURN);
     }
+  });
+});
+
+describe('initial tonk redeal', () => {
+  it('keeps the antes in the pot instead of collecting them again', () => {
+    const game = new Game();
+    game.initialize(2);
+    game.phase = PHASES.GAME_OVER;
+    const chipsBefore = game.players.map(p => p.chips);
+    const potBefore = game.pot;
+
+    // Force one double-tonk redeal on the next deal, then a normal deal
+    vi.spyOn(game, 'checkInitialTonk').mockReturnValueOnce([...game.players]).mockReturnValue([]);
+    let redeals = 0;
+    game.on('initialTonkDraw', () => redeals++);
+
+    game.awardPot(game.players[0]);
+    chipsBefore[0] += potBefore;
+    game.startNextRound();
+
+    expect(redeals).toBe(1);
+    expect(game.pot).toBe(2 * BETTING.ANTE_AMOUNT);
+    game.players.forEach((player, i) => {
+      expect(player.chips).toBe(chipsBefore[i] - BETTING.ANTE_AMOUNT);
+    });
   });
 });
 
