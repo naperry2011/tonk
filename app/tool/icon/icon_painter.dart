@@ -1,12 +1,12 @@
 // Shared icon artwork for the app icon and store assets.
 import 'package:flutter/material.dart';
 
-const _feltCenter = Color(0xFF15724A);
-const _feltEdge = Color(0xFF062A19);
-const _gold = Color(0xFFF2C14E);
-const _goldDeep = Color(0xFFC8962A);
-const _cardBack = Color(0xFF8E1B2E);
-const _cardDark = Color(0xFF14171F);
+const _feltCenter = Color(0xFF1D4A37);
+const _feltEdge = Color(0xFF0C0E14);
+const _gold = Color(0xFFEFC2B6); // rose gold
+const _goldDeep = Color(0xFFC08878);
+const _cardBack = Color(0xFF4A2B3A);
+const _cardDark = Color(0xFF1A1E2E);
 
 /// Paints the icon into a [size] square. With [background] false, only the
 /// cards are drawn (Android adaptive foreground), scaled into the safe zone.
@@ -69,7 +69,7 @@ void paintIcon(Canvas canvas, double size, {bool background = true}) {
       card(),
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = cardW * 0.045
+        ..strokeWidth = cardW * 0.035
         ..color = _gold,
     )
     ..drawRRect(
@@ -88,12 +88,17 @@ void paintIcon(Canvas canvas, double size, {bool background = true}) {
     ).createShader(
       Rect.fromCenter(center: Offset.zero, width: cardW, height: cardH),
     );
-  final barW = cardW * 0.62;
-  final barH = cardW * 0.17;
-  final stemW = cardW * 0.18;
-  final stemH = cardH * 0.52;
+  // A slim serif T, after Cormorant Garamond.
+  final barW = cardW * 0.6;
+  final barH = cardW * 0.1;
+  final stemW = cardW * 0.12;
+  final stemH = cardH * 0.5;
   final top = -cardH * 0.25;
-  final r = Radius.circular(barH * 0.25);
+  final r = Radius.circular(barH * 0.2);
+  final serifW = barH * 0.7;
+  final serifH = barH * 1.9;
+  final footW = stemW * 2.6;
+  final footH = barH * 0.6;
   canvas
     ..drawRRect(
       RRect.fromRectAndRadius(
@@ -105,6 +110,27 @@ void paintIcon(Canvas canvas, double size, {bool background = true}) {
     ..drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(-stemW / 2, top, stemW, stemH),
+        r,
+      ),
+      gold,
+    )
+    ..drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(-barW / 2, top, serifW, serifH),
+        r,
+      ),
+      gold,
+    )
+    ..drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(barW / 2 - serifW, top, serifW, serifH),
+        r,
+      ),
+      gold,
+    )
+    ..drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(-footW / 2, top + stemH - footH, footW, footH),
         r,
       ),
       gold,

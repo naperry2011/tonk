@@ -14,8 +14,8 @@ Active work. Update as items are completed and new work is identified.
 ## Up Next
 
 - [ ] User review of characters.json (names, lines, styles) - Small
-- [ ] Manually verify on device: lay spread, hit spread, drag reorder, match end, stock empty, Tonk celebration, sound volume, haptics on a phone - Small
-- [ ] Background music: pick or commission a track, add a music toggle - Small
+- [ ] Manually verify on device: lay and hit spreads from the new layout, fan tapping and drag reorder by thumb, match end, stock empty, Tonk celebration, sound volume, haptics on a phone - Small
+- [ ] User: listen to the lofi loop and sound effects on the phone; tune music volume (LofiMusic.volume) or regenerate if too busy - Small
 - [ ] Tune economy and XP numbers after real play (progression.dart, profile_controller.dart) - Small
 - [ ] User: replace [CONTACT EMAIL] in store/privacy-policy.html and host it on the website - Small
 - [ ] User: create the upload key and android/key.properties (store/README.md step 1) - Small
@@ -33,6 +33,10 @@ Active work. Update as items are completed and new work is identified.
 - [None]
 
 ## Recently Completed
+
+- [x] Declutter: one-button home with new-match sheet, compact seats with floating talk, contextual action bar, Raise chip in the top bar, fanned hand with drag reorder; 122 tests; installed on the Samsung - 2026-11-03
+
+- [x] Lofi redesign: web-matched palette and fonts, lofi backdrop, glass panels, softer motion, cream cards, lofi sfx, generated music loop with toggle, new icon/splash/store art and screenshots; verified on emulator and installed on the Samsung - 2026-11-03
 
 - [x] Flutter M4 (Android build side): app name, icon, splash, release signing config, store art and screenshots, privacy policy page, release checklist; startup stall and AI-turn lag fixes; release build verified on the Samsung (about 0.2s cold start) - 2026-10-11
 

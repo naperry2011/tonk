@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../app_services.dart';
 import '../../meta/progression.dart';
 import '../theme.dart';
+import '../widgets/lofi_backdrop.dart';
 import '../themes.dart';
 import '../widgets/playing_card.dart';
 
@@ -33,9 +34,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     int? lockLevel(UnlockKind kind, String id) =>
         profile.unlocked(kind, id) ? null : unlockLevel(kind, id);
     final theme = Theme.of(context);
-    final heading = theme.textTheme.titleMedium?.copyWith(
-      color: TonkColors.gold,
-      fontWeight: FontWeight.w800,
+    final heading = theme.textTheme.titleLarge?.copyWith(
+      fontSize: 24,
+      color: TonkColors.rose,
+      fontWeight: FontWeight.w700,
     );
     return ListenableBuilder(
       listenable: Listenable.merge([s, profile]),
@@ -44,65 +46,75 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title: const Text('Settings'),
           backgroundColor: Colors.transparent,
         ),
-        body: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-          children: [
-            Text('Table', style: heading),
-            const SizedBox(height: 8),
-            for (final t in TableTheme.all)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: _TableOption(
-                  theme: t,
-                  selected: s.tableTheme == t.id,
-                  lockedUntil: lockLevel(UnlockKind.table, t.id),
-                  onTap: () => s.update(tableTheme: t.id),
-                ),
-              ),
-            const SizedBox(height: 16),
-            Text('Card backs', style: heading),
-            const SizedBox(height: 22),
-            Wrap(
-              spacing: 14,
-              runSpacing: 12,
-              children: [
-                for (final d in DeckTheme.all)
-                  _DeckOption(
-                    deck: d,
-                    selected: s.deckTheme == d.id,
-                    lockedUntil: lockLevel(UnlockKind.deck, d.id),
-                    onTap: () => s.update(deckTheme: d.id),
+        body: LofiBackdrop(
+          table: TableTheme.byId(s.tableTheme),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+            children: [
+              Text('Table', style: heading),
+              const SizedBox(height: 8),
+              for (final t in TableTheme.all)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: _TableOption(
+                    theme: t,
+                    selected: s.tableTheme == t.id,
+                    lockedUntil: lockLevel(UnlockKind.table, t.id),
+                    onTap: () => s.update(tableTheme: t.id),
                   ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Text('Feel', style: heading),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Sound effects'),
-              value: s.sound,
-              onChanged: (v) => s.update(sound: v),
-            ),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Haptics'),
-              value: s.haptics,
-              onChanged: (v) => s.update(haptics: v),
-            ),
-            const SizedBox(height: 16),
-            Text('What the table calls you', style: heading),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _nickname,
-              maxLength: 16,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                hintText: 'rookie',
-                border: OutlineInputBorder(),
+                ),
+              const SizedBox(height: 16),
+              Text('Card backs', style: heading),
+              const SizedBox(height: 22),
+              Wrap(
+                spacing: 14,
+                runSpacing: 12,
+                children: [
+                  for (final d in DeckTheme.all)
+                    _DeckOption(
+                      deck: d,
+                      selected: s.deckTheme == d.id,
+                      lockedUntil: lockLevel(UnlockKind.deck, d.id),
+                      onTap: () => s.update(deckTheme: d.id),
+                    ),
+                ],
               ),
-              onChanged: (v) => s.update(nickname: v),
-            ),
-          ],
+              const SizedBox(height: 24),
+              Text('Feel', style: heading),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Sound effects'),
+                value: s.sound,
+                onChanged: (v) => s.update(sound: v),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Haptics'),
+                value: s.haptics,
+                onChanged: (v) => s.update(haptics: v),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Music'),
+                subtitle: const Text('Lofi beat in the background'),
+                value: s.music,
+                onChanged: (v) => s.update(music: v),
+              ),
+              const SizedBox(height: 16),
+              Text('What the table calls you', style: heading),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _nickname,
+                maxLength: 16,
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(
+                  hintText: 'rookie',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (v) => s.update(nickname: v),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -141,7 +153,7 @@ class _TableOption extends StatelessWidget {
             decoration: theme.decoration.copyWith(
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: selected ? theme.accent : Colors.white12,
+                color: selected ? theme.accent : TonkColors.glassBorder,
                 width: selected ? 2.5 : 1,
               ),
             ),
@@ -155,14 +167,14 @@ class _TableOption extends StatelessWidget {
                         theme.name,
                         style: TextStyle(
                           color: theme.accent,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w700,
                           fontSize: 16,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         theme.tagline,
-                        style: const TextStyle(color: Colors.white70),
+                        style: const TextStyle(color: TonkColors.textSoft),
                       ),
                     ],
                   ),
@@ -239,17 +251,17 @@ class _LockBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.black87,
+        color: TonkColors.ink.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.lock, size: 13, color: Colors.white70),
+          const Icon(Icons.lock, size: 13, color: TonkColors.textSoft),
           const SizedBox(width: 3),
           Text(
             'Lv $level',
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
           ),
         ],
       ),

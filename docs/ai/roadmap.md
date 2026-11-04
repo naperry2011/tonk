@@ -20,7 +20,7 @@ Tonk as a hype mobile card game on Android and iOS: solo play against AI charact
 
 ## Next
 
-- Background music (track to be chosen; sfx and toggles already exist).
+- Tune music and sfx levels after listening on device.
 
 ## Later
 
@@ -30,6 +30,8 @@ Tonk as a hype mobile card game on Android and iOS: solo play against AI charact
 
 ## Recently Completed
 
+- Decluttered home and table, fanned hand, contextual actions (2026-11-03)
+- Lofi redesign matched to the web game (palette, Cormorant + DM Sans, lamp glow and grain, glass panels, slower motion), lofi sfx, generated music loop, new icon and store art (2026-11-03)
 - M3: progression (XP, levels, bankroll and buy-ins, unlocks, achievements, daily challenge, profile screen), 119 tests (2026-10-11)
 - M2: swag (7 characters with table talk, themes, sfx, haptics, animations, celebration) and the fold rule with AI raises, 105 tests (2026-10-11)
 - M1: playable table on Android (controller, AI pacing, raise/call, round end panel, save/resume), 81 tests (2026-10-11)

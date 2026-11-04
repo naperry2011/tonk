@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import '../../content/roster.dart';
 import '../../engine/engine.dart';
 import '../theme.dart';
-import '../themes.dart';
-import 'playing_card.dart';
 
-/// An AI opponent: avatar, name, hidden hand, scores, and what they're
-/// doing or saying.
+/// Compact AI opponent: avatar with a card-count badge, name, score, and
+/// their last move. Speech bubbles are drawn separately ([SpeechBubble]) so
+/// they can float over the table without reserving space here.
 class OpponentSeat extends StatelessWidget {
   const OpponentSeat({
     super.key,
@@ -16,9 +15,9 @@ class OpponentSeat extends StatelessWidget {
     required this.isActive,
     this.character,
     this.lastAction,
-    this.speech,
-    this.deckTheme,
   });
+
+  static const double height = 104;
 
   final Player player;
   final Character? character;
@@ -26,100 +25,55 @@ class OpponentSeat extends StatelessWidget {
   final bool isActive;
   final String? lastAction;
 
-  /// Table talk; shown as a bubble and takes priority over [lastAction].
-  final String? speech;
-  final DeckTheme? deckTheme;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final accent = character?.color ?? TonkColors.gold;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      padding: const EdgeInsets.fromLTRB(6, 8, 6, 6),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: isActive ? 0.35 : 0.2),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isActive ? accent : Colors.transparent,
-          width: 2,
-        ),
-      ),
+    final accent = character?.color ?? TonkColors.rose;
+    final caption = lastAction ?? (isActive ? 'Thinking...' : '');
+    return SizedBox(
+      height: height,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _Avatar(
-                name: player.name,
-                color: accent,
-                emoji: character?.emoji,
-              ),
-              const SizedBox(width: 6),
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    player.name,
-                    maxLines: 1,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          _Avatar(
+            name: player.name,
+            color: accent,
+            emoji: character?.emoji,
+            cards: player.cardCount,
+            active: isActive,
           ),
-          const SizedBox(height: 6),
-          SizedBox(
-            height: 34,
-            width: 24 + (player.cardCount - 1).clamp(0, 99) * 9.0,
-            child: Stack(
-              children: [
-                for (var i = 0; i < player.cardCount; i++)
-                  Positioned(
-                    left: i * 9.0,
-                    child: PlayingCard(width: 24, deckTheme: deckTheme),
-                  ),
-              ],
+          const SizedBox(height: 5),
+          Text(
+            player.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontFamily: TonkFonts.display,
+              fontFeatures: const [FontFeature.liningFigures()],
+              fontWeight: FontWeight.w700,
+              fontSize: 17,
+              height: 1.1,
             ),
           ),
-          const SizedBox(height: 4),
           Text(
-            '$matchScore pts  ·  ${player.chips} chips',
-            style: theme.textTheme.labelSmall?.copyWith(color: Colors.white70),
+            '$matchScore pts',
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: TonkColors.textMuted,
+              height: 1.2,
+            ),
           ),
-          const SizedBox(height: 6),
-          SizedBox(
-            height: 54,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 220),
-              // Hide the outgoing line at once so two lines never overlap.
-              switchOutCurve: const Threshold(1),
-              transitionBuilder: (child, animation) => ScaleTransition(
-                scale: CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOutBack,
-                ),
-                child: FadeTransition(opacity: animation, child: child),
+          AnimatedSwitcher(
+            duration: TonkMotion.standard,
+            switchOutCurve: const Threshold(1),
+            child: Text(
+              caption,
+              key: ValueKey(caption),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: accent.withValues(alpha: 0.85),
+                fontStyle: FontStyle.italic,
+                height: 1.3,
               ),
-              child: speech != null
-                  ? _Bubble(key: ValueKey('s$speech'), text: speech!)
-                  : Center(
-                      key: ValueKey('a${lastAction ?? isActive}'),
-                      child: Text(
-                        lastAction ?? (isActive ? 'Thinking...' : ''),
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: accent,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ),
             ),
           ),
         ],
@@ -129,71 +83,173 @@ class OpponentSeat extends StatelessWidget {
 }
 
 class _Avatar extends StatelessWidget {
-  const _Avatar({required this.name, required this.color, this.emoji});
+  const _Avatar({
+    required this.name,
+    required this.color,
+    required this.cards,
+    required this.active,
+    this.emoji,
+  });
 
   final String name;
   final Color color;
   final String? emoji;
+  final int cards;
+  final bool active;
 
   @override
   Widget build(BuildContext context) {
     final emoji = this.emoji;
     return SizedBox(
-      width: 34,
-      height: 30,
+      width: 76,
+      height: 48,
       child: Stack(
         clipBehavior: Clip.none,
+        alignment: Alignment.center,
         children: [
-          CircleAvatar(
-            radius: 15,
-            backgroundColor: color,
-            child: Text(
-              name.characters.first,
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w900,
+          AnimatedContainer(
+            duration: TonkMotion.standard,
+            curve: TonkMotion.curve,
+            width: 48,
+            height: 48,
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: active ? color : Colors.transparent,
+                width: 2,
+              ),
+              boxShadow: [
+                if (active)
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.45),
+                    blurRadius: 18,
+                  ),
+              ],
+            ),
+            child: CircleAvatar(
+              backgroundColor: color,
+              child: Text(
+                name.characters.first,
+                style: const TextStyle(
+                  fontFamily: TonkFonts.display,
+                  fontFeatures: [FontFeature.liningFigures()],
+                  color: TonkColors.dusk,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                ),
               ),
             ),
           ),
           if (emoji != null && emoji.isNotEmpty)
             Positioned(
-              right: -2,
-              bottom: -4,
-              child: Text(emoji, style: const TextStyle(fontSize: 14)),
+              left: 6,
+              bottom: -2,
+              child: Text(emoji, style: const TextStyle(fontSize: 15)),
             ),
+          Positioned(
+            right: 0,
+            top: -2,
+            child: Semantics(
+              label: '$cards cards',
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: TonkColors.elevated,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: TonkColors.glassBorder),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.style,
+                      size: 11,
+                      color: TonkColors.textSoft,
+                    ),
+                    const SizedBox(width: 2),
+                    Text(
+                      '$cards',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: TonkColors.text,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class _Bubble extends StatelessWidget {
-  const _Bubble({super.key, required this.text});
+/// Table talk, drawn in an overlay just under the speaker's seat.
+class SpeechBubble extends StatelessWidget {
+  const SpeechBubble({super.key, required this.text});
 
   final String text;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: TonkColors.cardFace,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        text,
-        maxLines: 3,
-        textAlign: TextAlign.center,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
-          color: Colors.black,
-          fontSize: 11.5,
-          fontWeight: FontWeight.w700,
-          height: 1.15,
+    final fill = TonkColors.cardFace.withValues(alpha: 0.95);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CustomPaint(size: const Size(14, 7), painter: _TailPainter(fill)),
+        Container(
+          constraints: const BoxConstraints(maxWidth: 170),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: fill,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Text(
+            text,
+            maxLines: 3,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: TonkColors.dusk,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              fontStyle: FontStyle.italic,
+              height: 1.2,
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
+}
+
+class _TailPainter extends CustomPainter {
+  _TailPainter(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawPath(
+      Path()
+        ..moveTo(0, size.height)
+        ..lineTo(size.width / 2, 0)
+        ..lineTo(size.width, size.height)
+        ..close(),
+      Paint()..color = color,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_TailPainter old) => old.color != color;
 }

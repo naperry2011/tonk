@@ -9,7 +9,7 @@ class Celebration extends StatefulWidget {
   const Celebration({
     super.key,
     required this.title,
-    this.color = TonkColors.gold,
+    this.color = TonkColors.rose,
     this.duration = const Duration(milliseconds: 2200),
   });
 
@@ -32,10 +32,10 @@ class _CelebrationState extends State<Celebration>
   static List<_Piece> _makePieces(Color accent) {
     final random = Random(7);
     const palette = [
+      TonkColors.rose,
       TonkColors.gold,
-      TonkColors.cardRed,
       TonkColors.highlight,
-      Colors.white,
+      TonkColors.cardFace,
     ];
     return [
       for (var i = 0; i < 90; i++)
@@ -76,9 +76,11 @@ class _CelebrationState extends State<Celebration>
                     child: Text(
                       widget.title,
                       style: TextStyle(
-                        fontSize: 72,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 6,
+                        fontFamily: TonkFonts.display,
+                        fontFeatures: const [FontFeature.liningFigures()],
+                        fontSize: 76,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 4,
                         color: widget.color,
                         shadows: const [
                           Shadow(color: Colors.black, blurRadius: 18),

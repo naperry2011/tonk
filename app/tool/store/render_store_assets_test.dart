@@ -89,14 +89,18 @@ Future<ui.Image> _paint(int w, int h, void Function(Canvas) draw) {
   return recorder.endRecording().toImage(w, h);
 }
 
-Future<void> _loadRoboto() async {
-  final sdk = File(Platform.resolvedExecutable).parent.parent.parent.parent;
-  final font = File(
-    '${sdk.path}/artifacts/material_fonts/roboto-black.ttf',
-  );
-  final loader = FontLoader('RobotoBlack')
-    ..addFont(Future.value(ByteData.sublistView(font.readAsBytesSync())));
-  await loader.load();
+/// The app's own bundled fonts (SIL OFL), same as the in-game title.
+Future<void> _loadFonts() async {
+  for (final (family, file) in [
+    ('Cormorant', 'assets/fonts/CormorantGaramond.ttf'),
+    ('DMSans', 'assets/fonts/DMSans.ttf'),
+  ]) {
+    final loader = FontLoader(family)
+      ..addFont(
+        Future.value(ByteData.sublistView(File(file).readAsBytesSync())),
+      );
+    await loader.load();
+  }
 }
 
 void _paintFeatureGraphic(Canvas canvas) {
@@ -108,7 +112,20 @@ void _paintFeatureGraphic(Canvas canvas) {
       ..shader = const RadialGradient(
         center: Alignment(-0.45, -0.1),
         radius: 1.2,
-        colors: [Color(0xFF15724A), Color(0xFF062A19)],
+        colors: [Color(0xFF1D4A37), Color(0xFF0C0E14)],
+      ).createShader(rect),
+  );
+  // Warm lamp glow behind the title.
+  canvas.drawRect(
+    rect,
+    Paint()
+      ..shader = RadialGradient(
+        center: const Alignment(0.45, -0.3),
+        radius: 0.9,
+        colors: [
+          const Color(0xFFF3D3A2).withValues(alpha: 0.12),
+          const Color(0xFFF3D3A2).withValues(alpha: 0),
+        ],
       ).createShader(rect),
   );
 
@@ -119,17 +136,29 @@ void _paintFeatureGraphic(Canvas canvas) {
   paintIcon(canvas, 480, background: false);
   canvas.restore();
 
-  void text(String s, double x, double y, double size, Color color,
-      {double spacing = 0}) {
+  void text(
+    String s,
+    double x,
+    double y,
+    double size,
+    Color color, {
+    double spacing = 0,
+    FontWeight weight = FontWeight.w500,
+    bool italic = false,
+  }) {
     final painter = TextPainter(
       text: TextSpan(
         text: s,
         style: TextStyle(
-          fontFamily: 'RobotoBlack',
+          fontFamily: 'Cormorant',
           fontSize: size,
+          fontWeight: weight,
+          fontStyle: italic ? FontStyle.italic : FontStyle.normal,
           color: color,
           letterSpacing: spacing,
-          shadows: const [Shadow(color: Colors.black54, blurRadius: 12)],
+          shadows: [
+            Shadow(color: color.withValues(alpha: 0.3), blurRadius: 24),
+          ],
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -137,13 +166,20 @@ void _paintFeatureGraphic(Canvas canvas) {
     painter.paint(canvas, Offset(x, y));
   }
 
-  text('TONK', 470, 130, 150, const Color(0xFFF2C14E), spacing: 12);
-  text('Knock. Spread. Talk your talk.', 478, 318, 34, Colors.white);
+  text('TONK', 482, 122, 140, const Color(0xFFE8B4A8), spacing: 18);
+  text(
+    'Knock. Spread. Talk your talk.',
+    486,
+    318,
+    40,
+    const Color(0xFFCBD5E1),
+    italic: true,
+  );
 }
 
 void main() {
   test('render Play Store assets', () async {
-    await _loadRoboto();
+    await _loadFonts();
 
     final icon = await _paint(512, 512, (c) => paintIcon(c, 512));
     final iconBytes = await icon.toByteData(format: ui.ImageByteFormat.png);

@@ -33,20 +33,21 @@ class PlayingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final card = this.card;
     final back = deckTheme ?? DeckTheme.rosegold;
-    final radius = BorderRadius.circular(width * 0.12);
+    final radius = BorderRadius.circular(width * 0.14);
     final borderColor = selected
-        ? TonkColors.gold
+        ? TonkColors.rose
         : highlighted
         ? TonkColors.highlight
         : card == null
         ? back.border
-        : Colors.black26;
+        : Colors.black12;
 
     final face = AnimatedContainer(
-      duration: const Duration(milliseconds: 150),
+      duration: TonkMotion.quick,
+      curve: TonkMotion.curve,
       width: width,
       height: height,
-      transform: Matrix4.translationValues(0, selected ? -14 : 0, 0),
+      transform: Matrix4.translationValues(0, selected ? -12 : 0, 0),
       decoration: BoxDecoration(
         color: card == null ? null : TonkColors.cardFace,
         gradient: card == null
@@ -59,15 +60,15 @@ class PlayingCard extends StatelessWidget {
         borderRadius: radius,
         border: Border.all(
           color: borderColor,
-          width: selected || highlighted ? 2.5 : 1,
+          width: selected || highlighted ? 2 : 1,
         ),
         boxShadow: [
           BoxShadow(
             color: selected
-                ? TonkColors.gold.withValues(alpha: 0.5)
-                : Colors.black45,
-            blurRadius: selected ? 10 : 4,
-            offset: const Offset(0, 2),
+                ? TonkColors.rose.withValues(alpha: 0.35)
+                : Colors.black.withValues(alpha: 0.35),
+            blurRadius: selected ? 16 : 8,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -96,7 +97,7 @@ class DealIn extends StatelessWidget {
     super.key,
     required this.child,
     this.from = const Offset(0, -0.6),
-    this.duration = const Duration(milliseconds: 260),
+    this.duration = TonkMotion.standard,
   });
 
   final Widget child;
@@ -110,7 +111,7 @@ class DealIn extends StatelessWidget {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
       duration: duration,
-      curve: Curves.easeOutCubic,
+      curve: Curves.easeOutQuart,
       builder: (context, t, child) => FractionalTranslation(
         translation: Offset.lerp(from, Offset.zero, t)!,
         child: Opacity(opacity: t.clamp(0, 1), child: child),
@@ -130,9 +131,11 @@ class _Face extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = card.isRed ? TonkColors.cardRed : TonkColors.cardBlack;
     final corner = TextStyle(
+      fontFamily: TonkFonts.display,
+      fontFeatures: const [FontFeature.liningFigures()],
       color: color,
-      fontWeight: FontWeight.w900,
-      fontSize: width * 0.26,
+      fontWeight: FontWeight.w700,
+      fontSize: width * 0.3,
       height: 1,
     );
     return Padding(
@@ -145,7 +148,10 @@ class _Face extends StatelessWidget {
               Text(card.rank, style: corner),
               Text(
                 card.suit.symbol,
-                style: corner.copyWith(fontSize: width * 0.22),
+                style: corner.copyWith(
+                  fontFamily: TonkFonts.body,
+                  fontSize: width * 0.2,
+                ),
               ),
             ],
           ),
@@ -153,7 +159,11 @@ class _Face extends StatelessWidget {
             alignment: const Alignment(0.35, 0.45),
             child: Text(
               card.suit.symbol,
-              style: TextStyle(color: color, fontSize: width * 0.5, height: 1),
+              style: TextStyle(
+                color: color.withValues(alpha: 0.9),
+                fontSize: width * 0.48,
+                height: 1,
+              ),
             ),
           ),
         ],
@@ -174,15 +184,17 @@ class _Back extends StatelessWidget {
       margin: EdgeInsets.all(width * 0.08),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(width * 0.08),
-        border: Border.all(color: theme.emblem.withValues(alpha: 0.6)),
+        border: Border.all(color: theme.emblem.withValues(alpha: 0.4)),
       ),
       child: Center(
         child: Text(
           'T',
           style: TextStyle(
-            color: theme.emblem,
-            fontWeight: FontWeight.w900,
-            fontSize: width * 0.36,
+            fontFamily: TonkFonts.display,
+            fontFeatures: const [FontFeature.liningFigures()],
+            color: theme.emblem.withValues(alpha: 0.85),
+            fontWeight: FontWeight.w600,
+            fontSize: width * 0.42,
           ),
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart' hide Card;
 import '../../engine/engine.dart';
 import '../../meta/profile_controller.dart';
 import '../../state/game_controller.dart';
+import '../theme.dart';
 import 'playing_card.dart';
 
 /// Shown over the table when a round ends.
@@ -39,18 +40,18 @@ class RoundEndPanel extends StatelessWidget {
         : '${summary.winner.name.toUpperCase()} TAKES IT';
 
     return Container(
-      color: Colors.black.withValues(alpha: 0.65),
+      color: Colors.black.withValues(alpha: 0.55),
       alignment: Alignment.center,
       padding: const EdgeInsets.all(16),
       child: Material(
-        color: const Color(0xF0121212),
-        borderRadius: BorderRadius.circular(20),
+        color: TonkColors.dusk,
+        borderRadius: BorderRadius.circular(26),
         child: Container(
           constraints: const BoxConstraints(maxWidth: 440),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: accent, width: 2),
+            borderRadius: BorderRadius.circular(26),
+            border: Border.all(color: accent.withValues(alpha: 0.45)),
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -61,8 +62,8 @@ class RoundEndPanel extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headlineMedium?.copyWith(
                     color: accent,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -184,7 +185,7 @@ class _PlayerRow extends StatelessWidget {
                   player.isHuman ? 'You' : player.name,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w700,
                     color: isWinner ? accent : null,
                   ),
                 ),
@@ -244,7 +245,7 @@ class _RewardsView extends StatelessWidget {
                 '+${rewards.xp} XP',
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: accent,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               const SizedBox(width: 8),
@@ -253,7 +254,7 @@ class _RewardsView extends StatelessWidget {
                   rewards.breakdown
                       .map((e) => '${e.label} ${e.xp}')
                       .join('  ·  '),
-                  style: small?.copyWith(color: Colors.white60),
+                  style: small?.copyWith(color: TonkColors.textMuted),
                 ),
               ),
             ],
@@ -272,7 +273,7 @@ class _RewardsView extends StatelessWidget {
               child: Text(
                 'LEVEL ${rewards.newLevel}!',
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1.2,
                 ),
               ),

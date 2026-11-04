@@ -186,7 +186,7 @@ class GameController extends ChangeNotifier {
         for (final c in cast) _seat(c, game),
       ], startingChips: startingChips);
     }
-    status = 'New match, first to 100 loses. ${_turnHint()}';
+    status = 'New match · first to 100 loses';
     _afterChange();
   }
 
@@ -200,7 +200,7 @@ class GameController extends ChangeNotifier {
       Player('You', isHuman: true),
       for (final c in opponents) _seat(c, game),
     ]);
-    status = "Today's deal. One round, make it count. ${_turnHint()}";
+    status = "Today's deal · one round";
     _afterChange();
   }
 
@@ -245,7 +245,7 @@ class GameController extends ChangeNotifier {
         startNextRound();
         return true;
       }
-      status = 'Welcome back. ${_turnHint()}';
+      status = 'Welcome back · ${_turnHint()}';
       _afterChange();
       return true;
     } on Object {
@@ -263,7 +263,7 @@ class GameController extends ChangeNotifier {
     _aiRaisedThisRound.clear();
     _humanSpreads = 0;
     game.startNextRound();
-    status = 'Round ${game.roundNumber}. ${_turnHint()}';
+    status = 'Round ${game.roundNumber} · ${_turnHint()}';
     _afterChange();
   }
 
@@ -438,7 +438,7 @@ class GameController extends ChangeNotifier {
         amount: amount,
         toCall: amount < h.chips ? amount : h.chips,
       );
-      status = '${ai.name} raised $amount. Call or fold?';
+      status = '${ai.name} raised $amount';
       _notify();
       _save();
       final call = await answer.future;
@@ -447,10 +447,10 @@ class GameController extends ChangeNotifier {
       _raiseAnswer = null;
       if (call) {
         game.placeBet(h, amount);
-        status = 'You called.';
+        status = 'You called';
       } else {
         game.fold(h);
-        status = 'You folded. Sit back and watch this one.';
+        status = 'You folded';
       }
     }
     if (game.isGameOver) _settleRound();
@@ -582,7 +582,7 @@ class GameController extends ChangeNotifier {
         }
       case CardDrawn(:final player, :final source):
         if (player.isHuman) {
-          status = 'Spread, hit, or pick a card to discard.';
+          status = 'Your move';
         } else {
           lastAction[player.id] = source == DrawSource.discard
               ? 'Took the discard'
@@ -599,7 +599,7 @@ class GameController extends ChangeNotifier {
         _lastKnocker = knocker;
         _say(knocker, 'Knock knock!');
       case InitialTonkDraw():
-        status = 'Double 49-50 on the deal. Redeal!';
+        status = 'Double 49-50 on the deal · redeal';
       case GameOver() ||
           GameInitialized() ||
           RoundStart() ||
@@ -619,8 +619,8 @@ class GameController extends ChangeNotifier {
     if (game.isGameOver) return '';
     final player = game.currentPlayer;
     return player.isHuman
-        ? 'Your turn: knock, spread, or draw.'
-        : "${player.name}'s turn.";
+        ? 'Your turn'
+        : "${player.name}'s turn";
   }
 
   void _say(Player player, String text) {

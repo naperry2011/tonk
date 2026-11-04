@@ -64,6 +64,17 @@ flutter:
   assets:
     - assets/content/
     - assets/sfx/
+    - assets/music/
+
+  # Bundled because the app has no network access. SIL Open Font License
+  # (assets/fonts/OFL-*.txt). Variable fonts: fontWeight drives the wght axis.
+  fonts:
+    - family: Cormorant Garamond
+      fonts:
+        - asset: assets/fonts/CormorantGaramond.ttf
+    - family: DM Sans
+      fonts:
+        - asset: assets/fonts/DMSans.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -104,16 +115,16 @@ flutter_launcher_icons:
   image_path: "assets/icon/icon.png"
   min_sdk_android: 21
   remove_alpha_ios: true
-  background_color_ios: "#062A19"
-  adaptive_icon_background: "#0B4A2F"
+  background_color_ios: "#0C0E14"
+  adaptive_icon_background: "#15302A"
   adaptive_icon_foreground: "assets/icon/icon_foreground.png"
   adaptive_icon_foreground_inset: 0
 
 # Launch screen: regenerate with dart run flutter_native_splash:create
 flutter_native_splash:
-  color: "#07331F"
+  color: "#0C0E14"
   image: assets/icon/icon_foreground.png
   android_12:
-    color: "#07331F"
+    color: "#0C0E14"
     image: assets/icon/icon_foreground.png
   web: false

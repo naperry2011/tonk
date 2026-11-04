@@ -5,7 +5,7 @@
       "id": "uncle_ray",
       "name": "Uncle Ray",
       "tagline": "Never stops talking. Never.",
-      "color": "#F2C14E",
+      "color": "#E0B872",
       "emoji": "🎩",
       "style": { "knockAlwaysAt": 3, "knockMaybeAt": 5, "raiseAppetite": 1.2, "foldChance": 0.1 },
       "lines": {
@@ -29,7 +29,7 @@
       "id": "aunt_dot",
       "name": "Aunt Dot",
       "tagline": "Runs the table. Runs the kitchen. Runs everything.",
-      "color": "#E57373",
+      "color": "#D98B84",
       "emoji": "👑",
       "style": { "knockAlwaysAt": 2, "knockMaybeAt": 4, "raiseAppetite": 0.8, "foldChance": 0.0 },
       "lines": {
@@ -53,7 +53,7 @@
       "id": "cousin_dre",
       "name": "Cousin Dre",
       "tagline": "Quiet. Knocks early. Way too early.",
-      "color": "#4FC3F7",
+      "color": "#8FB7D4",
       "emoji": "🕶️",
       "style": { "knockAlwaysAt": 6, "knockMaybeAt": 9, "raiseAppetite": 1.0, "foldChance": 0.4 },
       "lines": {
@@ -77,7 +77,7 @@
       "id": "mr_earl",
       "name": "Mr. Earl",
       "tagline": "Old school. Slow. Patient as a fishing trip.",
-      "color": "#A1887F",
+      "color": "#B39A8C",
       "emoji": "🎣",
       "style": { "knockAlwaysAt": 1, "knockMaybeAt": 2, "raiseAppetite": 0.5, "foldChance": 0.5 },
       "lines": {
@@ -101,7 +101,7 @@
       "id": "keisha",
       "name": "Keisha",
       "tagline": "Spread queen. Grabs every card you throw away.",
-      "color": "#BA68C8",
+      "color": "#B892C6",
       "emoji": "💅",
       "style": { "knockAlwaysAt": 3, "knockMaybeAt": 5, "raiseAppetite": 1.1, "foldChance": 0.2, "takesLowDiscards": true },
       "lines": {
@@ -125,7 +125,7 @@
       "id": "lil_tre",
       "name": "Lil Tre",
       "tagline": "19, cocky, knocks on anything.",
-      "color": "#81C784",
+      "color": "#96BF95",
       "emoji": "🧢",
       "style": { "knockAlwaysAt": 5, "knockMaybeAt": 12, "raiseAppetite": 1.8, "foldChance": 0.05 },
       "lines": {
@@ -149,7 +149,7 @@
       "id": "grandma_pearl",
       "name": "Grandma Pearl",
       "tagline": "Sweetest lady you know. Ruthless at the table.",
-      "color": "#F48FB1",
+      "color": "#E3A6BC",
       "emoji": "🧶",
       "style": { "knockAlwaysAt": 4, "knockMaybeAt": 7, "raiseAppetite": 1.4, "foldChance": 0.15, "takesLowDiscards": true },
       "lines": {

@@ -84,6 +84,7 @@ class TableTheme {
     required this.center,
     required this.edge,
     required this.accent,
+    required this.glow,
   });
 
   final String id;
@@ -95,40 +96,46 @@ class TableTheme {
   /// Highlight color for buttons, pills, and titles on this table.
   final Color accent;
 
+  /// Lamp light falling on the table from above.
+  final Color glow;
+
   BoxDecoration get decoration => BoxDecoration(
     gradient: RadialGradient(
-      center: const Alignment(0, -0.2),
-      radius: 1.1,
+      center: const Alignment(0, -0.25),
+      radius: 1.15,
       colors: [center, edge],
     ),
   );
 
   static const cardRoom = TableTheme(
     id: 'card_room',
-    name: 'Card Room',
-    tagline: 'Green felt, low lights, serious faces.',
-    center: Color(0xFF0E5A3A),
-    edge: Color(0xFF07331F),
-    accent: Color(0xFFF2C14E),
+    name: 'Night Room',
+    tagline: 'Low lamp, green felt, a slow beat in the back.',
+    center: Color(0xFF163A2C),
+    edge: Color(0xFF0C0E14),
+    accent: Color(0xFFE8B4A8),
+    glow: Color(0xFFF3D3A2),
   );
 
   static const all = [
     cardRoom,
     TableTheme(
       id: 'cookout',
-      name: 'Backyard Cookout',
-      tagline: 'Folding table, grill smoke, music up.',
-      center: Color(0xFF8A5A2B),
-      edge: Color(0xFF3E2512),
-      accent: Color(0xFFFFB74D),
+      name: 'Dusk Cookout',
+      tagline: 'Grill embers, folding chairs, the sun going down.',
+      center: Color(0xFF4A2E22),
+      edge: Color(0xFF100C10),
+      accent: Color(0xFFE6B07A),
+      glow: Color(0xFFFFB27A),
     ),
     TableTheme(
       id: 'rooftop',
       name: 'Rooftop',
       tagline: 'City lights and late-night hands.',
-      center: Color(0xFF2B2D5C),
-      edge: Color(0xFF0D0E24),
-      accent: Color(0xFFFF80AB),
+      center: Color(0xFF2A2547),
+      edge: Color(0xFF0C0E14),
+      accent: Color(0xFFD9A7C7),
+      glow: Color(0xFFB9A6E8),
     ),
   ];
 

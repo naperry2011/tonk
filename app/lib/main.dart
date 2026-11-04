@@ -9,6 +9,7 @@ import 'data/save_store.dart';
 import 'data/settings_store.dart';
 import 'meta/profile_controller.dart';
 import 'state/game_controller.dart';
+import 'ui/lofi_music.dart';
 import 'ui/screens/home_screen.dart';
 import 'ui/table_feel.dart';
 import 'ui/theme.dart';
@@ -24,11 +25,14 @@ Future<void> main() async {
 
   // Load sounds in the background so the first frame isn't held up; a sound
   // requested before it loads is simply skipped. Sound is optional.
+  // Music starts after preload sets the shared audio context.
   final feel = TableFeel(settings);
+  final music = LofiMusic(settings);
   unawaited(
-    feel.preload().catchError(
-      (Object e) => debugPrint('Sound effects unavailable: $e'),
-    ),
+    feel
+        .preload()
+        .then((_) => music.start())
+        .catchError((Object e) => debugPrint('Audio unavailable: $e')),
   );
 
   final services = AppServices(

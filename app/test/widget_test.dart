@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/gestures.dart' show kLongPressTimeout;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tonk/app_services.dart';
@@ -12,6 +13,7 @@ import 'package:tonk/meta/profile.dart';
 import 'package:tonk/meta/profile_controller.dart';
 import 'package:tonk/state/game_controller.dart';
 import 'package:tonk/ui/widgets/hand_view.dart';
+import 'package:tonk/ui/widgets/opponent_seat.dart';
 import 'package:tonk/ui/widgets/playing_card.dart';
 
 void main() {
@@ -55,7 +57,7 @@ void main() {
     await pumpApp(tester, s);
 
     expect(find.text('TONK'), findsOneWidget);
-    expect(find.text('Level 1'), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('level 1')), findsOneWidget);
     expect(
       s.profile.bankroll,
       Profile.startingBankroll + ProfileController.dailyBonus,
@@ -72,7 +74,7 @@ void main() {
     await pumpApp(tester, s);
     final before = s.profile.bankroll;
 
-    await tester.tap(find.textContaining('Deal me in'));
+    await tester.tap(find.text('Play'));
     await tester.pumpAndSettle();
 
     expect(s.profile.bankroll, before - ProfileController.buyInAmount);
@@ -101,6 +103,82 @@ void main() {
     await tester.pump(const Duration(seconds: 5));
   });
 
+  group('table', () {
+    Future<AppServices> dealIn(WidgetTester tester) async {
+      final s = services();
+      await pumpApp(tester, s);
+      await tester.tap(find.text('Play'));
+      await tester.pumpAndSettle();
+      expect(s.match.isHumanTurn, isTrue);
+      return s;
+    }
+
+    Finder handCard(Object card) => find.descendant(
+      of: find.byType(HandView),
+      matching: find.byWidgetPredicate(
+        (w) => w is PlayingCard && w.card == card,
+      ),
+    );
+
+    Finder buttonText(String prefix) => find.byWidgetPredicate(
+      (w) =>
+          w is Text && (w.data ?? '').startsWith(prefix) && w.data != 'Discard',
+    );
+
+    testWidgets('action bar shows only the moves that make sense', (
+      tester,
+    ) async {
+      final s = await dealIn(tester);
+      expect(find.text('KNOCK'), findsOneWidget);
+      expect(find.text('or tap a pile to draw'), findsOneWidget);
+      expect(buttonText('Discard '), findsNothing);
+
+      await tester.tap(
+        find.byWidgetPredicate((w) => w is PlayingCard && w.card == null),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('KNOCK'), findsNothing);
+      expect(find.text('Pick a card to discard'), findsOneWidget);
+
+      final card = s.match.human.hand.first;
+      await tester.tap(handCard(card));
+      await tester.pumpAndSettle();
+      expect(find.text('Discard $card'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('long-press and drag reorders the fanned hand', (tester) async {
+      final s = await dealIn(tester);
+      final hand = s.match.human.hand;
+      final first = hand.first;
+      final last = hand.last;
+
+      final start = tester.getTopLeft(handCard(first)) + const Offset(12, 60);
+      final end = tester.getTopRight(handCard(last)) + const Offset(-12, 60);
+      final gesture = await tester.startGesture(start);
+      await tester.pump(kLongPressTimeout + const Duration(milliseconds: 100));
+      await gesture.moveTo(end);
+      await tester.pump();
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(s.match.human.hand.last, first);
+      expect(s.match.selected, isEmpty, reason: 'a drag is not a tap');
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('table talk floats in a bubble under the seat', (tester) async {
+      final s = await dealIn(tester);
+      final ai = s.match.opponents.first;
+      s.match.speech[ai.id] = 'Spread on em!';
+      s.match.toggleSelect(s.match.human.hand.first); // triggers a rebuild
+      await tester.pumpAndSettle();
+      expect(find.byType(SpeechBubble), findsOneWidget);
+      expect(find.text('Spread on em!'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+    });
+  });
+
   testWidgets('a broke player gets a refill button', (tester) async {
     final s = services();
     s.profile.profile
@@ -108,10 +186,11 @@ void main() {
       ..lastBonusDay = s.profile.today;
     await pumpApp(tester, s);
 
-    await tester.tap(find.textContaining('spots you'));
+    expect(find.textContaining('spots you'), findsOneWidget);
+    await tester.tap(find.text('Get a refill'));
     await tester.pump();
     expect(s.profile.bankroll, ProfileController.buyInAmount);
-    expect(find.textContaining('Deal me in'), findsOneWidget);
+    expect(find.text('Play'), findsOneWidget);
     await tester.pump(const Duration(seconds: 5));
   });
 

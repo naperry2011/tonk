@@ -11,12 +11,14 @@ Everything needed to ship the Android app to Google Play (and later iOS from the
 | `screenshots/*.png` | Phone screenshots (1080x1920, no alpha). `raw/` holds the original captures |
 | `privacy-policy.html` | Privacy policy page to host on your website. Replace `[CONTACT EMAIL]` first |
 
-Regenerate the icon, store art, and screenshot conversions from `app/`:
+Regenerate the icon, store art, screenshot conversions, sound effects, and music from `app/`:
 
 ```bash
 flutter test tool/icon/render_icon_test.dart && dart run flutter_launcher_icons
 flutter test tool/store/render_store_assets_test.dart
 dart run flutter_native_splash:create
+node tool/gen_sfx.mjs
+node tool/gen_music.mjs
 ```
 
 ## 1. Create the upload key (one time, you do this)
@@ -88,6 +90,7 @@ Lay spreads, hit your opponents' spreads, and drop when you think you're holding
 - Daily challenge: the same deal for everyone, every day. Keep your streak alive.
 - Level up to unlock new tables, card backs, and tougher opponents.
 - Earn achievements and track your stats.
+- A late-night lofi room: low lamp, soft beat, frosted glass, and rose gold.
 - Plays offline. No ads, no accounts, no data collected.
 
 Chips are play money with no real-world value. Tonk does not offer real-money gambling.

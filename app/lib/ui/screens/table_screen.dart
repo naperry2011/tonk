@@ -10,6 +10,7 @@ import '../theme.dart';
 import '../themes.dart';
 import '../widgets/celebration.dart';
 import '../widgets/hand_view.dart';
+import '../widgets/lofi_backdrop.dart';
 import '../widgets/opponent_seat.dart';
 import '../widgets/playing_card.dart';
 import '../widgets/round_end_panel.dart';
@@ -120,9 +121,8 @@ class _TableScreenState extends State<TableScreen> {
               if (!didPop) _confirmQuit();
             },
             child: Scaffold(
-              body: AnimatedContainer(
-                duration: const Duration(milliseconds: 400),
-                decoration: table.decoration,
+              body: LofiBackdrop(
+                table: table,
                 child: SafeArea(
                   child: c.hasGame
                       ? _buildTable(context, deck)
@@ -143,7 +143,7 @@ class _TableScreenState extends State<TableScreen> {
         Column(
           children: [
             _TopBar(controller: c, onQuit: _confirmQuit),
-            _OpponentsRow(controller: c, deck: deck),
+            _OpponentsRow(controller: c),
             Expanded(
               child: _Center(controller: c, deck: deck),
             ),
@@ -155,7 +155,7 @@ class _TableScreenState extends State<TableScreen> {
             else
               _ActionBar(controller: c),
             AnimatedOpacity(
-              duration: const Duration(milliseconds: 250),
+              duration: TonkMotion.standard,
               opacity: c.human.hasFolded ? 0.4 : 1,
               child: HandView(
                 cards: c.human.hand,
@@ -166,12 +166,19 @@ class _TableScreenState extends State<TableScreen> {
             ),
           ],
         ),
+        // Table talk floats over the felt, under each speaker's seat.
+        Positioned(
+          top: _TopBar.height + OpponentSeat.height - 8,
+          left: 8,
+          right: 8,
+          child: IgnorePointer(child: _SpeechRow(controller: c)),
+        ),
         if (summary != null)
           Positioned.fill(
             child: DealIn(
               key: ValueKey('panel-${c.game.roundNumber}'),
-              from: const Offset(0, 0.12),
-              duration: const Duration(milliseconds: 380),
+              from: const Offset(0, 0.08),
+              duration: TonkMotion.slow,
               child: RoundEndPanel(
                 controller: c,
                 summary: summary,
@@ -205,7 +212,7 @@ class _TableScreenState extends State<TableScreen> {
       );
     }
     if (tonk) {
-      final color = c.characterFor(summary.winner)?.color ?? TonkColors.gold;
+      final color = c.characterFor(summary.winner)?.color ?? TonkColors.rose;
       return Positioned.fill(
         child: Celebration(key: key, title: 'TONK!', color: color),
       );
@@ -223,53 +230,102 @@ class _TableScreenState extends State<TableScreen> {
 class _TopBar extends StatelessWidget {
   const _TopBar({required this.controller, required this.onQuit});
 
+  static const double height = 56;
+
   final GameController controller;
   final VoidCallback onQuit;
 
   @override
   Widget build(BuildContext context) {
-    final game = controller.game;
-    final human = controller.human;
-    final style = Theme.of(context).textTheme.labelLarge;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 4, 12, 4),
-      child: Row(
-        children: [
-          IconButton(
-            tooltip: 'Leave table',
-            onPressed: onQuit,
-            icon: const Icon(Icons.close),
-          ),
-          Text(
-            controller.mode == MatchMode.daily
-                ? 'Daily'
-                : 'Round ${game.roundNumber}',
-            style: style,
-          ),
-          const SizedBox(width: 8),
-          // Scales down on narrow phones instead of overflowing.
-          Expanded(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerRight,
-              child: Row(
-                children: [
-                  _Pill(icon: Icons.savings_outlined, label: 'Pot ${game.pot}'),
-                  const SizedBox(width: 8),
-                  _Pill(icon: Icons.toll, label: '${human.chips}'),
-                  if (controller.mode == MatchMode.match) ...[
-                    const SizedBox(width: 8),
-                    _Pill(
-                      icon: Icons.scoreboard_outlined,
-                      label:
-                          '${game.matchScores[human.id] ?? 0}/${game.pointLimit}',
-                    ),
+    final c = controller;
+    final game = c.game;
+    final human = c.human;
+    final style = Theme.of(context).textTheme.titleMedium?.copyWith(
+      fontFamily: TonkFonts.display,
+      fontFeatures: const [FontFeature.liningFigures()],
+      fontWeight: FontWeight.w600,
+      fontStyle: FontStyle.italic,
+      fontSize: 21,
+    );
+    final score = c.mode == MatchMode.match
+        ? '  ·  ${game.matchScores[human.id] ?? 0}/${game.pointLimit}'
+        : '';
+    return SizedBox(
+      height: height,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(4, 0, 12, 0),
+        child: Row(
+          children: [
+            IconButton(
+              tooltip: 'Leave table',
+              onPressed: onQuit,
+              icon: const Icon(Icons.close),
+            ),
+            Text(
+              c.mode == MatchMode.daily ? 'Daily' : 'Round ${game.roundNumber}',
+              style: style,
+            ),
+            const SizedBox(width: 8),
+            // Scales down on narrow phones instead of overflowing.
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Row(
+                  children: [
+                    _Pill(icon: Icons.savings_outlined, label: '${game.pot}'),
+                    const SizedBox(width: 6),
+                    _RaiseChip(controller: c),
+                    const SizedBox(width: 6),
+                    _Pill(icon: Icons.toll, label: '${human.chips}$score'),
                   ],
-                ],
+                ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RaiseChip extends StatelessWidget {
+  const _RaiseChip({required this.controller});
+
+  final GameController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = controller;
+    final accent = Theme.of(context).colorScheme.primary;
+    final enabled = Betting.raiseOptions.any(c.canRaise);
+    return PopupMenuButton<int>(
+      tooltip: 'Raise',
+      enabled: enabled,
+      onSelected: c.raise,
+      itemBuilder: (context) => [
+        for (final amount in Betting.raiseOptions)
+          PopupMenuItem(
+            value: amount,
+            enabled: c.canRaise(amount),
+            child: Text('Raise $amount'),
           ),
-        ],
+      ],
+      child: AnimatedContainer(
+        duration: TonkMotion.quick,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: glassPanel(
+          radius: 20,
+          border: enabled ? accent.withValues(alpha: 0.7) : null,
+        ),
+        child: Text(
+          'Raise',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.6,
+            color: enabled ? accent : TonkColors.textMuted,
+          ),
+        ),
       ),
     );
   }
@@ -284,24 +340,24 @@ class _Pill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: Colors.black38,
-        borderRadius: BorderRadius.circular(20),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+      decoration: glassPanel(radius: 20),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
           const SizedBox(width: 4),
           AnimatedSwitcher(
-            duration: const Duration(milliseconds: 250),
+            duration: TonkMotion.standard,
             transitionBuilder: (child, animation) =>
-                ScaleTransition(scale: animation, child: child),
+                FadeTransition(opacity: animation, child: child),
             child: Text(
               label,
               key: ValueKey(label),
-              style: const TextStyle(fontWeight: FontWeight.w700),
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: TonkColors.textSoft,
+              ),
             ),
           ),
         ],
@@ -311,10 +367,9 @@ class _Pill extends StatelessWidget {
 }
 
 class _OpponentsRow extends StatelessWidget {
-  const _OpponentsRow({required this.controller, required this.deck});
+  const _OpponentsRow({required this.controller});
 
   final GameController controller;
-  final DeckTheme deck;
 
   @override
   Widget build(BuildContext context) {
@@ -322,30 +377,62 @@ class _OpponentsRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (final p in controller.opponents)
             Expanded(
               child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 250),
-                opacity: p.hasFolded && !game.isGameOver ? 0.45 : 1,
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: OpponentSeat(
-                    player: p,
-                    character: controller.characterFor(p),
-                    matchScore: game.matchScores[p.id] ?? 0,
-                    isActive:
-                        !game.isGameOver && identical(game.currentPlayer, p),
-                    lastAction: controller.lastAction[p.id],
-                    speech: controller.speech[p.id],
-                    deckTheme: deck,
-                  ),
+                duration: TonkMotion.standard,
+                opacity: p.hasFolded && !game.isGameOver ? 0.4 : 1,
+                child: OpponentSeat(
+                  player: p,
+                  character: controller.characterFor(p),
+                  matchScore: game.matchScores[p.id] ?? 0,
+                  isActive:
+                      !game.isGameOver && identical(game.currentPlayer, p),
+                  lastAction: controller.lastAction[p.id],
                 ),
               ),
             ),
         ],
       ),
+    );
+  }
+}
+
+class _SpeechRow extends StatelessWidget {
+  const _SpeechRow({required this.controller});
+
+  final GameController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final p in controller.opponents)
+          Expanded(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: AnimatedSwitcher(
+                duration: TonkMotion.standard,
+                transitionBuilder: (child, animation) => FadeTransition(
+                  opacity: animation,
+                  child: SlideTransition(
+                    position: Tween(
+                      begin: const Offset(0, -0.15),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
+                  ),
+                ),
+                child: switch (controller.speech[p.id]) {
+                  final text? => SpeechBubble(key: ValueKey(text), text: text),
+                  null => const SizedBox.shrink(),
+                },
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -360,7 +447,10 @@ class _Center extends StatelessWidget {
   Widget build(BuildContext context) {
     final game = controller.game;
     final canDraw = controller.canDraw;
-    final labelStyle = Theme.of(context).textTheme.labelMedium;
+    final labelStyle = Theme.of(context).textTheme.labelMedium?.copyWith(
+      color: TonkColors.textMuted,
+      letterSpacing: 1.2,
+    );
     final top = game.topDiscard;
     return Column(
       children: [
@@ -389,9 +479,9 @@ class _Center extends StatelessWidget {
                   width: 62,
                   height: 62 * 1.42,
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 240),
+                    duration: TonkMotion.standard,
                     transitionBuilder: (child, animation) => ScaleTransition(
-                      scale: Tween(begin: 1.35, end: 1.0).animate(
+                      scale: Tween(begin: 1.15, end: 1.0).animate(
                         CurvedAnimation(
                           parent: animation,
                           curve: Curves.easeOutCubic,
@@ -424,7 +514,12 @@ class _Center extends StatelessWidget {
               ? Center(
                   child: Text(
                     'No spreads yet',
-                    style: labelStyle?.copyWith(color: Colors.white38),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontFamily: TonkFonts.display,
+                      fontFeatures: const [FontFeature.liningFigures()],
+                      fontStyle: FontStyle.italic,
+                      color: TonkColors.textMuted.withValues(alpha: 0.6),
+                    ),
                   ),
                 )
               : SingleChildScrollView(
@@ -461,8 +556,8 @@ class _EmptyPile extends StatelessWidget {
       width: 62,
       height: 62 * 1.42,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white24, width: 2),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: TonkColors.glassBorder, width: 1.5),
       ),
     );
   }
@@ -487,15 +582,11 @@ class _SpreadView extends StatelessWidget {
       child: GestureDetector(
         onTap: canHit ? () => controller.hit(spread) : null,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.fromLTRB(6, 4, 6, 6),
-          decoration: BoxDecoration(
-            color: Colors.black26,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: canHit ? TonkColors.highlight : Colors.transparent,
-              width: 2,
-            ),
+          duration: TonkMotion.quick,
+          padding: const EdgeInsets.fromLTRB(8, 5, 8, 8),
+          decoration: glassPanel(
+            radius: 14,
+            border: canHit ? TonkColors.highlight : null,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -532,23 +623,51 @@ class _StatusLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final human = controller.human;
+    final accent = Theme.of(context).colorScheme.primary;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.fromLTRB(20, 4, 16, 2),
       child: Row(
         children: [
           Expanded(
-            child: Text(
-              controller.status ?? '',
-              maxLines: 2,
-              style: Theme.of(context).textTheme.bodyMedium,
+            child: AnimatedSwitcher(
+              duration: TonkMotion.quick,
+              layoutBuilder: (current, previous) => Stack(
+                alignment: Alignment.centerLeft,
+                children: [...previous, ?current],
+              ),
+              child: Text(
+                controller.status ?? '',
+                key: ValueKey(controller.status),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: TonkColors.textSoft),
+              ),
             ),
           ),
-          Text(
-            'Hand ${human.calculatePoints()}',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.w900,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            decoration: glassPanel(radius: 14),
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  const TextSpan(
+                    text: 'hand ',
+                    style: TextStyle(fontSize: 12, color: TonkColors.textMuted),
+                  ),
+                  TextSpan(
+                    text: '${controller.human.calculatePoints()}',
+                    style: TextStyle(
+                      fontFamily: TonkFonts.display,
+                      fontFeatures: const [FontFeature.liningFigures()],
+                      color: accent,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -557,6 +676,7 @@ class _StatusLine extends StatelessWidget {
   }
 }
 
+/// Shows only the moves that make sense right now.
 class _ActionBar extends StatelessWidget {
   const _ActionBar({required this.controller});
 
@@ -565,77 +685,94 @@ class _ActionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = controller;
-    final accent = Theme.of(context).colorScheme.primary;
-    final canRaiseAny = Betting.raiseOptions.any(c.canRaise);
+    final children = <Widget>[];
+
+    Widget hint(String text) => Expanded(
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontFamily: TonkFonts.display,
+          fontFeatures: const [FontFeature.liningFigures()],
+          fontStyle: FontStyle.italic,
+          color: TonkColors.textMuted,
+        ),
+      ),
+    );
+
+    if (!c.isHumanTurn) {
+      // Nothing to do while the table plays.
+    } else if (c.game.phase == Phase.startOfTurn) {
+      children.add(
+        FilledButton(
+          onPressed: c.knock,
+          style: FilledButton.styleFrom(
+            backgroundColor: TonkColors.cardRed,
+            foregroundColor: TonkColors.cardFace,
+            padding: const EdgeInsets.symmetric(horizontal: 26),
+            textStyle: const TextStyle(
+              fontFamily: TonkFonts.body,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.6,
+            ),
+          ),
+          child: const Text('KNOCK'),
+        ),
+      );
+      if (c.canLaySelected) {
+        children.addAll([const SizedBox(width: 10), _spreadButton(c)]);
+      } else {
+        children.add(hint('or tap a pile to draw'));
+      }
+    } else {
+      if (c.canLaySelected) children.add(Expanded(child: _spreadButton(c)));
+      if (c.canDiscard) {
+        if (children.isNotEmpty) children.add(const SizedBox(width: 10));
+        children.add(
+          Expanded(
+            child: FilledButton(
+              onPressed: c.discardSelected,
+              child: Text('Discard ${c.selected.single}'),
+            ),
+          ),
+        );
+      }
+      if (children.isEmpty) {
+        children.add(
+          hint(
+            c.selected.length > 1
+                ? 'Not a spread yet'
+                : 'Pick a card to discard',
+          ),
+        );
+      }
+    }
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: SizedBox(
-        height: 48,
-        child: Row(
-          children: [
-            if (c.canKnock) ...[
-              Expanded(
-                child: FilledButton(
-                  onPressed: c.knock,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: TonkColors.cardRed,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: const Text('KNOCK'),
-                ),
-              ),
-              const SizedBox(width: 8),
-            ],
-            Expanded(
-              child: FilledButton.tonal(
-                onPressed: c.canLaySelected ? c.laySelected : null,
-                child: const Text('Spread'),
-              ),
+        height: 50,
+        child: AnimatedSwitcher(
+          duration: TonkMotion.quick,
+          child: Row(
+            key: ValueKey(
+              '${c.game.phase}-${c.selected.length}-${c.canLaySelected}-${c.isHumanTurn}',
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton(
-                onPressed: c.canDiscard ? c.discardSelected : null,
-                child: const Text('Discard'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            PopupMenuButton<int>(
-              tooltip: 'Raise',
-              enabled: canRaiseAny,
-              onSelected: c.raise,
-              itemBuilder: (context) => [
-                for (final amount in Betting.raiseOptions)
-                  PopupMenuItem(
-                    value: amount,
-                    enabled: c.canRaise(amount),
-                    child: Text('Raise $amount'),
-                  ),
-              ],
-              child: Container(
-                height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: canRaiseAny ? accent : Colors.white24,
-                  ),
-                ),
-                child: Text(
-                  'Raise',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    color: canRaiseAny ? accent : Colors.white38,
-                  ),
-                ),
-              ),
-            ),
-          ],
+            children: children,
+          ),
         ),
       ),
     );
   }
+
+  static Widget _spreadButton(GameController c) => FilledButton.tonal(
+    onPressed: c.laySelected,
+    style: FilledButton.styleFrom(
+      backgroundColor: TonkColors.elevated,
+      foregroundColor: TonkColors.text,
+    ),
+    child: const Text('Spread'),
+  );
 }
 
 class _RaisePrompt extends StatelessWidget {
@@ -692,9 +829,12 @@ class _FoldedBar extends StatelessWidget {
       child: Center(
         child: Text(
           "You're out this round",
-          style: Theme.of(
-            context,
-          ).textTheme.titleSmall?.copyWith(color: Colors.white60),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontFamily: TonkFonts.display,
+            fontFeatures: const [FontFeature.liningFigures()],
+            fontStyle: FontStyle.italic,
+            color: TonkColors.textMuted,
+          ),
         ),
       ),
     );

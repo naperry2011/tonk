@@ -32,6 +32,16 @@ Running history of what's been built and current state. Update after major chang
 
 ## Implementation History
 
+### 2026-11-03 - Declutter Home and Table, Fanned Hand
+**What was built:** Home reduced to a profile chip, the hero, one primary Play/Continue/Refill button, a "New match" sheet (opponent picker, remembered in settings), and a slim daily strip. Table: top bar with pot, a Raise chip, and chips/score; compact opponent seats (avatar with card-count badge, active glow) with talk floating in an overlay; one-line status plus hand badge; a contextual action bar that only shows legal moves; a fanned hand with tap-to-select and long-press drag to reorder. Shorter controller status strings. 3 new widget tests (action bar states, fan reorder, bubble overlay); 122 tests total. Verified on the emulator with 2 and 3 opponents; store screenshots retaken; installed on the Samsung.
+**Why:** User felt the UI was "just ok" and the home and table were crowded. Decisions: fanned hand, compact avatars with floating bubbles, contextual actions with Raise in the top bar, one big Play button.
+**Files affected:** app/lib/ui/screens/home_screen.dart, table_screen.dart; app/lib/ui/widgets/hand_view.dart, opponent_seat.dart, profile_chip.dart, new_match_sheet.dart; app/lib/data/settings_store.dart; app/lib/state/game_controller.dart; app/test/widget_test.dart; store/screenshots/
+
+### 2026-11-03 - Lofi Redesign
+**What was built:** A late-night lofi look matched to the web game: new design tokens in `app/lib/ui/theme.dart` (navy backgrounds, rose gold accent, muted gold, cream cards, glass panels, slower motion), Cormorant Garamond + DM Sans bundled in `app/assets/fonts/`, `LofiBackdrop` (lamp glow, vignette, film grain), restyled cards, seats, table, panels, home, settings, and profile. Tables renamed Night Room / Dusk Cookout / Rooftop (ids unchanged). Character colors softened. Sound effects regenerated warmer; a generated 49s lofi loop (`tool/gen_music.mjs`) plays via `LofiMusic` with a Music toggle. New icon (slim serif T), splash, feature graphic, and store screenshots. Fixed during review: grain drawn over content, clipped action buttons, old-style numerals, panel see-through.
+**Why:** User asked for a more laid-back lofi feel that matches the website. Decisions: match the Tonk web game, "late-night lofi room", full restyle, softer sounds, generated music (fonts downloaded from Google's fonts repo with approval).
+**Files affected:** app/lib/ui/ (theme, themes, widgets, screens, lofi_music), app/lib/data/settings_store.dart, app/lib/main.dart, app/lib/meta/progression.dart, app/assets/ (fonts, music, sfx, icon, content/characters.json colors), app/tool/ (gen_sfx, gen_music, icon, store), app/pubspec.yaml, app/android and app/ios generated icons/splash, store/
+
 ### 2026-10-11 - Flutter M4: Store Readiness (build side)
 **What was built:** Display name "Tonk"; app icon drawn in code (gold T card on felt) and generated for Android (adaptive) and iOS via flutter_launcher_icons; native splash via flutter_native_splash; release signing from `android/key.properties` with a debug-key fallback; `store/` kit with a 512 icon, 1024x500 feature graphic, five 1080x1920 RGB screenshots, a privacy policy page, and a release checklist with listing copy. Fixes found while capturing: awaiting `SystemChrome.setPreferredOrientations` stalled startup about 3s (portrait moved to manifest/Info.plist), sound preload no longer blocks `runApp`, the AI loop now hands control back immediately, and seat status lines no longer overlap mid-transition. Release build installed on the user's Samsung S948U: about 0.2s to fully drawn.
 **Why:** M4 of the mobile plan. User decisions: keep betting and accept an 18+ rating; keep app ID com.tonk.tonk; host the privacy policy on the user's website; icon drawn in code. Verified Apple's rule: frequent simulated gambling = 18+ (R18+ in Australia even when infrequent).
@@ -77,6 +87,13 @@ Running history of what's been built and current state. Update after major chang
 Vanilla JavaScript ES6 modules with Vite as build tool. Zero runtime dependencies. Event-driven architecture: Game.js emits state changes, GameUI.js subscribes and renders. Clean separation between pure game logic (src/game/) and DOM layer (src/ui/). See architecture.md for detail.
 
 ## Lessons Learned
+
+- Overlapping cards need custom hit-testing: with a shared GestureDetector, pick the topmost card whose x-range contains the touch (later cards sit on top). Per-card Semantics(onTap) keeps them accessible.
+- For widget tests of semantics on a card whose label merges with child text, find the widget by predicate instead of bySemanticsLabel.
+
+- Draw texture overlays (grain, vignette) with `CustomPaint.painter`, not `foregroundPainter`: a foreground overlay greys out everything on top, including cards.
+- Cormorant Garamond defaults to old-style numerals; add `FontFeature.liningFigures()` wherever it shows numbers.
+- In Git Bash, never pass JS containing backticks inside a double-quoted `node -e`; write the script to a file in the scratchpad instead.
 
 - Don't trust emulator startup timing: it showed 5-7s cold start while the real phone showed about 0.2s. Real Dart-side stalls still show up in the timing logs (e.g. the 3s orientation call).
 - Play rejects PNGs with an alpha channel for screenshots and the feature graphic; Flutter and adb both produce RGBA, so convert (tool/store does).

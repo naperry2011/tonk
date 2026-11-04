@@ -12,6 +12,8 @@
 
 <h3 align="center">Pull up a chair. The cookout card game, in your pocket.</h3>
 
+<p align="center"><i>Low lamp, green felt, a slow beat in the back.</i></p>
+
 <p align="center">
   Lay your spreads, hit theirs, and knock when you think you're holding the lowest hand.<br>
   Guess wrong and the table <i>will</i> let you hear about it.
@@ -40,7 +42,7 @@
 | **Opponents** | 7 characters with personalities and table talk | 1-3 AI players |
 | **Betting** | Ante, raise, call, or fold | Ante and raise |
 | **Progression** | XP, levels, unlocks, achievements, daily challenge | Win/loss stats |
-| **Style** | 3 tables, 6 card backs, sound, haptics | 6 card backs |
+| **Style** | Late-night lofi look, 3 tables, 6 card backs, lofi beat, sound, haptics | Navy and rose gold, 6 card backs |
 
 Both run offline with no accounts, no ads, and no data collected.
 
@@ -87,7 +89,9 @@ New players start with four of them. Level up to bring Aunt Dot, Grandma Pearl, 
 - **Level up:** XP every round unlocks tables, card backs, and tougher opponents
 - **Daily challenge:** the same deal for everyone, every day. Keep the streak alive.
 - **Achievements and stats:** ten to earn, plus your full table record
-- **Feel:** sound effects, haptics, card animations, and confetti when you Tonk
+- **Lofi room:** navy and rose gold to match the web game, serif type, a soft lamp glow and film grain, frosted-glass panels, and slower, gentler motion
+- **Lofi beat:** a looping chill track under the game, with its own toggle
+- **Feel:** warm sound effects, haptics, card animations, and confetti when you Tonk
 - **Never lose a hand:** every match saves automatically
 
 ## Getting Started
@@ -131,7 +135,8 @@ app/                      Flutter app (Android + iOS)
   lib/meta/               XP, levels, bankroll, daily challenge
   lib/ui/                 Screens, widgets, themes, sound and haptics
   assets/content/         The AI roster and every line they say
-  tool/                   Generators for sound effects, the icon, and store art
+  tool/                   Generators for sound effects, music, the icon, and store art
+  assets/fonts/           Cormorant Garamond and DM Sans (open source, bundled)
 src/                      Web game
   game/                   Game logic (no DOM)
   ui/                     DOM rendering and input
@@ -145,7 +150,7 @@ Highlights:
 
 - **One rulebook, two engines.** The Dart engine is a faithful port of the JS one, tested against the same cases plus a 1,000-round AI-vs-AI simulation that checks every chip and every card.
 - **Seeded randomness.** The same seed replays the same game, which is how the daily challenge deals everyone the same hand.
-- **Generated, not downloaded.** The sound effects, the app icon, and the store art are all made by scripts in `app/tool/`, so every asset is ours to ship.
+- **Generated, not downloaded.** The sound effects, the lofi music loop, the app icon, and the store art are all made by scripts in `app/tool/`, so every asset is ours to ship. The two fonts are open source (SIL Open Font License).
 
 CI runs the web lint, tests, and build, plus Flutter analyze and tests, on every push and pull request to `main`.
 

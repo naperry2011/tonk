@@ -93,3 +93,21 @@ In the mobile app, passing on a raise means folding: the player sits out the res
 - **Neutral:** Fold state is saved with the match, including an unanswered call/fold prompt.
 
 ---
+
+## ADR-006: Late-Night Lofi Visual Direction (Mobile App)
+
+**Date:** 2026-11-03
+**Status:** Accepted
+
+**Context**
+The mobile app's first look (bright green felt, bold gold type, big energy) didn't match the web game and felt louder than the user wanted. The request: a more laid-back lofi feel that matches the website.
+
+**Decision**
+Adopt the web game's palette and type (navy, rose gold, muted gold; Cormorant Garamond + DM Sans) with a lofi layer: lamp glow, vignette, and film grain behind content, frosted-glass panels, cream card faces, slower ease-in-out motion, warm low-passed sound effects, and a generated looping lofi track with a toggle. All tokens live in `app/lib/ui/theme.dart`; screens use `LofiBackdrop` and `glassPanel()` rather than ad-hoc colors.
+
+**Consequences**
+- **Positive:** The web game and the app now read as one brand; one token file controls the look; every asset (fonts aside) is generated and ours to ship.
+- **Negative:** Bundled fonts add about 1.4 MB and the music about 2.2 MB to the app.
+- **Neutral:** Table theme ids are unchanged (`card_room` is now displayed as Night Room), so saves and unlocks carry over.
+
+---

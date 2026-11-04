@@ -69,12 +69,12 @@ class Unlock {
   final String label;
 }
 
-/// Everything not listed here is available from the start: the Card Room
+/// Everything not listed here is available from the start: the Night Room
 /// table, Rose Gold and Midnight Gold backs, and Uncle Ray, Mr. Earl,
 /// Keisha, and Lil Tre.
 const List<Unlock> unlockTrack = [
   Unlock(2, UnlockKind.deck, 'emerald', 'Emerald Isle card backs'),
-  Unlock(3, UnlockKind.table, 'cookout', 'Backyard Cookout table'),
+  Unlock(3, UnlockKind.table, 'cookout', 'Dusk Cookout table'),
   Unlock(3, UnlockKind.character, 'aunt_dot', 'Aunt Dot joins the table'),
   Unlock(4, UnlockKind.deck, 'royal', 'Royal Velvet card backs'),
   Unlock(

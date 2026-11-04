@@ -93,18 +93,22 @@ Supporting Files:
 * app/lib/main.dart - App entry point (portrait lock, TonkApp with an injected GameController)
 * app/lib/state/game_controller.dart - Match driver for the UI: human actions, paced AI turns, RoundSummary, autosave
 * app/lib/data/save_store.dart - SaveStore (shared_preferences, tonk_game_state) and MemorySaveStore
-* app/lib/ui/screens/home_screen.dart, table_screen.dart - Home (continue/new match) and the game table
+* app/lib/ui/screens/home_screen.dart, table_screen.dart - Home (one Play/Continue button, new-match sheet, daily strip) and the game table (top bar with Raise, compact seats, bubble overlay, contextual action bar)
 * app/lib/ui/screens/settings_screen.dart - Table theme, card backs, sound/haptics toggles, nickname
-* app/lib/ui/widgets/ - playing_card (+ DealIn), opponent_seat (speech bubble), hand_view, round_end_panel, celebration
-* app/lib/ui/theme.dart - TonkColors, theme, felt background
-* app/lib/ui/themes.dart - DeckTheme (6, from styles/themes.css), TableTheme (Card Room, Backyard Cookout, Rooftop)
+* app/lib/ui/widgets/ - playing_card (+ DealIn), opponent_seat (compact seat + SpeechBubble), hand_view (fanned hand: tap select, long-press drag reorder), round_end_panel, celebration, profile_chip, new_match_sheet
+* app/lib/ui/theme.dart - Lofi design tokens (TonkColors, TonkFonts, TonkMotion), ThemeData, glassPanel()
+* app/lib/ui/themes.dart - DeckTheme (6, from styles/themes.css), TableTheme (Night Room, Dusk Cookout, Rooftop; ids card_room/cookout/rooftop) with lamp glow colors
+* app/lib/ui/widgets/lofi_backdrop.dart - Screen background: table gradient, lamp glow, vignette, film grain
+* app/lib/ui/lofi_music.dart - LofiMusic: background loop following the music setting and app lifecycle
+* app/assets/fonts/ - Cormorant Garamond and DM Sans (variable TTFs, OFL licenses)
+* app/assets/music/lofi_loop.wav - Generated music loop; app/tool/gen_music.mjs regenerates it
 * app/lib/ui/table_feel.dart - Sound effects and haptics driven by GameController.events
 * app/lib/content/roster.dart - Character, Roster, TalkKey; loads assets/content/characters.json
 * app/lib/state/table_talk.dart - Picks AI lines per game event, with cooldown
 * app/lib/engine/ai_style.dart - AiStyle play-style knobs per ComputerPlayer
 * app/lib/data/settings_store.dart - SettingsController (tonk_settings)
 * app/assets/content/characters.json - AI roster and table talk (editable content)
-* app/assets/sfx/ - Generated sound effects; app/tool/gen_sfx.mjs regenerates them
+* app/assets/sfx/ - Generated lofi sound effects; app/tool/gen_sfx.mjs regenerates them
 * app/test/engine/ - Ported engine tests plus AI turn, save/restore, and 1,000-round simulation tests
 * app/test/state/ - GameController tests (full matches, raise/call/fold, AI raise prompt, resume)
 * app/test/content/ - Roster validation (clean talk, known keys, sane styles) and TableTalk tests
