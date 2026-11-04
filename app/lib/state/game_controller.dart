@@ -321,6 +321,30 @@ class GameController extends ChangeNotifier {
       isHumanTurn &&
       (game.phase == Phase.startOfTurn || game.phase == Phase.draw);
 
+  /// The best spread the human could lay right now (highest points), or
+  /// null. Drives the gold hint glow and the one-tap Spread suggestion.
+  SpreadCandidate? get suggestedSpread {
+    if (!isHumanTurn) return null;
+    if (game.phase != Phase.startOfTurn && game.phase != Phase.action) {
+      return null;
+    }
+    final options = findPossibleSpreads(human.hand);
+    if (options.isEmpty) return null;
+    int points(SpreadCandidate s) => s.cards.fold(0, (sum, c) => sum + c.value);
+    options.sort((a, b) => points(b) - points(a));
+    return options.first;
+  }
+
+  /// Lays [suggestedSpread] in one tap.
+  void laySuggested() {
+    final spread = suggestedSpread;
+    if (spread == null) return;
+    selected
+      ..clear()
+      ..addAll(spread.cards);
+    laySelected();
+  }
+
   bool get canLaySelected =>
       isHumanTurn &&
       (game.phase == Phase.startOfTurn || game.phase == Phase.action) &&
@@ -618,9 +642,7 @@ class GameController extends ChangeNotifier {
     final game = this.game;
     if (game.isGameOver) return '';
     final player = game.currentPlayer;
-    return player.isHuman
-        ? 'Your turn'
-        : "${player.name}'s turn";
+    return player.isHuman ? 'Your turn' : "${player.name}'s turn";
   }
 
   void _say(Player player, String text) {

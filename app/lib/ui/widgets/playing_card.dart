@@ -12,6 +12,7 @@ class PlayingCard extends StatelessWidget {
     this.width = 60,
     this.selected = false,
     this.highlighted = false,
+    this.hinted = false,
     this.deckTheme,
     this.onTap,
   });
@@ -22,6 +23,9 @@ class PlayingCard extends StatelessWidget {
 
   /// Outline used for playable targets (e.g. a hittable spread).
   final bool highlighted;
+
+  /// Soft gold glow: this card is part of a spread you could lay.
+  final bool hinted;
 
   /// Card back style; defaults to Rose Gold.
   final DeckTheme? deckTheme;
@@ -38,6 +42,8 @@ class PlayingCard extends StatelessWidget {
         ? TonkColors.rose
         : highlighted
         ? TonkColors.highlight
+        : hinted
+        ? TonkColors.gold
         : card == null
         ? back.border
         : Colors.black12;
@@ -60,14 +66,16 @@ class PlayingCard extends StatelessWidget {
         borderRadius: radius,
         border: Border.all(
           color: borderColor,
-          width: selected || highlighted ? 2 : 1,
+          width: selected || highlighted || hinted ? 2 : 1,
         ),
         boxShadow: [
           BoxShadow(
             color: selected
                 ? TonkColors.rose.withValues(alpha: 0.35)
+                : hinted
+                ? TonkColors.gold.withValues(alpha: 0.3)
                 : Colors.black.withValues(alpha: 0.35),
-            blurRadius: selected ? 16 : 8,
+            blurRadius: selected || hinted ? 16 : 8,
             offset: const Offset(0, 3),
           ),
         ],

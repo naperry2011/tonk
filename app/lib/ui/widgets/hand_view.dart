@@ -15,11 +15,20 @@ class HandView extends StatefulWidget {
     required this.selected,
     required this.onTap,
     required this.onReorder,
+    this.hinted = const {},
+    this.cardKeys,
   });
 
   final List<Card> cards;
   final List<Card> selected;
   final ValueChanged<Card> onTap;
+
+  /// Cards that could form a spread (soft gold glow).
+  final Set<Card> hinted;
+
+  /// Key per card id, so the table can find where a card is on screen
+  /// (for spread animations).
+  final Map<String, GlobalKey>? cardKeys;
 
   /// Moves the card at oldIndex so it ends up at newIndex.
   final void Function(int oldIndex, int newIndex) onReorder;
@@ -147,9 +156,11 @@ class _HandViewState extends State<HandView> {
                 child: DealIn(
                   key: ValueKey('deal-${card.id}'),
                   child: PlayingCard(
+                    key: widget.cardKeys?[card.id],
                     card: card,
                     width: fan.cardW,
                     selected: isSelected,
+                    hinted: !isSelected && widget.hinted.contains(card),
                   ),
                 ),
               ),

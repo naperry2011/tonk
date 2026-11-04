@@ -8,6 +8,7 @@ import 'package:tonk/app_services.dart';
 import 'package:tonk/content/roster.dart';
 import 'package:tonk/data/save_store.dart';
 import 'package:tonk/data/settings_store.dart';
+import 'package:tonk/engine/engine.dart' as engine;
 import 'package:tonk/main.dart';
 import 'package:tonk/meta/profile.dart';
 import 'package:tonk/meta/profile_controller.dart';
@@ -164,6 +165,39 @@ void main() {
 
       expect(s.match.human.hand.last, first);
       expect(s.match.selected, isEmpty, reason: 'a drag is not a tap');
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('a spread in hand glows and lays in one tap', (tester) async {
+      final s = await dealIn(tester);
+      final human = s.match.human;
+      human.hand = [
+        engine.Card(engine.Suit.hearts, '7'),
+        engine.Card(engine.Suit.spades, '7'),
+        engine.Card(engine.Suit.clubs, '7'),
+        engine.Card(engine.Suit.diamonds, '2'),
+        engine.Card(engine.Suit.spades, '9'),
+      ];
+      // Trigger a rebuild with the new hand.
+      s.match.toggleSelect(human.hand.last);
+      s.match.toggleSelect(human.hand.last);
+      await tester.pumpAndSettle();
+
+      final hinted = find.byWidgetPredicate(
+        (w) => w is PlayingCard && w.hinted,
+      );
+      expect(hinted, findsNWidgets(3));
+      expect(find.text('Spread 7s'), findsOneWidget);
+
+      await tester.tap(find.text('Spread 7s'));
+      await tester.pump(); // event delivered, flights scheduled
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200)); // mid-flight
+      await tester.pumpAndSettle();
+
+      expect(s.match.game.spreadsOnTable, hasLength(1));
+      expect(human.cardCount, 2);
+      expect(hinted, findsNothing);
       await tester.pump(const Duration(seconds: 5));
     });
 

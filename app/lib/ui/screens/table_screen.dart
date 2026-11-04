@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart' hide Card;
 
 import '../../app_services.dart';
@@ -37,6 +40,103 @@ class TableScreen extends StatefulWidget {
 class _TableScreenState extends State<TableScreen> {
   GameController get c => widget.controller;
 
+  // Where things are on screen, for the spread slide animations.
+  final GlobalKey _layerKey = GlobalKey();
+  final Map<String, GlobalKey> _handKeys = {};
+  final Map<String, GlobalKey> _trayKeys = {};
+  final Map<String, GlobalKey> _seatKeys = {};
+
+  final List<_Flight> _flights = [];
+
+  /// Card ids still flying into a spread (hidden in the tray until they land).
+  final Set<String> _inFlight = {};
+  StreamSubscription<GameEvent>? _events;
+  int _nextFlight = 0;
+
+  GlobalKey _trayKey(String spreadId, String cardId) =>
+      _trayKeys.putIfAbsent('$spreadId-$cardId', GlobalKey.new);
+
+  Rect? _rectOf(GlobalKey? key) {
+    final box = key?.currentContext?.findRenderObject() as RenderBox?;
+    final layer = _layerKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null || layer == null || !box.attached || !box.hasSize) {
+      return null;
+    }
+    return box.localToGlobal(Offset.zero, ancestor: layer) & box.size;
+  }
+
+  /// A small card-sized rect at an opponent's avatar.
+  Rect? _seatRect(Player player) {
+    final seat = _rectOf(_seatKeys[player.id]);
+    if (seat == null) return null;
+    return Rect.fromCenter(
+      center: seat.topCenter + const Offset(0, 24),
+      width: 30,
+      height: 30 * 1.42,
+    );
+  }
+
+  void _onGameEvent(GameEvent event) {
+    final (Player? player, List<Card> cards, Spread? spread) = switch (event) {
+      SpreadLaid(:final player, :final spread) => (
+        player,
+        List.of(spread.cards),
+        spread,
+      ),
+      SpreadHit(:final player, :final card, :final spread) => (
+        player,
+        [card],
+        spread,
+      ),
+      _ => (null, const [], null),
+    };
+    if (player == null || spread == null || !mounted) return;
+
+    // The hand hasn't rebuilt yet, so the cards are still where they were.
+    final starts = <String, Rect>{
+      for (final card in cards)
+        card.id: ?(player.isHuman
+            ? _rectOf(_handKeys[card.id])
+            : _seatRect(player)),
+    };
+    if (starts.isEmpty) return;
+    setState(() => _inFlight.addAll(starts.keys));
+
+    // Targets exist once the tray has been built.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final flights = <_Flight>[];
+      var delay = 0;
+      for (final card in cards) {
+        final from = starts[card.id];
+        final to = _rectOf(_trayKeys['${spread.id}-${card.id}']);
+        if (from == null || to == null) {
+          _inFlight.remove(card.id);
+          continue;
+        }
+        flights.add(
+          _Flight(
+            id: _nextFlight++,
+            card: card,
+            from: from,
+            to: to,
+            delay: Duration(milliseconds: delay),
+          ),
+        );
+        delay += 70;
+      }
+      setState(() => _flights.addAll(flights));
+    });
+  }
+
+  void _landed(_Flight flight) {
+    if (!mounted) return;
+    setState(() {
+      _flights.remove(flight);
+      _inFlight.remove(flight.card.id);
+    });
+  }
+
   void _nextRound(RoundSummary summary) {
     if (summary.isDaily) {
       Navigator.pop(context);
@@ -53,11 +153,13 @@ class _TableScreenState extends State<TableScreen> {
     super.initState();
     c.addListener(_onChange);
     widget.feel?.attach(c.events);
+    _events = c.events.listen(_onGameEvent);
   }
 
   @override
   void dispose() {
     c.removeListener(_onChange);
+    _events?.cancel();
     super.dispose();
   }
 
@@ -138,14 +240,21 @@ class _TableScreenState extends State<TableScreen> {
 
   Widget _buildTable(BuildContext context, DeckTheme deck) {
     final summary = c.roundSummary;
+    final suggestion = c.suggestedSpread;
     return Stack(
+      key: _layerKey,
       children: [
         Column(
           children: [
             _TopBar(controller: c, onQuit: _confirmQuit),
-            _OpponentsRow(controller: c),
+            _OpponentsRow(controller: c, seatKeys: _seatKeys),
             Expanded(
-              child: _Center(controller: c, deck: deck),
+              child: _Center(
+                controller: c,
+                deck: deck,
+                trayKey: _trayKey,
+                inFlight: _inFlight,
+              ),
             ),
             _StatusLine(controller: c),
             if (c.pendingRaise case final raise?)
@@ -162,6 +271,11 @@ class _TableScreenState extends State<TableScreen> {
                 selected: c.selected,
                 onTap: _tapCard,
                 onReorder: c.reorderHand,
+                hinted: c.canLaySelected ? const {} : {...?suggestion?.cards},
+                cardKeys: {
+                  for (final card in c.human.hand)
+                    card.id: _handKeys.putIfAbsent(card.id, GlobalKey.new),
+                },
               ),
             ),
           ],
@@ -172,6 +286,20 @@ class _TableScreenState extends State<TableScreen> {
           left: 8,
           right: 8,
           child: IgnorePointer(child: _SpeechRow(controller: c)),
+        ),
+        Positioned.fill(
+          child: IgnorePointer(
+            child: Stack(
+              children: [
+                for (final flight in _flights)
+                  _FlyingCard(
+                    key: ValueKey(flight.id),
+                    flight: flight,
+                    onLanded: _landed,
+                  ),
+              ],
+            ),
+          ),
         ),
         if (summary != null)
           Positioned.fill(
@@ -367,9 +495,10 @@ class _Pill extends StatelessWidget {
 }
 
 class _OpponentsRow extends StatelessWidget {
-  const _OpponentsRow({required this.controller});
+  const _OpponentsRow({required this.controller, required this.seatKeys});
 
   final GameController controller;
+  final Map<String, GlobalKey> seatKeys;
 
   @override
   Widget build(BuildContext context) {
@@ -384,6 +513,7 @@ class _OpponentsRow extends StatelessWidget {
                 duration: TonkMotion.standard,
                 opacity: p.hasFolded && !game.isGameOver ? 0.4 : 1,
                 child: OpponentSeat(
+                  key: seatKeys.putIfAbsent(p.id, GlobalKey.new),
                   player: p,
                   character: controller.characterFor(p),
                   matchScore: game.matchScores[p.id] ?? 0,
@@ -438,10 +568,17 @@ class _SpeechRow extends StatelessWidget {
 }
 
 class _Center extends StatelessWidget {
-  const _Center({required this.controller, required this.deck});
+  const _Center({
+    required this.controller,
+    required this.deck,
+    required this.trayKey,
+    required this.inFlight,
+  });
 
   final GameController controller;
   final DeckTheme deck;
+  final GlobalKey Function(String spreadId, String cardId) trayKey;
+  final Set<String> inFlight;
 
   @override
   Widget build(BuildContext context) {
@@ -452,66 +589,71 @@ class _Center extends StatelessWidget {
       letterSpacing: 1.2,
     );
     final top = game.topDiscard;
-    return Column(
+    final piles = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Column(
           children: [
-            Column(
-              children: [
-                game.deckCount > 0
-                    ? PlayingCard(
-                        width: 62,
-                        deckTheme: deck,
-                        highlighted: canDraw,
-                        onTap: canDraw ? controller.drawFromDeck : null,
-                      )
-                    : const _EmptyPile(),
-                const SizedBox(height: 4),
-                Text('Stock ${game.deckCount}', style: labelStyle),
-              ],
-            ),
-            const SizedBox(width: 24),
-            Column(
-              children: [
-                SizedBox(
-                  width: 62,
-                  height: 62 * 1.42,
-                  child: AnimatedSwitcher(
-                    duration: TonkMotion.standard,
-                    transitionBuilder: (child, animation) => ScaleTransition(
-                      scale: Tween(begin: 1.15, end: 1.0).animate(
-                        CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.easeOutCubic,
-                        ),
-                      ),
-                      child: FadeTransition(opacity: animation, child: child),
-                    ),
-                    child: top == null
-                        ? const _EmptyPile(key: ValueKey('empty'))
-                        : PlayingCard(
-                            key: ValueKey(
-                              '${top.id}-${game.deck.discardPile.length}',
-                            ),
-                            card: top,
-                            width: 62,
-                            highlighted: canDraw,
-                            onTap: canDraw ? controller.drawFromDiscard : null,
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text('Discard', style: labelStyle),
-              ],
-            ),
+            game.deckCount > 0
+                ? PlayingCard(
+                    width: 66,
+                    deckTheme: deck,
+                    highlighted: canDraw,
+                    onTap: canDraw ? controller.drawFromDeck : null,
+                  )
+                : const _EmptyPile(),
+            const SizedBox(height: 6),
+            Text('Stock ${game.deckCount}', style: labelStyle),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(width: 26),
+        Column(
+          children: [
+            SizedBox(
+              width: 66,
+              height: 66 * 1.42,
+              child: AnimatedSwitcher(
+                duration: TonkMotion.standard,
+                transitionBuilder: (child, animation) => ScaleTransition(
+                  scale: Tween(begin: 1.15, end: 1.0).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutCubic,
+                    ),
+                  ),
+                  child: FadeTransition(opacity: animation, child: child),
+                ),
+                child: top == null
+                    ? const _EmptyPile(key: ValueKey('empty'))
+                    : PlayingCard(
+                        key: ValueKey(
+                          '${top.id}-${game.deck.discardPile.length}',
+                        ),
+                        card: top,
+                        width: 66,
+                        highlighted: canDraw,
+                        onTap: canDraw ? controller.drawFromDiscard : null,
+                      ),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text('Discard', style: labelStyle),
+          ],
+        ),
+      ],
+    );
+
+    return Column(
+      children: [
+        // Piles sit in the middle of the felt, away from the seats.
+        const Spacer(),
+        piles,
+        const SizedBox(height: 18),
         Expanded(
+          flex: 2,
           child: game.spreadsOnTable.isEmpty
-              ? Center(
+              ? Align(
+                  alignment: const Alignment(0, -0.5),
                   child: Text(
                     'No spreads yet',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -530,13 +672,12 @@ class _Center extends StatelessWidget {
                     runSpacing: 10,
                     children: [
                       for (final spread in game.spreadsOnTable)
-                        DealIn(
+                        _SpreadView(
                           key: ValueKey(spread.id),
-                          from: const Offset(0, 0.4),
-                          child: _SpreadView(
-                            controller: controller,
-                            spread: spread,
-                          ),
+                          controller: controller,
+                          spread: spread,
+                          trayKey: trayKey,
+                          inFlight: inFlight,
                         ),
                     ],
                   ),
@@ -564,10 +705,18 @@ class _EmptyPile extends StatelessWidget {
 }
 
 class _SpreadView extends StatelessWidget {
-  const _SpreadView({required this.controller, required this.spread});
+  const _SpreadView({
+    super.key,
+    required this.controller,
+    required this.spread,
+    required this.trayKey,
+    required this.inFlight,
+  });
 
   final GameController controller;
   final Spread spread;
+  final GlobalKey Function(String spreadId, String cardId) trayKey;
+  final Set<String> inFlight;
 
   @override
   Widget build(BuildContext context) {
@@ -604,7 +753,14 @@ class _SpreadView extends StatelessWidget {
                   for (final card in spread.cards)
                     Align(
                       widthFactor: 0.62,
-                      child: PlayingCard(card: card, width: 38),
+                      child: Opacity(
+                        opacity: inFlight.contains(card.id) ? 0 : 1,
+                        child: PlayingCard(
+                          key: trayKey(spread.id, card.id),
+                          card: card,
+                          width: 38,
+                        ),
+                      ),
                     ),
                 ],
               ),
@@ -721,11 +877,20 @@ class _ActionBar extends StatelessWidget {
       );
       if (c.canLaySelected) {
         children.addAll([const SizedBox(width: 10), _spreadButton(c)]);
+      } else if (c.suggestedSpread case final spread?) {
+        children.addAll([
+          const SizedBox(width: 10),
+          Expanded(child: _suggestButton(c, spread)),
+        ]);
       } else {
         children.add(hint('or tap a pile to draw'));
       }
     } else {
-      if (c.canLaySelected) children.add(Expanded(child: _spreadButton(c)));
+      if (c.canLaySelected) {
+        children.add(Expanded(child: _spreadButton(c)));
+      } else if (c.suggestedSpread case final spread?) {
+        children.add(Expanded(child: _suggestButton(c, spread)));
+      }
       if (c.canDiscard) {
         if (children.isNotEmpty) children.add(const SizedBox(width: 10));
         children.add(
@@ -761,6 +926,24 @@ class _ActionBar extends StatelessWidget {
             children: children,
           ),
         ),
+      ),
+    );
+  }
+
+  /// One tap to lay the best spread in hand, e.g. "Spread 7s" or "Spread 4-6♥".
+  static Widget _suggestButton(GameController c, SpreadCandidate spread) {
+    final cards = spread.cards;
+    final label = spread.type == SpreadType.book
+        ? '${cards.first.rank}s'
+        : '${cards.first.rank}-${cards.last.rank}${cards.first.suit.symbol}';
+    return FilledButton.icon(
+      onPressed: c.laySuggested,
+      icon: const Icon(Icons.auto_awesome, size: 18),
+      label: Text('Spread $label', overflow: TextOverflow.ellipsis),
+      style: FilledButton.styleFrom(
+        backgroundColor: TonkColors.gold,
+        foregroundColor: TonkColors.dusk,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
       ),
     );
   }
@@ -837,6 +1020,59 @@ class _FoldedBar extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// One card sliding from a hand or seat into a spread tray.
+class _Flight {
+  _Flight({
+    required this.id,
+    required this.card,
+    required this.from,
+    required this.to,
+    required this.delay,
+  });
+
+  final int id;
+  final Card card;
+  final Rect from;
+  final Rect to;
+  final Duration delay;
+}
+
+class _FlyingCard extends StatelessWidget {
+  const _FlyingCard({super.key, required this.flight, required this.onLanded});
+
+  static const _travel = Duration(milliseconds: 520);
+
+  final _Flight flight;
+  final void Function(_Flight) onLanded;
+
+  @override
+  Widget build(BuildContext context) {
+    final total = flight.delay + _travel;
+    final start = flight.delay.inMilliseconds / total.inMilliseconds;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: total,
+      curve: Interval(start, 1, curve: Curves.easeInOutCubic),
+      onEnd: () => onLanded(flight),
+      builder: (context, t, _) {
+        final rect = Rect.lerp(flight.from, flight.to, t)!;
+        // A gentle arc up and over the felt.
+        final lift = sin(pi * t) * 36;
+        return Positioned(
+          left: rect.left,
+          top: rect.top - lift,
+          width: rect.width,
+          height: rect.height,
+          child: Transform.rotate(
+            angle: sin(pi * t) * 0.08,
+            child: PlayingCard(card: flight.card, width: rect.width),
+          ),
+        );
+      },
     );
   }
 }
